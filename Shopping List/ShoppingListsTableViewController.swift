@@ -12,15 +12,15 @@ import CoreData
 class ShoppingListsTableViewController: FetchedResultsTableViewController {
     
     // MARK: API
-    var persistContainer: NSPersistentContainer! = AppDelegate.persistentContainer
+    var persistContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
     // MARK: - Model
-    private var shoppingLists: [ShoppingList]?
-    
     fileprivate var fetchedResultsController: NSFetchedResultsController<ShoppingList>? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.title = "Shopping Lists"
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -94,15 +94,34 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
      }
      */
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
+    
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        
+        var targetCtlr = segue.destination
+        
+        if let navCtlr = targetCtlr as? UINavigationController {
+            
+            targetCtlr = navCtlr.visibleViewController ?? targetCtlr
+            
+        }
+        
+        if let shoppingListCtlr = targetCtlr as? ShoppingListTableViewController {
+            
+            if let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) {
+                
+                let aShoppingList = fetchedResultsController?.object(at: indexPath)
+                
+                shoppingListCtlr.shoppingList = aShoppingList
+            }
+        }
+        
+    }
+    
     
 }
 

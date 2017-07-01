@@ -104,6 +104,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             groceryShoppingList?.name = "Grocery"
             groceryShoppingList?.comments = "Everyday stuffs"
             groceryShoppingList?.lastUpdatedOn = NSDate()
+            
+            do {
+                let banana = try Item.findOrCreateNewItem(name: "Banana", context: persistentContainer.viewContext)
+                banana.name = "Banana"
+                banana.brand = "Del Monte"
+                
+                let milk = try Item.findOrCreateNewItem(name: "Milk", context: persistentContainer.viewContext)
+                milk.name = "Milk"
+                milk.brand = "Magnolia"
+                
+                groceryShoppingList?.addToItemsInShoppingList(banana)
+                groceryShoppingList?.addToItemsInShoppingList(milk)
+            } catch {
+                let nserror = error as NSError
+                print("Error occured \(nserror): \(nserror.userInfo)")
+            }
         }
         
         let artShoppingList = ShoppingList.findOrCreateNew(name: "Art project", context: persistentContainer.viewContext)
@@ -115,7 +131,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         saveContext()
-
+        
     }
     
     

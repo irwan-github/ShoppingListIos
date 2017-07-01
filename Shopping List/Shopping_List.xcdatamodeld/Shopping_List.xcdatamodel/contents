@@ -17,7 +17,7 @@
         <attribute name="quantityToBuy" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="bundlePrice" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="BundlePrice" inverseName="item" inverseEntity="BundlePrice" syncable="YES"/>
         <relationship name="picture" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Picture" inverseName="item" inverseEntity="Picture" syncable="YES"/>
-        <relationship name="shoppingList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="itemsInShoppingList" inverseEntity="ShoppingList" syncable="YES"/>
+        <relationship name="shoppingLists" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="itemsInShoppingList" inverseEntity="ShoppingList" syncable="YES"/>
         <relationship name="unitPrice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UnitPrice" inverseName="item" inverseEntity="UnitPrice" syncable="YES"/>
     </entity>
     <entity name="Picture" representedClassName=".Picture" syncable="YES" codeGenerationType="category">
@@ -29,7 +29,7 @@
         <attribute name="comments" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="itemsInShoppingList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="shoppingList" inverseEntity="Item" syncable="YES"/>
+        <relationship name="itemsInShoppingList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="shoppingLists" inverseEntity="Item" syncable="YES"/>
     </entity>
     <entity name="UnitPrice" representedClassName=".UnitPrice" syncable="YES" codeGenerationType="category">
         <attribute name="currencyCode" optional="YES" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
