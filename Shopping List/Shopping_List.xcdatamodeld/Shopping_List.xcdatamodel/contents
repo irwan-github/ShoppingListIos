@@ -1,4 +1,47 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="BundlePrice" representedClassName="BundlePrice" syncable="YES" codeGenerationType="category">
+        <attribute name="bundleQuantity" attributeType="Integer 32" minValueString="2" defaultValueString="2" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="currencyCode" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
+        <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="price" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="storeId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="bundlePrice" inverseEntity="Item" syncable="YES"/>
+    </entity>
+    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="category">
+        <attribute name="brand" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="countryOfOrigin" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="itemDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="quantityToBuy" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="bundlePrice" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="BundlePrice" inverseName="item" inverseEntity="BundlePrice" syncable="YES"/>
+        <relationship name="picture" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Picture" inverseName="item" inverseEntity="Picture" syncable="YES"/>
+        <relationship name="shoppingList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="itemsInShoppingList" inverseEntity="ShoppingList" syncable="YES"/>
+        <relationship name="unitPrice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UnitPrice" inverseName="item" inverseEntity="UnitPrice" syncable="YES"/>
+    </entity>
+    <entity name="Picture" representedClassName="Picture" syncable="YES" codeGenerationType="category">
+        <attribute name="fileUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="picture" inverseEntity="Item" syncable="YES"/>
+    </entity>
+    <entity name="ShoppingList" representedClassName="ShoppingList" syncable="YES" codeGenerationType="category">
+        <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="itemsInShoppingList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Item" inverseName="shoppingList" inverseEntity="Item" syncable="YES"/>
+    </entity>
+    <entity name="UnitPrice" representedClassName="UnitPrice" syncable="YES" codeGenerationType="category">
+        <attribute name="currencyCode" optional="YES" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
+        <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="price" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="storeId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="unitPrice" inverseEntity="Item" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Item" positionX="970" positionY="954" width="128" height="193"/>
+        <element name="BundlePrice" positionX="576" positionY="909" width="128" height="133"/>
+        <element name="Picture" positionX="1323" positionY="1008" width="128" height="88"/>
+        <element name="ShoppingList" positionX="945" positionY="1307" width="128" height="88"/>
+        <element name="UnitPrice" positionX="576" positionY="1179" width="128" height="118"/>
+    </elements>
 </model>
