@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        
         loadDummyShoppingList()
         return true
     }
@@ -114,8 +115,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 milk.name = "Milk"
                 milk.brand = "Magnolia"
                 
-                groceryShoppingList?.addToItemsInShoppingList(banana)
-                groceryShoppingList?.addToItemsInShoppingList(milk)
+                let fruit = try Item.findOrCreateNewItem(name: "Australian Watermelon", context: persistentContainer.viewContext)
+            
+                fruit.name = "Australian Watermelon"
+                fruit.brand = "Australian Farm for Watermelon"
+                
+                groceryShoppingList?.add(item: banana, quantity: 5)
+                groceryShoppingList?.add(item: milk, quantity: 4)
+                groceryShoppingList?.add(item: fruit, quantity: 599)
+
+                
             } catch {
                 let nserror = error as NSError
                 print("Error occured \(nserror): \(nserror.userInfo)")

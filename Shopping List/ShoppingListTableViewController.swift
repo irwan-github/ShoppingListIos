@@ -17,7 +17,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
     // Mark: - Model
-    var fetchedResultsController: NSFetchedResultsController<Item>? = nil
+    var fetchedResultsController: NSFetchedResultsController<ShoppingListItem>? = nil
     
     
     override func viewDidLoad() {
@@ -26,6 +26,8 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         navigationItem.title = shoppingList?.name
         
         fetchItemsInShoppingList()
+        
+        
     }
     
     func fetchItemsInShoppingList() {
@@ -33,18 +35,18 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         guard let shoppingList = self.shoppingList else { return }
         
         //Request items in shopping list
-        let requestForItems: NSFetchRequest<Item> = Item.fetchRequest()
+        let requestForShoppingListItem: NSFetchRequest<ShoppingListItem> = ShoppingListItem.fetchRequest()
         
         //Matching criteria
-        let criteria = NSPredicate(format: "ANY shoppingLists = %@", shoppingList)
-        requestForItems.predicate = criteria
+        let criteria = NSPredicate(format: "shoppingList = %@", shoppingList)
+        requestForShoppingListItem.predicate = criteria
         
         //Sort by
-        let sortBy = [NSSortDescriptor(key: "name", ascending: true)]
-        requestForItems.sortDescriptors = sortBy
+        let sortBy = [NSSortDescriptor(key: "item.name", ascending: true)]
+        requestForShoppingListItem.sortDescriptors = sortBy
         
         //Go fetch
-        fetchedResultsController = NSFetchedResultsController(fetchRequest: requestForItems,
+        fetchedResultsController = NSFetchedResultsController(fetchRequest: requestForShoppingListItem,
                                                               managedObjectContext: persistentContainer.viewContext, sectionNameKeyPath: nil,
                                                               cacheName: nil)
         fetchedResultsController?.delegate = self
@@ -60,12 +62,14 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List Item", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List Item", for: indexPath) as! ShoppingListItemTableViewCell
         
         // Configure the cell...
-        let item = fetchedResultsController?.object(at: indexPath)
-        cell.textLabel?.text = item?.name
-        cell.detailTextLabel?.text = item?.brand
+        let shoppingListItem = fetchedResultsController?.object(at: indexPath)
+        
+        cell.itemName.text = shoppingListItem?.item?.name
+        cell.brand.text = shoppingListItem?.item?.brand
+        cell.quantity.text = String(describing: (shoppingListItem?.quantity)!)
         return cell
     }
     
@@ -98,3 +102,21 @@ extension ShoppingListTableViewController {
     }
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

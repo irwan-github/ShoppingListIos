@@ -61,4 +61,16 @@ class ShoppingList: NSManagedObject {
         return shoppingList
         
     }
+    
+    func add(item: Item) {
+        add(item: item, quantity: 1)
+    }
+    
+    func add(item: Item, quantity: Int) {
+        
+        let shoppingListItem = ShoppingListItem(context: item.managedObjectContext!)
+        shoppingListItem.item = item
+        shoppingListItem.quantity = quantity
+        self.addToLineItems(shoppingListItem)
+    }
 }

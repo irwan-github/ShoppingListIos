@@ -19,7 +19,7 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print(#function)
         navigationItem.title = "Shopping Lists"
         
         // Uncomment the following line to preserve selection between presentations
@@ -31,6 +31,11 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         //Fetch all shopping list
         fetchShoppingLists()
         
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        print(#function)
     }
     
     func fetchShoppingLists() {
@@ -121,8 +126,6 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         }
         
     }
-    
-    
 }
 
 extension ShoppingListsTableViewController {
@@ -138,7 +141,6 @@ extension ShoppingListsTableViewController {
         
         return fetchedResultsController?.fetchedObjects?.count ?? 0
     }
-    
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
