@@ -19,4 +19,6 @@ class ShoppingListItem: NSManagedObject {
             quantityToBuy = Int32(newValue)
         }
     }
+    
+
 }

@@ -12,7 +12,11 @@ import CoreData
 class ShoppingListTableViewController: FetchedResultsTableViewController {
     
     //API
-    var shoppingList: ShoppingList?
+    var shoppingList: ShoppingList? {
+        didSet {
+            updateUi()
+        }
+    }
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
@@ -24,10 +28,10 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         super.viewDidLoad()
         
         navigationItem.title = shoppingList?.name
-        
+    }
+    
+    func updateUi() {
         fetchItemsInShoppingList()
-        
-        
     }
     
     func fetchItemsInShoppingList() {
@@ -73,18 +77,36 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         return cell
     }
     
-    
-    
-    /*
      // MARK: - Navigation
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
      override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
      // Get the new view controller using segue.destinationViewController.
      // Pass the selected object to the new view controller.
+        
+        var destinationVc = segue.destination
+            
+        if let navigationController = destinationVc as? UINavigationController {
+            
+            destinationVc = navigationController.visibleViewController!
+        }
+        
+        let shoppingEditorVc = destinationVc as! ShoppingListItemEditorViewController
+        
+        shoppingEditorVc.shoppingList = shoppingList
+        
+        if let id = segue.identifier, id == "Update Shopping List Item" {
+            
+            let cell = sender as! ShoppingListItemTableViewCell
+            
+            let indexPath = tableView.indexPath(for: cell)!
+            
+            let shoppingListItem = fetchedResultsController?.object(at: indexPath)
+                
+            shoppingEditorVc.shoppingLineItem = shoppingListItem
+            
+        }
      }
-     */
-    
 }
 
 extension ShoppingListTableViewController {

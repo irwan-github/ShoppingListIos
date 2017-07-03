@@ -15,6 +15,7 @@
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="bundlePrice" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="BundlePrice" inverseName="item" inverseEntity="BundlePrice" syncable="YES"/>
+        <relationship name="listItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ShoppingListItem" inverseName="item" inverseEntity="ShoppingListItem" syncable="YES"/>
         <relationship name="picture" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Picture" inverseName="item" inverseEntity="Picture" syncable="YES"/>
         <relationship name="unitPrice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UnitPrice" inverseName="item" inverseEntity="UnitPrice" syncable="YES"/>
     </entity>
@@ -31,7 +32,7 @@
     </entity>
     <entity name="ShoppingListItem" representedClassName=".ShoppingListItem" syncable="YES" codeGenerationType="category">
         <attribute name="quantityToBuy" attributeType="Integer 32" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" syncable="YES"/>
+        <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="listItems" inverseEntity="Item" syncable="YES"/>
         <relationship name="shoppingList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="lineItems" inverseEntity="ShoppingList" syncable="YES"/>
     </entity>
     <entity name="UnitPrice" representedClassName=".UnitPrice" syncable="YES" codeGenerationType="category">
@@ -43,7 +44,7 @@
     </entity>
     <elements>
         <element name="BundlePrice" positionX="576" positionY="909" width="128" height="133"/>
-        <element name="Item" positionX="988" positionY="900" width="128" height="163"/>
+        <element name="Item" positionX="988" positionY="900" width="128" height="178"/>
         <element name="Picture" positionX="1323" positionY="981" width="128" height="88"/>
         <element name="ShoppingList" positionX="988" positionY="1436" width="128" height="103"/>
         <element name="UnitPrice" positionX="576" positionY="1179" width="128" height="118"/>
