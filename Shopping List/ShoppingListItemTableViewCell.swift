@@ -12,7 +12,8 @@ class ShoppingListItemTableViewCell: UITableViewCell {
 
     @IBOutlet weak var itemName: UILabel!
     @IBOutlet weak var brand: UILabel!
-    @IBOutlet weak var quantity: UILabel!
+    @IBOutlet weak var quantityToBuy: ToggleCircleButton!
+
     
     override func awakeFromNib() {
         super.awakeFromNib()

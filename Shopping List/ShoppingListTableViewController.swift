@@ -23,7 +23,6 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     // Mark: - Model
     var fetchedResultsController: NSFetchedResultsController<ShoppingListItem>? = nil
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,12 +67,13 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List Item", for: indexPath) as! ShoppingListItemTableViewCell
         
-        // Configure the cell...
+        // Configure the cell...ß
         let shoppingListItem = fetchedResultsController?.object(at: indexPath)
         
         cell.itemName.text = shoppingListItem?.item?.name
         cell.brand.text = shoppingListItem?.item?.brand
-        cell.quantity.text = String(describing: (shoppingListItem?.quantity)!)
+        let qtyToBuy = shoppingListItem?.quantity
+        cell.quantityToBuy.setTitle(String(describing: qtyToBuy!), for: .normal)
         return cell
     }
     

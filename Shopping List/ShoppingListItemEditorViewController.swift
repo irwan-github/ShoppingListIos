@@ -32,6 +32,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
+    @IBOutlet weak var deleteItemButton: UIButton!
+    
     @IBOutlet weak var qtyTextField: UITextField!
     
     private var displayQty: Int {
@@ -54,7 +56,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         descriptionTextField.delegate = self
         
         if shoppingLineItem == nil {
-            validationState.handle(event: .onItemNew, handleNextStateUiAttributes: nil)
+            validationState.handle(event: .onItemNew, handleNextStateUiAttributes: { nextState in
+            
+                self.deleteItemButton.isHidden = true
+            })
         } else {
             validationState.handle(event: .onItemExist, handleNextStateUiAttributes: { nextState in
                 
@@ -64,7 +69,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.countryOriginTextField.text = self.shoppingLineItem?.item?.countryOfOrigin
                 self.descriptionTextField.text = self.shoppingLineItem?.item?.itemDescription
                 self.itemNameTextField.isEnabled = false
-                
+                self.deleteItemButton.isHidden = false
             })
         }
     }
@@ -142,11 +147,10 @@ class ShoppingListItemEditorViewController: UIViewController {
             item.brand = brandTextField.text
             item.countryOfOrigin = countryOriginTextField.text
             item.itemDescription = descriptionTextField.text
-            
-            shoppingList.add(item: item)
+
+            shoppingList.add(item: item, quantity: displayQty)
             
             try persistentContainer.viewContext.save()
-            //presentingViewController?.dismiss(animated: true, completion: nil)
             
         } catch  {
             let nserror = error as NSError

@@ -73,7 +73,7 @@ import UIKit
         
         //Need to add contraint to define textfield height
         //We let stack view adjust the width
-        noteField.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
+        //noteField.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
         
         //The default initializer comes with no border. Let's give it a border
         noteField.borderStyle = .roundedRect
@@ -83,7 +83,7 @@ import UIKit
         
         //Need to add contraint to define label's height
         //We let stack view adjust the width
-        errorLabel.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
+        //errorLabel.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
         
         errorLabel.textColor = UIColor.red
         errorLabel.isHidden = true
