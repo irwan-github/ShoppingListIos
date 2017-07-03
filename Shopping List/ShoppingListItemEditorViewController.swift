@@ -34,20 +34,17 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var deleteItemButton: UIButton!
     
-    @IBOutlet weak var qtyTextField: UITextField!
+    @IBOutlet weak var quantityToBuyLabel: UILabel!
+    
+    @IBOutlet weak var quantityToBuyStepper: UIStepper!
     
     private var displayQty: Int {
         set {
-            qtyTextField.text = String(newValue)
+            quantityToBuyLabel.text = String(newValue)
         }
         
         get {
-            if let qtyText = qtyTextField.text, !qtyText.isEmpty {
-                return (Int(qtyText))!
-            } else {
-                return 1
-            }
-            
+            return Int(quantityToBuyStepper.value)
         }
     }
     
@@ -71,12 +68,29 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.itemNameTextField.text = self.shoppingLineItem?.item?.name
                 self.brandTextField.text = self.shoppingLineItem?.item?.brand
                 self.displayQty = (self.shoppingLineItem?.quantity)!
+                self.quantityToBuyStepper.value = Double((self.shoppingLineItem?.quantity)!)
                 self.countryOriginTextField.text = self.shoppingLineItem?.item?.countryOfOrigin
                 self.descriptionTextField.text = self.shoppingLineItem?.item?.itemDescription
                 self.itemNameTextField.isEnabled = false
                 self.deleteItemButton.isHidden = false
             })
         }
+    }
+    
+    @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
+        
+        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: { nextState in
+            
+            switch nextState {
+                
+            case .changed:
+                self.doneButton.isEnabled = true
+                self.displayQty = Int(sender.value)
+                
+            default:
+                break
+            }
+        })
     }
     
     @IBAction func onCancel(_ sender: UIBarButtonItem) {

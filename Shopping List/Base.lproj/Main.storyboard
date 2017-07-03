@@ -44,14 +44,14 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aJX-hf-d5X">
-                                            <rect key="frame" x="15" y="5" width="33.5" height="20.5"/>
+                                            <rect key="frame" x="16" y="5" width="33.5" height="20.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7dH-1L-ZtM">
-                                            <rect key="frame" x="15" y="25.5" width="44" height="14.5"/>
+                                            <rect key="frame" x="16" y="25.5" width="44" height="14.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="textColor"/>
@@ -391,7 +391,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="wqr-jC-UOt">
-                                        <rect key="frame" x="0.0" y="66" width="728" height="144"/>
+                                        <rect key="frame" x="0.0" y="66" width="728" height="201.5"/>
                                         <subviews>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Brand" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hbb-Pv-GZK" userLabel="Brand">
                                                 <rect key="frame" x="0.0" y="0.0" width="728" height="30"/>
@@ -405,14 +405,36 @@
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Qty" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zyj-sK-5cD" userLabel="Qty">
-                                                <rect key="frame" x="0.0" y="76" width="728" height="30"/>
-                                                <nil key="textColor"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                            </textField>
+                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="fen-3z-Aem">
+                                                <rect key="frame" x="0.0" y="76" width="728" height="87.5"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Quantity to buy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iPE-7w-5H9">
+                                                        <rect key="frame" x="0.0" y="0.0" width="118" height="20.5"/>
+                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1oi-U9-SPF">
+                                                        <rect key="frame" x="118" y="0.0" width="610" height="29"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4B1-dc-QTR" userLabel="Qty to buy">
+                                                                <rect key="frame" x="0.0" y="0.0" width="516" height="29"/>
+                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="7WK-wj-gAd">
+                                                                <rect key="frame" x="516" y="0.0" width="94" height="29"/>
+                                                                <connections>
+                                                                    <action selector="onChangeQtyToBuy:" destination="CqQ-3E-E6A" eventType="valueChanged" id="6rp-66-mMX"/>
+                                                                </connections>
+                                                            </stepper>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                            </stackView>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="73y-TU-CfF" userLabel="Description">
-                                                <rect key="frame" x="0.0" y="114" width="728" height="30"/>
+                                                <rect key="frame" x="0.0" y="171.5" width="728" height="30"/>
                                                 <nil key="textColor"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                 <textInputTraits key="textInputTraits"/>
@@ -420,14 +442,14 @@
                                         </subviews>
                                     </stackView>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="HVN-vQ-16N">
-                                        <rect key="frame" x="0.0" y="226" width="728" height="29"/>
+                                        <rect key="frame" x="0.0" y="283.5" width="728" height="29"/>
                                         <segments>
                                             <segment title="Unit Price"/>
                                             <segment title="Bundle Price"/>
                                         </segments>
                                     </segmentedControl>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hcv-K8-7Sd">
-                                        <rect key="frame" x="0.0" y="270" width="728" height="30"/>
+                                        <rect key="frame" x="0.0" y="327.5" width="728" height="30"/>
                                         <subviews>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vlr-7P-KIk" userLabel="Currency Code">
                                                 <rect key="frame" x="0.0" y="0.0" width="51" height="30"/>
@@ -444,13 +466,13 @@
                                         </subviews>
                                     </stackView>
                                     <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6aF-dJ-g7r" userLabel="Bundle Quantity">
-                                        <rect key="frame" x="0.0" y="316" width="728" height="30"/>
+                                        <rect key="frame" x="0.0" y="373.5" width="728" height="30"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="K0p-6x-9cg">
-                                        <rect key="frame" x="0.0" y="362" width="728" height="533"/>
+                                        <rect key="frame" x="0.0" y="419.5" width="728" height="475.5"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Afq-kB-cA1" userLabel="Delete from shopping list">
@@ -493,7 +515,8 @@
                         <outlet property="descriptionTextField" destination="73y-TU-CfF" id="fKm-KM-Mpi"/>
                         <outlet property="doneButton" destination="urr-Bu-2OJ" id="QMa-XV-hh1"/>
                         <outlet property="itemNameTextField" destination="DTN-m5-pQV" id="Heo-qE-TBa"/>
-                        <outlet property="qtyTextField" destination="zyj-sK-5cD" id="rvl-qf-KY6"/>
+                        <outlet property="quantityToBuyLabel" destination="4B1-dc-QTR" id="Ywt-lw-f63"/>
+                        <outlet property="quantityToBuyStepper" destination="7WK-wj-gAd" id="yld-Fk-5BO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="G6n-zI-UaS" userLabel="First Responder" sceneMemberID="firstResponder"/>
