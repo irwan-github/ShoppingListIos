@@ -429,6 +429,9 @@
                                         <state key="normal" title="Delete item from shopping list">
                                             <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="onDeleteItem:" destination="CqQ-3E-E6A" eventType="touchUpInside" id="5FR-pv-jEq"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                             </stackView>

@@ -42,7 +42,12 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
         
         get {
-            return (Int(qtyTextField.text!))!
+            if let qtyText = qtyTextField.text, !qtyText.isEmpty {
+                return (Int(qtyText))!
+            } else {
+                return 1
+            }
+            
         }
     }
     
@@ -175,6 +180,41 @@ class ShoppingListItemEditorViewController: UIViewController {
             let nserror = error as NSError
             print("Error \(nserror) : \(nserror.userInfo)")
         }
+    }
+    
+    @IBAction func onDeleteItem(_ sender: UIButton) {
+    
+        validationState.handle(event: .onDelete({ state in
+            
+            switch state {
+                
+            case .existingItem:
+                self.deleteItemFromShoppingList()
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+                
+            default:
+                break
+            }
+        
+        
+        }), handleNextStateUiAttributes: nil)
+    }
+    
+    
+    private func deleteItemFromShoppingList() {
+        
+        let moc = persistentContainer.viewContext
+        
+        moc.delete(shoppingLineItem!)
+        
+        do {
+            try moc.save()
+        } catch {
+            let nserror = error as NSError
+            print("Error \(nserror) : \(nserror.userInfo)")
+        }
+        
+        
     }
     
     /*
