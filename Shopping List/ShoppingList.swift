@@ -62,15 +62,16 @@ class ShoppingList: NSManagedObject {
         
     }
     
-    func add(item: Item) {
-        add(item: item, quantity: 1)
+    func add(item: Item) -> ShoppingListItem{
+        return add(item: item, quantity: 1)
     }
     
-    func add(item: Item, quantity: Int) {
+    func add(item: Item, quantity: Int) -> ShoppingListItem {
         
         let shoppingListItem = ShoppingListItem(context: item.managedObjectContext!)
         shoppingListItem.item = item
         shoppingListItem.quantity = quantity
         self.addToLineItems(shoppingListItem)
+        return shoppingListItem
     }
 }

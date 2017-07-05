@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BundlePrice" representedClassName=".BundlePrice" syncable="YES" codeGenerationType="category">
-        <attribute name="bundleQuantity" attributeType="Integer 32" minValueString="2" defaultValueString="2" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="currencyCode" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
+        <attribute name="bundleQuantity" attributeType="Integer 32" defaultValueString="2" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="currencyCode" optional="YES" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="price" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="storeId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="bundlePrice" inverseEntity="Item" syncable="YES"/>
+        <attribute name="storeId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="bundlePrice" inverseEntity="Item" syncable="YES"/>
     </entity>
     <entity name="Item" representedClassName=".Item" syncable="YES" codeGenerationType="category">
         <attribute name="brand" optional="YES" attributeType="String" syncable="YES"/>
@@ -14,7 +14,7 @@
         <attribute name="itemDescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
-        <relationship name="bundlePrice" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="BundlePrice" inverseName="item" inverseEntity="BundlePrice" syncable="YES"/>
+        <relationship name="bundlePrice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BundlePrice" inverseName="item" inverseEntity="BundlePrice" syncable="YES"/>
         <relationship name="listItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ShoppingListItem" inverseName="item" inverseEntity="ShoppingListItem" syncable="YES"/>
         <relationship name="picture" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Picture" inverseName="item" inverseEntity="Picture" syncable="YES"/>
         <relationship name="unitPrice" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UnitPrice" inverseName="item" inverseEntity="UnitPrice" syncable="YES"/>
@@ -31,6 +31,7 @@
         <relationship name="lineItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ShoppingListItem" inverseName="shoppingList" inverseEntity="ShoppingListItem" syncable="YES"/>
     </entity>
     <entity name="ShoppingListItem" representedClassName=".ShoppingListItem" syncable="YES" codeGenerationType="category">
+        <attribute name="priceTypeSelected" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="quantityToBuy" attributeType="Integer 32" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="listItems" inverseEntity="Item" syncable="YES"/>
         <relationship name="shoppingList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="lineItems" inverseEntity="ShoppingList" syncable="YES"/>
@@ -38,16 +39,16 @@
     <entity name="UnitPrice" representedClassName=".UnitPrice" syncable="YES" codeGenerationType="category">
         <attribute name="currencyCode" optional="YES" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="price" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="storeId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="unitPrice" inverseEntity="Item" syncable="YES"/>
+        <attribute name="storeId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="value" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="unitPrice" inverseEntity="Item" syncable="YES"/>
     </entity>
     <elements>
-        <element name="BundlePrice" positionX="576" positionY="909" width="128" height="133"/>
+        <element name="BundlePrice" positionX="574" positionY="999" width="128" height="133"/>
         <element name="Item" positionX="988" positionY="900" width="128" height="178"/>
         <element name="Picture" positionX="1323" positionY="981" width="128" height="88"/>
         <element name="ShoppingList" positionX="988" positionY="1436" width="128" height="103"/>
+        <element name="ShoppingListItem" positionX="990" positionY="1187" width="128" height="103"/>
         <element name="UnitPrice" positionX="576" positionY="1179" width="128" height="118"/>
-        <element name="ShoppingListItem" positionX="990" positionY="1187" width="128" height="88"/>
     </elements>
 </model>

@@ -11,4 +11,14 @@ import CoreData
 
 class UnitPrice: NSManagedObject {
 
+    var valueDisplay: Int {
+        get {
+            return Int(value)
+        }
+        set {
+            value = Int32(newValue)
+        }
+    }
+    
+    
 }

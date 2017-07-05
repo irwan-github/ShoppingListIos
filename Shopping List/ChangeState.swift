@@ -21,6 +21,7 @@ enum ChangeState {
         case onCancel((ChangeState) -> Void)
         case onStay
         case onLeave
+        case onSelectPrice
     }
     
     init() {
@@ -35,7 +36,7 @@ enum ChangeState {
             
             switch event {
                 
-            case .onChangeCharacters, .onCameraCapture:
+            case .onChangeCharacters, .onCameraCapture, .onSelectPrice:
                 self = .changed
                 
             case .onCancel(let cancel):

@@ -60,4 +60,5 @@ class Item: NSManagedObject {
             return false
         }
     }
+    
 }

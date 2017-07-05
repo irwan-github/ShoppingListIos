@@ -10,5 +10,23 @@ import UIKit
 import CoreData
 
 class BundlePrice: NSManagedObject {
+    
+    var valueDisplay: Int {
+        set {
+            value = Int32(newValue)
+        }
+        get {
+            return Int(value)
+        }
+    }
+    
+    var bundleQuantityDisplay: Int {
+        set {
+            bundleQuantity = Int32(newValue)
+        }
+        get {
+            return Int(bundleQuantity)
+        }
+    }
 
 }

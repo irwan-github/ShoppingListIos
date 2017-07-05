@@ -20,5 +20,9 @@ class ShoppingListItem: NSManagedObject {
         }
     }
     
+//    var priceSelected:  {
+//        
+//    }
+    
 
 }
