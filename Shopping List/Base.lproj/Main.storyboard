@@ -11,10 +11,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Navigation Controller-->
+        <!--Shopping Lists-->
         <scene sceneID="Ay1-EZ-RvN">
             <objects>
-                <navigationController id="nk7-vM-b06" sceneMemberID="viewController">
+                <navigationController title="Shopping Lists" id="nk7-vM-b06" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="y7R-mh-zKL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -27,10 +27,10 @@
             </objects>
             <point key="canvasLocation" x="334" y="-271"/>
         </scene>
-        <!--Shopping Lists Table View Controller-->
+        <!--Shopping Lists-->
         <scene sceneID="AN0-1P-huu">
             <objects>
-                <tableViewController clearsSelectionOnViewWillAppear="NO" id="sTz-Tn-Hag" customClass="ShoppingListsTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Shopping Lists" clearsSelectionOnViewWillAppear="NO" id="sTz-Tn-Hag" customClass="ShoppingListsTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="2nv-UY-jxe">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -60,7 +60,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="Tun-0d-aWu" kind="showDetail" id="WTF-oB-epI"/>
+                                    <segue destination="Tun-0d-aWu" kind="showDetail" identifier="showShoppingList" id="WTF-oB-epI"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -69,7 +69,7 @@
                             <outlet property="delegate" destination="sTz-Tn-Hag" id="h2S-Gv-XnD"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="PZ3-yz-ODf"/>
+                    <navigationItem key="navigationItem" title="Shopping Lists" id="PZ3-yz-ODf"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RHd-xa-b0Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -446,7 +446,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="gvr-py-VWL"/>
-        <segue reference="ciU-1r-frd"/>
+        <segue reference="WTF-oB-epI"/>
+        <segue reference="6vb-mK-mGf"/>
     </inferredMetricsTieBreakers>
 </document>

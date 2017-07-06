@@ -25,14 +25,11 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
             return fetchedResultsController?.object(at: indexPathOfDefaultShoppingList)
         }
     }
-        
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
-        
-        splitViewController?.delegate = self
-        
-        navigationItem.title = "Shopping Lists"
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -46,11 +43,17 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         initializeShoppingList()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        clearsSelectionOnViewWillAppear = (splitViewController?.isCollapsed)!
+    }
+    
+    // MARK: - Business
     private func initializeShoppingList() {
         
-        let horizontal = traitCollection.horizontalSizeClass
+        let horizontalWidth = traitCollection.horizontalSizeClass
         
-        if UIDevice.current.userInterfaceIdiom == .pad  || horizontal == .regular {
+        if UIDevice.current.userInterfaceIdiom == .pad  || horizontalWidth == .regular {
             
             var shoppingListsVc = splitViewController?.viewControllers[1]
             
@@ -65,7 +68,7 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         }
     }
     
-    func fetchShoppingLists() {
+    private func fetchShoppingLists() {
         
         //Request for shopping list(s)
         let request: NSFetchRequest<ShoppingList> = ShoppingList.fetchRequest()
@@ -133,6 +136,11 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         print("\(#function) - \(type(of: self))")
+        
+        if segue.identifier != "showShoppingList" {
+            return
+        }
+        
         var targetCtlr = segue.destination
         
         if let navCtlr = targetCtlr as? UINavigationController {
@@ -148,6 +156,9 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
                 let aShoppingList = fetchedResultsController?.object(at: indexPath)
                 
                 shoppingListCtlr.shoppingList = aShoppingList
+                
+                shoppingListCtlr.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+                shoppingListCtlr.navigationItem.leftItemsSupplementBackButton = true
             }
         }
         
@@ -179,46 +190,3 @@ extension ShoppingListsTableViewController {
         return cell
     }
 }
-
-extension ShoppingListsTableViewController: UISplitViewControllerDelegate {
-    
-    //Collapsing and Expanding the interface
-    
-    //    func primaryViewController(forCollapsing splitViewController: UISplitViewController) -> UIViewController? {
-    //        print("\(#function) - \(type(of: self))")
-    //        return nil
-    //    }
-    
-    //iPhone 7+ Potrait, iPhone 7 (Potrait & Landscape)
-    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
-        
-        clearsSelectionOnViewWillAppear = true
-        print("\(#function) - \(type(of: self))")
-        return true
-    }
-    
-    //    func primaryViewController(forExpanding splitViewController: UISplitViewController) -> UIViewController? {
-    //        print("\(#function) - \(type(of: self))")
-    //        return nil
-    //    }
-    //
-    //    func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
-    //        print("\(#function) - \(type(of: self))")
-    //        return nil
-    //    }
-    
-    //Overriding the Presentation Behavior
-    
-    //    func splitViewController(_ splitViewController: UISplitViewController, show vc: UIViewController, sender: Any?) -> Bool {
-    //        print("\(#function) - \(type(of: self))")
-    //        return false
-    //    }
-    //
-    //    func splitViewController(_ splitViewController: UISplitViewController, showDetail vc: UIViewController, sender: Any?) -> Bool {
-    //        print("\(#function) - \(type(of: self))")
-    //        return false
-    //    }
-    
-}
-
-

@@ -10,14 +10,19 @@ import UIKit
 import CoreData
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
     
     var window: UIWindow?
     
-    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let splitViewController = window!.rootViewController as! UISplitViewController
         
+        let navigationController = splitViewController.viewControllers[1] as! UINavigationController
+        
+        //The following will enable ONLY iPhone 7+ Landscape to have the "expand button" on its detail vc when it is NOT displayed via a segue from master
+        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+        splitViewController.delegate = self
         
         loadDummyShoppingList()
         return true
@@ -45,11 +50,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
-    }
-    
-    
-    static var persistentContainer: NSPersistentContainer {
-        return (UIApplication.shared.delegate as! AppDelegate).persistentContainer
     }
     
     // MARK: - Core Data stack
@@ -81,6 +81,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return container
     }()
     
+    //For convenience
+    static var persistentContainer: NSPersistentContainer {
+        return (UIApplication.shared.delegate as! AppDelegate).persistentContainer
+    }
+    
     // MARK: - Core Data Saving support
     
     func saveContext () {
@@ -97,6 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    // MARK: - For testing only
     func loadDummyShoppingList() {
         
         let groceryShoppingList = ShoppingList.findOrCreateNew(name: "Grocery", context: persistentContainer.viewContext)
@@ -116,14 +122,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 milk.brand = "Magnolia"
                 
                 let fruit = try Item.findOrCreateNewItem(name: "Australian Watermelon", context: persistentContainer.viewContext)
-            
+                
                 fruit.name = "Australian Watermelon"
                 fruit.brand = "Australian Farm for Watermelon"
                 
                 _ = groceryShoppingList?.add(item: banana, quantity: 5)
                 _ = groceryShoppingList?.add(item: milk, quantity: 4)
                 _ = groceryShoppingList?.add(item: fruit, quantity: 599)
-
+                
                 
             } catch {
                 let nserror = error as NSError
@@ -143,7 +149,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
     }
     
+    // MARK: - Collapsing and Expanding the interface
     
+    //Called by iPhone 7+ Potrait, iPhone 7 (Potrait & Landscape)
+    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+        
+        guard let secondaryAsNc = secondaryViewController as? UINavigationController else { return false }
+        guard let rootVcOfNc = secondaryAsNc.visibleViewController as? ShoppingListTableViewController else { return false }
+        if rootVcOfNc.shoppingList == nil {
+            return true
+        }
+        return false
+    }
     
 }
 
