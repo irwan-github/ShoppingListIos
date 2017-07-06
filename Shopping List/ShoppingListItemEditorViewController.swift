@@ -18,6 +18,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
+    
+    // MARK: - Properties
     fileprivate var validationState = ValidationState()
     
     fileprivate var changeState = ChangeState()
@@ -166,7 +168,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("\(#function) - \(type(of: self))")
         doneButton.isEnabled = false
         itemNameTextField.delegate = self
         brandTextField.delegate = self

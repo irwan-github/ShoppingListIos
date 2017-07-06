@@ -70,11 +70,7 @@ import UIKit
         
         //Disable the textfield's automatically generated constraints
         noteField.translatesAutoresizingMaskIntoConstraints = false
-        
-        //Need to add contraint to define textfield height
-        //We let stack view adjust the width
-        //noteField.heightAnchor.constraint(equalToConstant: 44.0).isActive = true
-        
+                
         //The default initializer comes with no border. Let's give it a border
         noteField.borderStyle = .roundedRect
         

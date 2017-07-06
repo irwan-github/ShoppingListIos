@@ -120,9 +120,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fruit.name = "Australian Watermelon"
                 fruit.brand = "Australian Farm for Watermelon"
                 
-                groceryShoppingList?.add(item: banana, quantity: 5)
-                groceryShoppingList?.add(item: milk, quantity: 4)
-                groceryShoppingList?.add(item: fruit, quantity: 599)
+                _ = groceryShoppingList?.add(item: banana, quantity: 5)
+                _ = groceryShoppingList?.add(item: milk, quantity: 4)
+                _ = groceryShoppingList?.add(item: fruit, quantity: 599)
 
                 
             } catch {

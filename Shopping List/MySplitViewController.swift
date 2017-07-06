@@ -12,31 +12,47 @@ class MySplitViewController: UISplitViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("\(#function) - \(type(of: self))")
         self.delegate = self
-        
         // Do any additional setup after loading the view.
     }
-
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
 
 extension MySplitViewController: UISplitViewControllerDelegate {
     
+    //Collapsing and Expanding the interface
+    
+//    func primaryViewController(forCollapsing splitViewController: UISplitViewController) -> UIViewController? {
+//        print("\(#function) - \(type(of: self))")
+//        return nil
+//    }
+    
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController: UIViewController, onto primaryViewController: UIViewController) -> Bool {
         
-        print(#function)
+        print("\(#function) - \(type(of: self))")
         return true
     }
     
+//    func primaryViewController(forExpanding splitViewController: UISplitViewController) -> UIViewController? {
+//        print("\(#function) - \(type(of: self))")
+//        return nil
+//    }
+//    
+//    func splitViewController(_ splitViewController: UISplitViewController, separateSecondaryFrom primaryViewController: UIViewController) -> UIViewController? {
+//        print("\(#function) - \(type(of: self))")
+//        return nil
+//    }
+    
+    //Overriding the Presentation Behavior
+    
+//    func splitViewController(_ splitViewController: UISplitViewController, show vc: UIViewController, sender: Any?) -> Bool {
+//        print("\(#function) - \(type(of: self))")
+//        return false
+//    }
+//    
+//    func splitViewController(_ splitViewController: UISplitViewController, showDetail vc: UIViewController, sender: Any?) -> Bool {
+//        print("\(#function) - \(type(of: self))")
+//        return false
+//    }
     
 }

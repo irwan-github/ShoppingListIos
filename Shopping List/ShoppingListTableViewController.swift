@@ -11,13 +11,14 @@ import CoreData
 
 class ShoppingListTableViewController: FetchedResultsTableViewController {
     
-    //API
+    // MARK : - API
     var shoppingList: ShoppingList? {
         didSet {
             updateUi()
         }
     }
     
+    // MARK : - Properties
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
     // Mark: - Model
@@ -25,7 +26,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("\(#function) - \(type(of: self))")
         navigationItem.title = shoppingList?.name
     }
     

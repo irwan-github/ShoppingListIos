@@ -17,9 +17,18 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
     // MARK: - Model
     fileprivate var fetchedResultsController: NSFetchedResultsController<ShoppingList>? = nil
     
+    // MARK: - Properties
+    var firstShoppingList: ShoppingList? {
+        get {
+            let indexPathOfFirstItem = IndexPath(row: 0, section: 0)
+            return fetchedResultsController?.object(at: indexPathOfFirstItem)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(#function)
+        print("\(#function) - \(type(of: self))")
+    
         navigationItem.title = "Shopping Lists"
         
         // Uncomment the following line to preserve selection between presentations
@@ -31,11 +40,16 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         //Fetch all shopping list
         fetchShoppingLists()
         
+        let nc = splitViewController?.viewControllers[1] as! UINavigationController
+        if let slist = nc.visibleViewController as? ShoppingListTableViewController {
+            print("Shopping list exist")
+            slist.shoppingList = firstShoppingList
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print(#function)
+        print("\(#function) - \(type(of: self))")
     }
     
     func fetchShoppingLists() {
@@ -99,14 +113,13 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
      }
      */
     
-    
     // MARK: - Navigation
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-        
+        print("\(#function) - \(type(of: self))")
         var targetCtlr = segue.destination
         
         if let navCtlr = targetCtlr as? UINavigationController {
