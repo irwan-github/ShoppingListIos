@@ -30,7 +30,7 @@
         <!--Shopping Lists Table View Controller-->
         <scene sceneID="AN0-1P-huu">
             <objects>
-                <tableViewController id="sTz-Tn-Hag" customClass="ShoppingListsTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController clearsSelectionOnViewWillAppear="NO" id="sTz-Tn-Hag" customClass="ShoppingListsTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="2nv-UY-jxe">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -413,10 +413,10 @@
             </objects>
             <point key="canvasLocation" x="2873" y="578"/>
         </scene>
-        <!--My Split View Controller-->
+        <!--Split View Controller-->
         <scene sceneID="th5-Vn-URp">
             <objects>
-                <splitViewController id="jEQ-nz-wj3" customClass="MySplitViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController id="jEQ-nz-wj3" sceneMemberID="viewController">
                     <connections>
                         <segue destination="nk7-vM-b06" kind="relationship" relationship="masterViewController" id="usq-wb-hLc"/>
                         <segue destination="Tun-0d-aWu" kind="relationship" relationship="detailViewController" id="gvr-py-VWL"/>
