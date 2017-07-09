@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 class Price: NSManagedObject {
-
+    
     var valueDisplay: Int {
         get {
             return Int(value)
@@ -30,7 +30,7 @@ class Price: NSManagedObject {
     }
     
     class func findPrices(of item: Item, moc: NSManagedObjectContext) throws -> [Price]? {
-    
+        
         //Create request
         let fetchRequest: NSFetchRequest<Price> = Price.fetchRequest()
         

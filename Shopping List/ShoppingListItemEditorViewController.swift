@@ -22,7 +22,16 @@ class ShoppingListItemEditorViewController: UIViewController {
         didSet {
             unitPriceDisplay = unitPrice?.valueDisplay
             bundlePriceDisplay = bundlePrice?.valueDisplay
-            bundleQtyDisplay = bundlePrice?.quantityDisplay ?? 2
+            
+            if let bundlePrice = bundlePrice {
+                bundleQtyStepper.value = Double(bundlePrice.quantityDisplay)
+                bundleQtyDisplay = bundlePrice.quantityDisplay
+                
+            } else {
+                bundleQtyStepper.value = Double(2)
+                bundleQtyDisplay = 2
+            }
+            
         }
     }
     
@@ -114,9 +123,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    private var bundleQtyDisplay: Int {
+    private var bundleQtyDisplay: Int? {
         set {
-            bundleQtyLabel.text = String(describing: Int(newValue))
+            let setValue = newValue ?? 2
+            bundleQtyLabel.text = String(describing: setValue)
         }
         
         get {
@@ -241,7 +251,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                     self.countryOriginTextField.text = self.shoppingLineItem?.item?.countryOfOrigin
                     self.descriptionTextField.text = self.shoppingLineItem?.item?.itemDescription
                     
-                    //Although I can traverse item to get prices, it is difficult to work with NSSet.
+                    //Although I can traverse from item to get prices, it is difficult to work with NSSet.
                     //Therefore I do a fetch prices to get an array of prices
                     self.prices = try! Price.findPrices(of: (self.shoppingLineItem?.item)!, moc: self.persistentContainer.viewContext)
                     
@@ -437,14 +447,14 @@ class ShoppingListItemEditorViewController: UIViewController {
             if let bundlePrice = bundlePrice {
                 bundlePrice.currencyCode = "SGD"
                 bundlePrice.valueDisplay = bundlePriceDisplay
-                print("Bundle Qty display \(bundleQtyDisplay)")
-                bundlePrice.quantityDisplay = bundleQtyDisplay
+                print("Bundle Qty display \(bundleQtyDisplay ?? -1)")
+                bundlePrice.quantityDisplay = bundleQtyDisplay ?? 2
             } else {
                 
                 let bundlePrice = Price(context: persistentContainer.viewContext)
                 bundlePrice.currencyCode = "SGD"
-                print("Bundle Qty \(bundleQtyDisplay)")
-                bundlePrice.quantityDisplay = bundleQtyDisplay
+                print("Bundle Qty \(bundleQtyDisplay ?? -1)")
+                bundlePrice.quantityDisplay = bundleQtyDisplay ?? 2
                 bundlePrice.valueDisplay = bundlePriceDisplay
                 print("Bundle Price \(bundlePriceDisplay)")
                 item.addToPrices(bundlePrice)
@@ -482,7 +492,6 @@ class ShoppingListItemEditorViewController: UIViewController {
             default:
                 break
             }
-            
             
         }), handleNextStateUiAttributes: nil)
     }

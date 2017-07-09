@@ -16,11 +16,11 @@
         <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="picture" inverseEntity="Item" syncable="YES"/>
     </entity>
     <entity name="Price" representedClassName=".Price" syncable="YES" codeGenerationType="category">
-        <attribute name="currencyCode" optional="YES" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
+        <attribute name="currencyCode" attributeType="String" minValueString="3" maxValueString="3" syncable="YES"/>
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="quantity" optional="YES" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="quantity" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="storeId" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="value" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="value" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="prices" inverseEntity="Item" syncable="YES"/>
     </entity>
     <entity name="ShoppingList" representedClassName=".ShoppingList" syncable="YES" codeGenerationType="category">
