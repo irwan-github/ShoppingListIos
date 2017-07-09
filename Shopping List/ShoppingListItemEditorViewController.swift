@@ -18,6 +18,49 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
+    private var prices: [Price]? {
+        didSet {
+            unitPriceDisplay = unitPrice?.valueDisplay
+            bundlePriceDisplay = bundlePrice?.valueDisplay
+            bundleQtyDisplay = bundlePrice?.quantityDisplay ?? 2
+        }
+    }
+    
+    private var unitPrice: Price? {
+        get {
+            
+            if let prices = prices, prices.count > 0 {
+                let nsprices = prices as NSArray
+                let unitPriceFilter = NSPredicate(format: "quantity == 1")
+                let unitPriceRes = nsprices.filtered(using: unitPriceFilter)
+                if unitPriceRes.count > 0 {
+                    return unitPriceRes[0] as? Price
+                } else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+    }
+    
+    private var bundlePrice: Price? {
+        get {
+            
+            if let prices = prices, prices.count > 0 {
+                let nsprices = prices as NSArray
+                let bundlePriceFilter = NSPredicate(format: "quantity >= 2")
+                let bundlePriceRes = nsprices.filtered(using: bundlePriceFilter)
+                if bundlePriceRes.count > 0 {
+                    return bundlePriceRes[0] as? Price
+                } else {
+                    return nil
+                }
+            } else {
+                return nil
+            }
+        }
+    }
     
     // MARK: - Properties
     fileprivate var validationState = ValidationState()
@@ -61,7 +104,6 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var bundleQtyStepper: UIStepper!
     
-    
     private var quantityToBuyDisplay: Int {
         set {
             quantityToBuyLabel.text = String(newValue)
@@ -94,12 +136,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         set {
             
             if let newValue = newValue {
-                let dollars = newValue / 100
-                let cents = newValue % 100
-                let centsString = String(cents)
-                let moneyString = String(dollars) + "." + (centsString.characters.count == 1 ? "0" + centsString : centsString)
-                unitPriceTextField.text = moneyString
-                
+                unitPriceTextField.text = Helper.formatMoney(amount: newValue)
             } else {
                 unitPriceTextField.text = nil
             }
@@ -121,11 +158,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         set {
             
             if let newValue = newValue {
-                let dollars = newValue / 100
-                let cents = newValue % 100
-                let centsString = String(cents)
-                let moneyString = String(dollars) + "." + (centsString.characters.count == 1 ? "0" + centsString : centsString)
-                bundlePriceTextField.text = moneyString
+                bundlePriceTextField.text = Helper.formatMoney(amount: newValue)
             } else {
                 bundlePriceTextField.text = nil
             }
@@ -144,7 +177,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    let moneyTextFieldDelegate = MoneyUITextFieldDelegate()
+    private let moneyTextFieldDelegate = MoneyUITextFieldDelegate()
     
     @IBAction func onDisplayPriceTypeInformation(_ sender: UISegmentedControl) {
         
@@ -182,41 +215,50 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         if shoppingLineItem == nil {
             validationState.handle(event: .onItemNew, handleNextStateUiAttributes: { nextState in
-                self.deleteItemButton.isHidden = true
-                self.selectedPrice = Int16(PriceType.unit_price.rawValue)
-                self.priceTypeSc.selectedSegmentIndex = Int(PriceType.unit_price.rawValue)
-                self.onDisplayPriceTypeInformation(self.priceTypeSc)
+                
+                switch nextState {
+                case .newItem:
+                    self.deleteItemButton.isHidden = true
+                    self.selectedPrice = Int16(PriceType.unit_price.rawValue)
+                    self.priceTypeSc.selectedSegmentIndex = Int(PriceType.unit_price.rawValue)
+                    self.onDisplayPriceTypeInformation(self.priceTypeSc)
+                    
+                default:
+                    break
+                }
             })
         } else {
             validationState.handle(event: .onItemExist, handleNextStateUiAttributes: { nextState in
                 
-                self.itemNameTextField.text = self.shoppingLineItem?.item?.name
-                self.brandTextField.text = self.shoppingLineItem?.item?.brand
-                self.quantityToBuyDisplay = (self.shoppingLineItem?.quantity)!
-                self.quantityToBuyStepper.value = Double((self.shoppingLineItem?.quantity)!)
-                self.countryOriginTextField.text = self.shoppingLineItem?.item?.countryOfOrigin
-                self.descriptionTextField.text = self.shoppingLineItem?.item?.itemDescription
-                
-                //Set price info for unit price
-                self.unitPriceDisplay = self.shoppingLineItem?.item?.unitPrice?.valueDisplay
-                
-                //Set price info for bundle price
-                if let bundlePrice = self.shoppingLineItem?.item?.bundlePrice {
-                    self.bundlePriceDisplay = bundlePrice.valueDisplay
-                    self.bundleQtyDisplay = bundlePrice.bundleQuantityDisplay
-                    self.bundleQtyStepper.value = Double(bundlePrice.bundleQuantityDisplay)
+                switch nextState {
+                    
+                case .existingItem:
+                    
+                    self.itemNameTextField.text = self.shoppingLineItem?.item?.name
+                    self.brandTextField.text = self.shoppingLineItem?.item?.brand
+                    self.quantityToBuyDisplay = (self.shoppingLineItem?.quantity)!
+                    self.quantityToBuyStepper.value = Double((self.shoppingLineItem?.quantity)!)
+                    self.countryOriginTextField.text = self.shoppingLineItem?.item?.countryOfOrigin
+                    self.descriptionTextField.text = self.shoppingLineItem?.item?.itemDescription
+                    
+                    //Although I can traverse item to get prices, it is difficult to work with NSSet.
+                    //Therefore I do a fetch prices to get an array of prices
+                    self.prices = try! Price.findPrices(of: (self.shoppingLineItem?.item)!, moc: self.persistentContainer.viewContext)
+                    
+                    if let selected = self.shoppingLineItem?.priceTypeSelected {
+                        self.priceTypeSc.selectedSegmentIndex = Int(selected)
+                    } else {
+                        self.priceTypeSc.selectedSegmentIndex = Int(PriceType.unit_price.rawValue)
+                    }
+                    
+                    self.onDisplayPriceTypeInformation(self.priceTypeSc)
+                    self.itemNameTextField.isEnabled = false
+                    self.deleteItemButton.isHidden = false
+                    self.selectedPrice = (self.shoppingLineItem?.priceTypeSelected)!
+                    
+                default:
+                    break
                 }
-                
-                if let selected = self.shoppingLineItem?.priceTypeSelected {
-                    self.priceTypeSc.selectedSegmentIndex = Int(selected)
-                } else {
-                    self.priceTypeSc.selectedSegmentIndex = Int(PriceType.unit_price.rawValue)
-                }
-                
-                self.onDisplayPriceTypeInformation(self.priceTypeSc)
-                self.itemNameTextField.isEnabled = false
-                self.deleteItemButton.isHidden = false
-                self.selectedPrice = (self.shoppingLineItem?.priceTypeSelected)!
             })
         }
     }
@@ -328,10 +370,8 @@ class ShoppingListItemEditorViewController: UIViewController {
             item.brand = brandTextField.text
             item.countryOfOrigin = countryOriginTextField.text
             item.itemDescription = descriptionTextField.text
-            
-            
-            setNewUnitPrice(of: item)
-            setNewBundlePrice(of: item)
+            updateUnitPrice(of: item)
+            updateBundlePrice(of: item)
             
             let shoppingLineItem = shoppingList.add(item: item, quantity: quantityToBuyDisplay)
             
@@ -346,49 +386,16 @@ class ShoppingListItemEditorViewController: UIViewController {
         
     }
     
-    private func setNewUnitPrice(of item: Item) {
-        
-        if let unitPriceDisplay = unitPriceDisplay {
-            let unitPrice = UnitPrice(context: persistentContainer.viewContext)
-            unitPrice.currencyCode = "SGD"
-            unitPrice.valueDisplay = unitPriceDisplay
-            item.unitPrice = unitPrice
-        }
-    
-    }
-    
-    private func setNewBundlePrice(of item: Item) {
-        
-        if let bundlePriceDisplay = bundlePriceDisplay {
-            let bundlePrice = BundlePrice(context: persistentContainer.viewContext)
-            bundlePrice.currencyCode = "SGD"
-            print("Bundle Qty \(bundleQtyDisplay)")
-            bundlePrice.bundleQuantityDisplay = bundleQtyDisplay
-            bundlePrice.valueDisplay = bundlePriceDisplay
-            print("Bundle Price \(bundlePriceDisplay)")
-            item.bundlePrice = bundlePrice
-        }
-    }
-    
     fileprivate func saveUpdate() {
         
-        let item = shoppingLineItem?.item
-        item?.countryOfOrigin = countryOriginTextField.text
-        item?.brand = brandTextField.text
-        item?.itemDescription = descriptionTextField.text
-        shoppingLineItem?.quantity = quantityToBuyDisplay
-        shoppingLineItem?.priceTypeSelected = selectedPrice
-        
-        if item?.unitPrice != nil {
-            updateUnitPrice(of: item!)
-        } else {
-            setNewUnitPrice(of: item!)
-        }
-        
-        if item?.bundlePrice != nil {
-            updateBundlePrice(of: item!)
-        } else {
-            setNewBundlePrice(of: item!)
+        if let shoppingLineItem = shoppingLineItem, let item = shoppingLineItem.item {
+            item.countryOfOrigin = countryOriginTextField.text
+            item.brand = brandTextField.text
+            item.itemDescription = descriptionTextField.text
+            shoppingLineItem.quantity = quantityToBuyDisplay
+            shoppingLineItem.priceTypeSelected = selectedPrice
+            updateUnitPrice(of: item)
+            updateBundlePrice(of: item)
         }
         
         do {
@@ -403,23 +410,48 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private func updateUnitPrice(of item: Item) {
         
-        if let unitPriceDisplay = unitPriceDisplay{
-            item.unitPrice!.currencyCode = "SGD"
-            item.unitPrice!.valueDisplay = unitPriceDisplay
-        } else {
-            item.unitPrice = nil
+        if let unitPriceDisplay = unitPriceDisplay {
+            
+            if let unitPrice = unitPrice {
+                unitPrice.currencyCode = "SGD"
+                unitPrice.valueDisplay = unitPriceDisplay
+                unitPrice.quantityDisplay = 1
+            } else {
+                
+                let unitPrice = Price(context: persistentContainer.viewContext)
+                unitPrice.currencyCode = "SGD"
+                unitPrice.quantityDisplay = 1
+                unitPrice.valueDisplay = unitPriceDisplay
+                item.addToPrices(unitPrice)
+            }
+            
+        } else if let unitPrice = unitPrice {
+            persistentContainer.viewContext.delete(unitPrice)
         }
     }
     
     private func updateBundlePrice(of item: Item) {
         
         if let bundlePriceDisplay = bundlePriceDisplay {
-            item.bundlePrice!.currencyCode = "SGD"
-            item.bundlePrice!.valueDisplay = bundlePriceDisplay
-            print("Bundle Qty display \(bundleQtyDisplay)")
-            item.bundlePrice!.bundleQuantityDisplay = bundleQtyDisplay
-        } else {
-            item.bundlePrice = nil
+            
+            if let bundlePrice = bundlePrice {
+                bundlePrice.currencyCode = "SGD"
+                bundlePrice.valueDisplay = bundlePriceDisplay
+                print("Bundle Qty display \(bundleQtyDisplay)")
+                bundlePrice.quantityDisplay = bundleQtyDisplay
+            } else {
+                
+                let bundlePrice = Price(context: persistentContainer.viewContext)
+                bundlePrice.currencyCode = "SGD"
+                print("Bundle Qty \(bundleQtyDisplay)")
+                bundlePrice.quantityDisplay = bundleQtyDisplay
+                bundlePrice.valueDisplay = bundlePriceDisplay
+                print("Bundle Price \(bundlePriceDisplay)")
+                item.addToPrices(bundlePrice)
+            }
+            
+        } else if let bundlePrice = bundlePrice {
+            persistentContainer.viewContext.delete(bundlePrice)
         }
     }
     

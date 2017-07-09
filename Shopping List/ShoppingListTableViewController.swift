@@ -14,6 +14,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     // MARK : - API
     var shoppingList: ShoppingList? {
         didSet {
+            print("\(#function) - \(type(of: self))")
             updateUi()
         }
     }
@@ -64,6 +65,8 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         
     }
     
+    // MARK: - Table view data source II
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List Item", for: indexPath) as! ShoppingListItemTableViewCell
@@ -78,15 +81,12 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         return cell
     }
     
-     // MARK: - Navigation
+    // MARK: - Navigation
     
+    //Do create an shopping list item when a shopping list exist
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        //Do not create an item without a shopping list
-        if shoppingList == nil {
-            return false
-        } else {
-            return true
-        }
+        
+        return shoppingList != nil
     }
      
      // In a storyboard-based application, you will often want to do a little preparation before navigation
@@ -121,7 +121,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
 
 extension ShoppingListTableViewController {
     
-    // MARK: - Table view data source
+    // MARK: - Table view data source I
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         
