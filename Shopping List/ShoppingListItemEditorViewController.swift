@@ -14,7 +14,15 @@ class ShoppingListItemEditorViewController: UIViewController {
     // MARK: - API
     var shoppingList: ShoppingList!
     
-    var shoppingLineItem: ShoppingListItem?
+    var shoppingListItem: ShoppingListItem? {
+        didSet {
+            if shoppingListItem?.item?.picture == nil {
+                pictureState = .none
+            } else {
+                pictureState = .existing
+            }
+        }
+    }
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
@@ -75,6 +83,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     fileprivate var validationState = ValidationState()
     
     fileprivate var changeState = ChangeState()
+    
+    fileprivate var pictureState = PictureState()
     
     @IBOutlet weak var itemNameTextField: UITextErrorField!
     
@@ -187,6 +197,14 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    fileprivate var itemImage: UIImage? {
+        didSet {
+            itemImageView.image = itemImage
+        }
+    }
+    
+    @IBOutlet weak var itemImageView: UIImageView!
+    
     private let moneyTextFieldDelegate = MoneyUITextFieldDelegate()
     
     @IBAction func onDisplayPriceTypeInformation(_ sender: UISegmentedControl) {
@@ -223,7 +241,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         unitPriceTextField.delegate = moneyTextFieldDelegate
         bundlePriceTextField.delegate = moneyTextFieldDelegate
         
-        if shoppingLineItem == nil {
+        if shoppingListItem == nil {
             validationState.handle(event: .onItemNew, handleNextStateUiAttributes: { nextState in
                 
                 switch nextState {
@@ -244,18 +262,22 @@ class ShoppingListItemEditorViewController: UIViewController {
                     
                 case .existingItem:
                     
-                    self.itemNameTextField.text = self.shoppingLineItem?.item?.name
-                    self.brandTextField.text = self.shoppingLineItem?.item?.brand
-                    self.quantityToBuyDisplay = (self.shoppingLineItem?.quantity)!
-                    self.quantityToBuyStepper.value = Double((self.shoppingLineItem?.quantity)!)
-                    self.countryOriginTextField.text = self.shoppingLineItem?.item?.countryOfOrigin
-                    self.descriptionTextField.text = self.shoppingLineItem?.item?.itemDescription
+                    self.itemNameTextField.text = self.shoppingListItem?.item?.name
+                    self.brandTextField.text = self.shoppingListItem?.item?.brand
+                    self.quantityToBuyDisplay = (self.shoppingListItem?.quantity)!
+                    self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantity)!)
+                    self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
+                    self.descriptionTextField.text = self.shoppingListItem?.item?.itemDescription
+                    
+                    if let pathString = self.shoppingListItem?.item?.picture?.fileUrl {
+                        self.itemImage = UIImage(contentsOfFile: pathString)
+                    }
                     
                     //Although I can traverse from item to get prices, it is difficult to work with NSSet.
                     //Therefore I do a fetch prices to get an array of prices
-                    self.prices = try! Price.findPrices(of: (self.shoppingLineItem?.item)!, moc: self.persistentContainer.viewContext)
+                    self.prices = try! Price.findPrices(of: (self.shoppingListItem?.item)!, moc: self.persistentContainer.viewContext)
                     
-                    if let selected = self.shoppingLineItem?.priceTypeSelected {
+                    if let selected = self.shoppingListItem?.priceTypeSelected {
                         self.priceTypeSc.selectedSegmentIndex = Int(selected)
                     } else {
                         self.priceTypeSc.selectedSegmentIndex = Int(PriceType.unit_price.rawValue)
@@ -264,7 +286,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                     self.onDisplayPriceTypeInformation(self.priceTypeSc)
                     self.itemNameTextField.isEnabled = false
                     self.deleteItemButton.isHidden = false
-                    self.selectedPrice = (self.shoppingLineItem?.priceTypeSelected)!
+                    self.selectedPrice = (self.shoppingListItem?.priceTypeSelected)!
                     
                 default:
                     break
@@ -362,6 +384,16 @@ class ShoppingListItemEditorViewController: UIViewController {
         validationState.handle(event: .onSaveItem(onSaveEventhandler), handleNextStateUiAttributes: nil)
     }
     
+    func persistImagePickedFromCamera() -> URL? {
+        
+        if let image = itemImage {
+            let cameraUtil = CameraUtil()
+            return cameraUtil.persistImage(data: image)
+        } else {
+            return nil
+        }
+    }
+    
     fileprivate func saveNew() {
         
         let moc = persistentContainer.viewContext
@@ -375,11 +407,28 @@ class ShoppingListItemEditorViewController: UIViewController {
                 return
             }
             
+            var itemPicture: Picture? = nil
+            
+            pictureState.transition(event: .onSaveImage({ pictureState in
+                
+                switch pictureState {
+                case .new:
+                    if let itemImageUrl = self.persistImagePickedFromCamera() {
+                        itemPicture = Picture(context: moc)
+                        itemPicture?.fileUrl = itemImageUrl.path
+                    }
+                    
+                default:
+                    break
+                }
+            }))
+            
             let item = Item(context: moc)
             item.name = itemNameTextField.text!
             item.brand = brandTextField.text
             item.countryOfOrigin = countryOriginTextField.text
             item.itemDescription = descriptionTextField.text
+            item.picture = itemPicture
             updateUnitPrice(of: item)
             updateBundlePrice(of: item)
             
@@ -398,10 +447,44 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     fileprivate func saveUpdate() {
         
-        if let shoppingLineItem = shoppingLineItem, let item = shoppingLineItem.item {
+        let moc = persistentContainer.viewContext
+        
+        if let shoppingLineItem = shoppingListItem, let item = shoppingLineItem.item {
+            
+            var itemPicture: Picture? = item.picture
+            pictureState.transition(event: .onSaveImage({ pictureState in
+                
+                switch pictureState {
+                case .new:
+                    if let itemImageUrl = self.persistImagePickedFromCamera() {
+                        itemPicture = Picture(context: moc)
+                        itemPicture?.fileUrl = itemImageUrl.path
+                    }
+                case .replacement:
+                    
+                    let fileMgr = FileManager.default
+                    if let imageStringPath = item.picture?.fileUrl {
+                        do {
+                            try fileMgr.removeItem(atPath: imageStringPath)
+                            if let itemImageUrl = self.persistImagePickedFromCamera() {
+                                itemPicture = Picture(context: moc)
+                                itemPicture?.fileUrl = itemImageUrl.path
+                            }
+                        } catch {
+                            let nserror = error as NSError
+                            print("\(#function) Failed to delete previous picture -> \(nserror): \(nserror.userInfo)")
+                        }
+                    }
+                    
+                default:
+                    break
+                }
+            }))
+            
             item.countryOfOrigin = countryOriginTextField.text
             item.brand = brandTextField.text
             item.itemDescription = descriptionTextField.text
+            item.picture = itemPicture
             shoppingLineItem.quantity = quantityToBuyDisplay
             shoppingLineItem.priceTypeSelected = selectedPrice
             updateUnitPrice(of: item)
@@ -409,8 +492,8 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
         
         do {
-            if let hasChanges = shoppingLineItem?.managedObjectContext?.hasChanges, hasChanges {
-                try shoppingLineItem?.managedObjectContext?.save()
+            if let hasChanges = shoppingListItem?.managedObjectContext?.hasChanges, hasChanges {
+                try shoppingListItem?.managedObjectContext?.save()
             }
         } catch  {
             let nserror = error as NSError
@@ -423,11 +506,12 @@ class ShoppingListItemEditorViewController: UIViewController {
         if let unitPriceDisplay = unitPriceDisplay {
             
             if let unitPrice = unitPrice {
+                //Update existing price
                 unitPrice.currencyCode = "SGD"
                 unitPrice.valueDisplay = unitPriceDisplay
                 unitPrice.quantityDisplay = 1
             } else {
-                
+                //Create new price
                 let unitPrice = Price(context: persistentContainer.viewContext)
                 unitPrice.currencyCode = "SGD"
                 unitPrice.quantityDisplay = 1
@@ -435,8 +519,10 @@ class ShoppingListItemEditorViewController: UIViewController {
                 item.addToPrices(unitPrice)
             }
             
-        } else if let unitPrice = unitPrice {
-            persistentContainer.viewContext.delete(unitPrice)
+        } else {
+            if let unitPrice = unitPrice {
+                persistentContainer.viewContext.delete(unitPrice)
+            }
         }
     }
     
@@ -445,6 +531,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         if let bundlePriceDisplay = bundlePriceDisplay {
             
             if let bundlePrice = bundlePrice {
+                
                 bundlePrice.currencyCode = "SGD"
                 bundlePrice.valueDisplay = bundlePriceDisplay
                 print("Bundle Qty display \(bundleQtyDisplay ?? -1)")
@@ -460,8 +547,11 @@ class ShoppingListItemEditorViewController: UIViewController {
                 item.addToPrices(bundlePrice)
             }
             
-        } else if let bundlePrice = bundlePrice {
-            persistentContainer.viewContext.delete(bundlePrice)
+        } else {
+            
+            if let bundlePrice = bundlePrice {
+                persistentContainer.viewContext.delete(bundlePrice)
+            }
         }
     }
     
@@ -501,7 +591,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         let moc = persistentContainer.viewContext
         
-        moc.delete(shoppingLineItem!)
+        moc.delete(shoppingListItem!)
         
         do {
             try moc.save()
@@ -513,6 +603,27 @@ class ShoppingListItemEditorViewController: UIViewController {
         
     }
     
+    // MARK: - Picture
+    
+    @IBAction func onPictureAction(_ sender: UIButton) {
+        
+        //Create a action sheet
+        let popoverMenu = UIAlertController(title: "Show a picture of the item", message: nil, preferredStyle: .actionSheet)
+        
+        popoverMenu.addAction(UIAlertAction(title: "Camera", style: .default, handler: onPictureActionHandler))
+        popoverMenu.addAction(UIAlertAction(title: "Album", style: .default, handler: nil))
+        popoverMenu.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: onPictureActionHandler))
+        popoverMenu.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        //The following will cause app to adapt to iPad by presenting action sheet as popover on an iPad.
+        popoverMenu.modalPresentationStyle = .popover
+        let popoverMenuPresentationController = popoverMenu.popoverPresentationController
+        popoverMenuPresentationController?.sourceView = sender
+        popoverMenuPresentationController?.sourceRect = sender.frame
+        
+        present(popoverMenu, animated: true, completion: nil)
+    }
+    
     /*
      // MARK: - Navigation
      
@@ -522,6 +633,79 @@ class ShoppingListItemEditorViewController: UIViewController {
      // Pass the selected object to the new view controller.
      }
      */
+    
+}
+
+extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    var onPictureActionHandler: (UIAlertAction) -> Void {
+        get {
+            return { action in
+                switch action.title! {
+                case "Camera":
+                    self.activateCamera()
+                case "Delete":
+                    self.deletePicture()
+                default:
+                    break
+                }
+                
+            }
+            
+        }
+    }
+    
+    func deletePicture() {
+        print(#function)
+        pictureState.transition(event: .onDelete, handleNextStateUiAttributes: { pictureState in
+        
+            switch pictureState {
+            case .delete:
+                print("")
+                
+            default:
+                break
+            }
+        
+        })
+    }
+        
+    func deletePicture(pathString: String) {
+        print(#function)
+    }
+    
+    func activateCamera() {
+        
+        if !UIImagePickerController.isSourceTypeAvailable(.camera) {
+            print("Camera is NOT available on this device")
+            return
+        }
+        
+        let cameraController = UIImagePickerController()
+        cameraController.delegate = self
+        cameraController.allowsEditing = false
+        cameraController.sourceType = .camera
+        cameraController.cameraCaptureMode = .photo
+        cameraController.modalPresentationStyle = .fullScreen
+        
+        present(cameraController, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        
+        itemImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+        
+        pictureState.transition(event: .onFinishPickingCameraMedia)
+        
+        changeState.transition(event: .onCameraCapture)
+        
+        self.dismiss(animated: true, completion: { print("completion dismiss imagePickerVc")})
+        
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        print(#function)
+    }
     
 }
 

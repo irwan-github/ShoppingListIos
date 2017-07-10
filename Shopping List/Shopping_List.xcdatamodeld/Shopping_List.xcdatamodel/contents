@@ -11,7 +11,7 @@
         <relationship name="prices" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Price" inverseName="item" inverseEntity="Price" syncable="YES"/>
     </entity>
     <entity name="Picture" representedClassName=".Picture" syncable="YES" codeGenerationType="category">
-        <attribute name="fileUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fileUrl" attributeType="String" syncable="YES"/>
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="picture" inverseEntity="Item" syncable="YES"/>
     </entity>

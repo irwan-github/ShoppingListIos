@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="jEQ-nz-wj3">
-    <device id="retina4_7" orientation="portrait">
+    <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -32,15 +33,15 @@
             <objects>
                 <tableViewController title="Shopping Lists" clearsSelectionOnViewWillAppear="NO" id="sTz-Tn-Hag" customClass="ShoppingListsTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="2nv-UY-jxe">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Shopping List" textLabel="aJX-hf-d5X" detailTextLabel="7dH-1L-ZtM" style="IBUITableViewCellStyleSubtitle" id="jBR-AZ-Vdw">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jBR-AZ-Vdw" id="sV6-kS-MqP">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aJX-hf-d5X">
@@ -96,31 +97,31 @@
             <objects>
                 <tableViewController id="0Z4-sc-yBF" customClass="ShoppingListTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="64" sectionHeaderHeight="28" sectionFooterHeight="28" id="kwK-iJ-0ss">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Shopping List Item" rowHeight="64" id="WSJ-Dv-71D" customClass="ShoppingListItemTableViewCell" customModule="Shopping_List" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="64"/>
+                                <rect key="frame" x="0.0" y="28" width="768" height="64"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WSJ-Dv-71D" id="Gl5-3v-eNb">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="64"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="LGs-2k-gjW">
-                                            <rect key="frame" x="16" y="8" width="343" height="47.5"/>
+                                            <rect key="frame" x="16" y="8" width="736" height="47.5"/>
                                             <subviews>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="56w-lS-irl">
-                                                    <rect key="frame" x="0.0" y="0.0" width="286" height="47.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="613.5" height="47.5"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Item Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JyW-r9-aLY">
-                                                            <rect key="frame" x="0.0" y="0.0" width="286" height="20"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="613.5" height="20"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brand" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GJe-M5-f2A">
-                                                            <rect key="frame" x="0.0" y="28" width="286" height="19.5"/>
+                                                            <rect key="frame" x="0.0" y="28" width="613.5" height="19.5"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
@@ -128,7 +129,7 @@
                                                     </subviews>
                                                 </stackView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e2y-1X-qdt" userLabel="Quantity to buy" customClass="ToggleCircleButton" customModule="Shopping_List" customModuleProvider="target">
-                                                    <rect key="frame" x="286" y="0.0" width="57" height="47.5"/>
+                                                    <rect key="frame" x="613.5" y="0.0" width="122.5" height="47.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                                     <state key="normal" title="1"/>
                                                     <userDefinedRuntimeAttributes>
@@ -193,188 +194,214 @@
                         <viewControllerLayoutGuide type="bottom" id="Pt7-6z-JGO"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Te4-9F-0Wh">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Lcs-p5-FoT">
-                                <rect key="frame" x="16" y="72" width="343" height="587"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="1ZP-0d-lRW">
+                                <rect key="frame" x="20" y="72" width="728" height="952"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="DTN-m5-pQV" userLabel="Item name" customClass="UITextErrorField" customModule="Shopping_List" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="343" height="90.5"/>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="color" keyPath="errorTextColor">
-                                                <color key="value" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                            </userDefinedRuntimeAttribute>
-                                            <userDefinedRuntimeAttribute type="string" keyPath="placeHolder" value="Name"/>
-                                        </userDefinedRuntimeAttributes>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="wqr-jC-UOt">
-                                        <rect key="frame" x="0.0" y="106.5" width="343" height="144"/>
+                                    <stackView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" verticalHuggingPriority="253" verticalCompressionResistancePriority="748" translatesAutoresizingMaskIntoConstraints="NO" id="qVn-Fb-1e4" userLabel="Picture group">
+                                        <rect key="frame" x="0.0" y="0.0" width="728" height="86"/>
                                         <subviews>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Brand" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hbb-Pv-GZK" userLabel="Brand">
-                                                <rect key="frame" x="0.0" y="0.0" width="343" height="30"/>
-                                                <nil key="textColor"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                            </textField>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Country" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lrO-Ru-z27" userLabel="Country">
-                                                <rect key="frame" x="0.0" y="38" width="343" height="30"/>
-                                                <nil key="textColor"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                            </textField>
-                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="fen-3z-Aem">
-                                                <rect key="frame" x="0.0" y="76" width="343" height="30"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="255" verticalHuggingPriority="255" horizontalCompressionResistancePriority="745" verticalCompressionResistancePriority="745" image="empty-photo" translatesAutoresizingMaskIntoConstraints="NO" id="ois-Ij-FIy">
+                                                <rect key="frame" x="0.0" y="0.0" width="86" height="86"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="ois-Ij-FIy" secondAttribute="height" multiplier="1:1" id="utv-dj-1ta"/>
+                                                </constraints>
+                                            </imageView>
+                                            <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="253" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8OI-Rx-Ofe" userLabel="Picture">
+                                                <rect key="frame" x="86" y="0.0" width="642" height="86"/>
+                                                <state key="normal" title="Picture"/>
+                                                <connections>
+                                                    <action selector="onPictureAction:" destination="CqQ-3E-E6A" eventType="touchUpInside" id="0cf-yf-3Cr"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="753" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="Lcs-p5-FoT" userLabel="Item group">
+                                        <rect key="frame" x="0.0" y="94" width="728" height="858"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="DTN-m5-pQV" userLabel="Item name" customClass="UITextErrorField" customModule="Shopping_List" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="728" height="50"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="color" keyPath="errorTextColor">
+                                                        <color key="value" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="string" keyPath="placeHolder" value="Name"/>
+                                                </userDefinedRuntimeAttributes>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="248" verticalCompressionResistancePriority="751" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="wqr-jC-UOt" userLabel="Information group">
+                                                <rect key="frame" x="0.0" y="66" width="728" height="144"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Quantity to buy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iPE-7w-5H9">
-                                                        <rect key="frame" x="0.0" y="0.0" width="118" height="20.5"/>
-                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <nil key="highlightedColor"/>
-                                                    </label>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1oi-U9-SPF">
-                                                        <rect key="frame" x="118" y="0.0" width="225" height="29"/>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fen-3z-Aem">
+                                                        <rect key="frame" x="0.0" y="0.0" width="728" height="30"/>
                                                         <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4B1-dc-QTR" userLabel="Qty to buy">
-                                                                <rect key="frame" x="0.0" y="0.0" width="131" height="29"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Quantity to buy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iPE-7w-5H9">
+                                                                <rect key="frame" x="0.0" y="0.0" width="118" height="30"/>
                                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                                <nil key="textColor"/>
+                                                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="7WK-wj-gAd">
-                                                                <rect key="frame" x="131" y="0.0" width="94" height="29"/>
-                                                                <connections>
-                                                                    <action selector="onChangeQtyToBuy:" destination="CqQ-3E-E6A" eventType="valueChanged" id="6rp-66-mMX"/>
-                                                                </connections>
-                                                            </stepper>
+                                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1oi-U9-SPF">
+                                                                <rect key="frame" x="118" y="0.0" width="610" height="30"/>
+                                                                <subviews>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4B1-dc-QTR" userLabel="Qty to buy">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="516" height="30"/>
+                                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                                        <nil key="textColor"/>
+                                                                        <nil key="highlightedColor"/>
+                                                                    </label>
+                                                                    <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="7WK-wj-gAd">
+                                                                        <rect key="frame" x="516" y="0.0" width="94" height="29"/>
+                                                                        <connections>
+                                                                            <action selector="onChangeQtyToBuy:" destination="CqQ-3E-E6A" eventType="valueChanged" id="6rp-66-mMX"/>
+                                                                        </connections>
+                                                                    </stepper>
+                                                                </subviews>
+                                                            </stackView>
                                                         </subviews>
                                                     </stackView>
-                                                </subviews>
-                                            </stackView>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="73y-TU-CfF" userLabel="Description">
-                                                <rect key="frame" x="0.0" y="114" width="343" height="30"/>
-                                                <nil key="textColor"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                <textInputTraits key="textInputTraits"/>
-                                            </textField>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="jv6-3Y-C78">
-                                        <rect key="frame" x="0.0" y="266.5" width="343" height="28"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select price type:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oX0-TM-h7o">
-                                                <rect key="frame" x="0.0" y="0.0" width="134" height="28"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="VNc-SW-OyH" userLabel="Selected price type">
-                                                <rect key="frame" x="150" y="0.0" width="193" height="29"/>
-                                                <segments>
-                                                    <segment title="Unit Price"/>
-                                                    <segment title="Bundle Price"/>
-                                                </segments>
-                                                <connections>
-                                                    <action selector="onSelectPriceType:" destination="CqQ-3E-E6A" eventType="valueChanged" id="FPI-5m-rE2"/>
-                                                </connections>
-                                            </segmentedControl>
-                                        </subviews>
-                                    </stackView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sMp-6N-a59" userLabel="Pricing information">
-                                        <rect key="frame" x="0.0" y="310.5" width="343" height="33.5"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="HVN-vQ-16N">
-                                        <rect key="frame" x="0.0" y="360" width="343" height="29"/>
-                                        <segments>
-                                            <segment title="Unit Price"/>
-                                            <segment title="Bundle Price"/>
-                                        </segments>
-                                        <connections>
-                                            <action selector="onDisplayPriceTypeInformation:" destination="CqQ-3E-E6A" eventType="valueChanged" id="r1z-ON-KLs"/>
-                                        </connections>
-                                    </segmentedControl>
-                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hcv-K8-7Sd" userLabel="Price Stack View">
-                                        <rect key="frame" x="0.0" y="404" width="343" height="30"/>
-                                        <subviews>
-                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vlr-7P-KIk" userLabel="Currency Code">
-                                                <rect key="frame" x="0.0" y="0.0" width="56" height="30"/>
-                                                <nil key="textColor"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" spellCheckingType="no" keyboardType="alphabet"/>
-                                            </textField>
-                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="974-rT-iz0">
-                                                <rect key="frame" x="56" y="0.0" width="287" height="30"/>
-                                                <subviews>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Unit price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7Er-qI-BXB" userLabel="Unit Price">
-                                                        <rect key="frame" x="0.0" y="0.0" width="143.5" height="30"/>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Brand" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hbb-Pv-GZK" userLabel="Brand">
+                                                        <rect key="frame" x="0.0" y="38" width="728" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" spellCheckingType="no" keyboardType="numberPad"/>
+                                                        <textInputTraits key="textInputTraits"/>
                                                     </textField>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Bundle price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="C84-w3-037" userLabel="Bundle Price">
-                                                        <rect key="frame" x="143.5" y="0.0" width="143.5" height="30"/>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Country" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="lrO-Ru-z27" userLabel="Country">
+                                                        <rect key="frame" x="0.0" y="76" width="728" height="30"/>
+                                                        <nil key="textColor"/>
+                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                        <textInputTraits key="textInputTraits"/>
+                                                    </textField>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="73y-TU-CfF" userLabel="Description">
+                                                        <rect key="frame" x="0.0" y="114" width="728" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
                                                 </subviews>
                                             </stackView>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="MjT-os-JL5" userLabel="Bundle Qty Stack View">
-                                        <rect key="frame" x="0.0" y="450" width="343" height="29"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Bundle Quantity " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gIU-Rt-uAs" userLabel="Buble Qty Label">
-                                                <rect key="frame" x="0.0" y="0.0" width="127" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pb0-Ba-bl0">
-                                                <rect key="frame" x="127" y="0.0" width="216" height="29"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="jv6-3Y-C78" userLabel="Select price">
+                                                <rect key="frame" x="0.0" y="226" width="728" height="28"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLx-Eh-bGd" userLabel="Bundle Qty Display">
-                                                        <rect key="frame" x="0.0" y="0.0" width="122" height="29"/>
-                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select price type:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oX0-TM-h7o">
+                                                        <rect key="frame" x="0.0" y="0.0" width="134" height="28"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" minimumValue="2" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="ggF-WB-wOI" userLabel="Bundle Qty Stepper">
-                                                        <rect key="frame" x="122" y="0.0" width="94" height="29"/>
+                                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="VNc-SW-OyH" userLabel="Selected price type">
+                                                        <rect key="frame" x="150" y="0.0" width="578" height="29"/>
+                                                        <segments>
+                                                            <segment title="Unit Price"/>
+                                                            <segment title="Bundle Price"/>
+                                                        </segments>
                                                         <connections>
-                                                            <action selector="onBundleQtyChange:" destination="CqQ-3E-E6A" eventType="valueChanged" id="x2w-hY-cXW"/>
+                                                            <action selector="onSelectPriceType:" destination="CqQ-3E-E6A" eventType="valueChanged" id="FPI-5m-rE2"/>
                                                         </connections>
-                                                    </stepper>
+                                                    </segmentedControl>
                                                 </subviews>
                                             </stackView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sMp-6N-a59" userLabel="Pricing information">
+                                                <rect key="frame" x="0.0" y="270" width="728" height="33.5"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="HVN-vQ-16N">
+                                                <rect key="frame" x="0.0" y="319.5" width="728" height="29"/>
+                                                <segments>
+                                                    <segment title="Unit Price"/>
+                                                    <segment title="Bundle Price"/>
+                                                </segments>
+                                                <connections>
+                                                    <action selector="onDisplayPriceTypeInformation:" destination="CqQ-3E-E6A" eventType="valueChanged" id="r1z-ON-KLs"/>
+                                                </connections>
+                                            </segmentedControl>
+                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hcv-K8-7Sd" userLabel="Price Stack View">
+                                                <rect key="frame" x="0.0" y="363.5" width="728" height="30"/>
+                                                <subviews>
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vlr-7P-KIk" userLabel="Currency Code">
+                                                        <rect key="frame" x="0.0" y="0.0" width="56" height="30"/>
+                                                        <nil key="textColor"/>
+                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" spellCheckingType="no" keyboardType="alphabet"/>
+                                                    </textField>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="974-rT-iz0">
+                                                        <rect key="frame" x="56" y="0.0" width="672" height="30"/>
+                                                        <subviews>
+                                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Unit price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="7Er-qI-BXB" userLabel="Unit Price">
+                                                                <rect key="frame" x="0.0" y="0.0" width="336" height="30"/>
+                                                                <nil key="textColor"/>
+                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" spellCheckingType="no" keyboardType="numberPad"/>
+                                                            </textField>
+                                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Bundle price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="C84-w3-037" userLabel="Bundle Price">
+                                                                <rect key="frame" x="336" y="0.0" width="336" height="30"/>
+                                                                <nil key="textColor"/>
+                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                                <textInputTraits key="textInputTraits"/>
+                                                            </textField>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="MjT-os-JL5" userLabel="Bundle Qty Stack View">
+                                                <rect key="frame" x="0.0" y="409.5" width="728" height="333.5"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Bundle Quantity " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gIU-Rt-uAs" userLabel="Buble Qty Label">
+                                                        <rect key="frame" x="0.0" y="0.0" width="127" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pb0-Ba-bl0">
+                                                        <rect key="frame" x="127" y="0.0" width="601" height="29"/>
+                                                        <subviews>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BLx-Eh-bGd" userLabel="Bundle Qty Display">
+                                                                <rect key="frame" x="0.0" y="0.0" width="507" height="29"/>
+                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                                <nil key="textColor"/>
+                                                                <nil key="highlightedColor"/>
+                                                            </label>
+                                                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" minimumValue="2" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="ggF-WB-wOI" userLabel="Bundle Qty Stepper">
+                                                                <rect key="frame" x="507" y="0.0" width="94" height="29"/>
+                                                                <connections>
+                                                                    <action selector="onBundleQtyChange:" destination="CqQ-3E-E6A" eventType="valueChanged" id="x2w-hY-cXW"/>
+                                                                </connections>
+                                                            </stepper>
+                                                        </subviews>
+                                                    </stackView>
+                                                </subviews>
+                                            </stackView>
+                                            <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="K0p-6x-9cg">
+                                                <rect key="frame" x="0.0" y="759" width="728" height="50"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Afq-kB-cA1" userLabel="Delete from shopping list">
+                                                <rect key="frame" x="0.0" y="825" width="728" height="33"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <state key="normal" title="Delete item from shopping list">
+                                                    <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="onDeleteItem:" destination="CqQ-3E-E6A" eventType="touchUpInside" id="5FR-pv-jEq"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                     </stackView>
-                                    <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="K0p-6x-9cg">
-                                        <rect key="frame" x="0.0" y="495" width="343" height="43"/>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    </view>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Afq-kB-cA1" userLabel="Delete from shopping list">
-                                        <rect key="frame" x="0.0" y="554" width="343" height="33"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                        <state key="normal" title="Delete item from shopping list">
-                                            <color key="titleColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="onDeleteItem:" destination="CqQ-3E-E6A" eventType="touchUpInside" id="5FR-pv-jEq"/>
-                                        </connections>
-                                    </button>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstItem="qVn-Fb-1e4" firstAttribute="height" secondItem="Lcs-p5-FoT" secondAttribute="height" multiplier="0.1" id="lml-ZW-grC"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Lcs-p5-FoT" firstAttribute="top" secondItem="rdp-G1-MHN" secondAttribute="bottom" constant="8" symbolic="YES" id="4g1-Nc-P0r"/>
-                            <constraint firstItem="Lcs-p5-FoT" firstAttribute="leading" secondItem="Te4-9F-0Wh" secondAttribute="leadingMargin" id="5tK-zQ-tg4"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Lcs-p5-FoT" secondAttribute="trailing" id="CmQ-ut-QLr"/>
-                            <constraint firstItem="Pt7-6z-JGO" firstAttribute="top" secondItem="Lcs-p5-FoT" secondAttribute="bottom" constant="8" symbolic="YES" id="MaU-9B-AsJ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="1ZP-0d-lRW" secondAttribute="trailing" id="Onh-pL-VSt"/>
+                            <constraint firstItem="1ZP-0d-lRW" firstAttribute="leading" secondItem="Te4-9F-0Wh" secondAttribute="leadingMargin" id="eCw-RJ-hNw"/>
+                            <constraint firstItem="1ZP-0d-lRW" firstAttribute="top" secondItem="rdp-G1-MHN" secondAttribute="bottom" constant="8" id="mYD-LA-ZDY"/>
+                            <constraint firstItem="Pt7-6z-JGO" firstAttribute="top" secondItem="1ZP-0d-lRW" secondAttribute="bottom" id="paJ-7I-VYW"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="EGf-Fy-UP4">
@@ -400,6 +427,7 @@
                         <outlet property="deleteItemButton" destination="Afq-kB-cA1" id="Xrx-rq-fPj"/>
                         <outlet property="descriptionTextField" destination="73y-TU-CfF" id="fKm-KM-Mpi"/>
                         <outlet property="doneButton" destination="urr-Bu-2OJ" id="QMa-XV-hh1"/>
+                        <outlet property="itemImageView" destination="ois-Ij-FIy" id="2NX-2j-ZhT"/>
                         <outlet property="itemNameTextField" destination="DTN-m5-pQV" id="Heo-qE-TBa"/>
                         <outlet property="priceStackView" destination="hcv-K8-7Sd" id="eYv-Ef-5jk"/>
                         <outlet property="priceTypeSc" destination="HVN-vQ-16N" id="gZs-4l-qVH"/>
@@ -445,8 +473,11 @@
             <point key="canvasLocation" x="2030.46875" y="577.734375"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="empty-photo" width="640" height="640"/>
+    </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="WTF-oB-epI"/>
         <segue reference="6vb-mK-mGf"/>
+        <segue reference="WTF-oB-epI"/>
     </inferredMetricsTieBreakers>
 </document>

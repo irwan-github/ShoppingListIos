@@ -113,7 +113,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
             
             let shoppingListItem = fetchedResultsController?.object(at: indexPath)
                 
-            shoppingEditorVc.shoppingLineItem = shoppingListItem
+            shoppingEditorVc.shoppingListItem = shoppingListItem
             
         }
      }

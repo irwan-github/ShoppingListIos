@@ -28,7 +28,7 @@ enum ChangeState {
         self = .unchanged
     }
     
-    mutating func transition(event: Event, handleNextStateUiAttributes: ((ChangeState) -> Void)? ) {
+    mutating func transition(event: Event, handleNextStateUiAttributes: ((ChangeState) -> Void)? = nil ) {
         
         switch self {
             
