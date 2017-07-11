@@ -758,6 +758,11 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         return { (changeState: ChangeState) -> Void  in
             
             switch changeState {
+                
+            case .unchanged:
+
+                self.performSegue(withIdentifier: "return to shopping list", sender: self)
+                
             case .changed:
                 //Alert vc will adapt. iPad will show as popover. iPhone present modally from bottom.
                 let alertVc = UIAlertController(title: "Warning", message: "You may have unsaved change(s)", preferredStyle: .actionSheet)
@@ -766,7 +771,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
                 alertVc.addAction(UIAlertAction(title: "Leave", style: .destructive) {
                     action in
                     self.presentingViewController?.dismiss(animated: true, completion: nil)
-                    })
+                })
                 
                 alertVc.addAction(UIAlertAction(title: "Stay", style: .cancel, handler: nil))
                 alertVc.modalPresentationStyle = .popover
@@ -774,8 +779,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
                 ppc?.barButtonItem = self.cancelButton
                 
                 self.present(alertVc, animated: true, completion: nil)
-            default:
-                break
+
             }
             
         }

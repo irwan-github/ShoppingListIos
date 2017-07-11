@@ -128,7 +128,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                 
                 _ = groceryShoppingList?.add(item: banana, quantity: 5)
                 _ = groceryShoppingList?.add(item: milk, quantity: 4)
-                _ = groceryShoppingList?.add(item: fruit, quantity: 599)
+                _ = groceryShoppingList?.add(item: fruit, quantity: 9)
                 
                 
             } catch {

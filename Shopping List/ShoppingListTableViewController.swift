@@ -27,8 +27,16 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("\(#function) - \(type(of: self))")
+        
+        //The following does not work because viewWillAppear is not called when using popover. My solution is use an unwind segue and manually clear the cell selection
+        clearsSelectionOnViewWillAppear = true
+        
         navigationItem.title = shoppingList?.name
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("\(#function) - \(type(of: self))")
+        super.viewWillAppear(animated)
     }
     
     func updateUi() {
@@ -69,33 +77,41 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List Item", for: indexPath) as! ShoppingListItemTableViewCell
+        let shoppingListItemCell = tableView.dequeueReusableCell(withIdentifier: "Shopping List Item", for: indexPath) as! ShoppingListItemTableViewCell
         
-        // Configure the cell...ß
+        // Configure the cell...
         let shoppingListItem = fetchedResultsController?.object(at: indexPath)
         
-        cell.itemName.text = shoppingListItem?.item?.name
-        cell.brand.text = shoppingListItem?.item?.brand
-        let qtyToBuy = shoppingListItem?.quantity
-        cell.quantityToBuy.setTitle(String(describing: qtyToBuy!), for: .normal)
-        return cell
+        shoppingListItemCell.shoppingListItem = shoppingListItem
+        
+        return shoppingListItemCell
     }
     
     // MARK: - Navigation
     
     //Do create an shopping list item when a shopping list exist
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
-        
-        return shoppingList != nil
+        if shoppingList != nil {
+            return super.shouldPerformSegue(withIdentifier: identifier, sender: sender)
+        } else {
+            return false
+        }
     }
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
+    
+    @IBAction func unwindToShoppingList(for segue: UIStoryboardSegue) {
+        //viewWillAppear is not called when using popover. My solution is use an unwind segue and manually clear the cell selection
+        if let indexPathForSelectedRow = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: indexPathForSelectedRow, animated: true)
+        }
+    }
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
         
         var destinationVc = segue.destination
-            
+        
         if let navigationController = destinationVc as? UINavigationController {
             
             destinationVc = navigationController.visibleViewController!
