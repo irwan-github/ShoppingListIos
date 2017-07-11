@@ -11,7 +11,7 @@ import CoreData
 
 class ShoppingListItemEditorViewController: UIViewController {
     
-    // MARK: - API
+    // MARK: - API and Model
     var shoppingList: ShoppingList!
     
     var shoppingListItem: ShoppingListItem?
@@ -260,14 +260,10 @@ class ShoppingListItemEditorViewController: UIViewController {
                     self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantity)!)
                     self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
                     self.descriptionTextField.text = self.shoppingListItem?.item?.itemDescription
+                    self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
                     
-                    if let pathString = self.shoppingListItem?.item?.picture?.fileUrl {
-                        self.itemImage = UIImage(contentsOfFile: pathString)
-                        self.pictureState.transition(event: .onExist)
-                    }
-                    
-                    //Although I can traverse from item to get prices, it is difficult to work with NSSet.
-                    //Therefore I do a fetch prices to get an array of prices
+                    //Although I can traverse from item to get prices of type NSSet, it is difficult to work with NSSet.
+                    //Therefore I do a fetch prices to get an array of prices at the cost of a round trip to database
                     self.prices = try! Price.findPrices(of: (self.shoppingListItem?.item)!, moc: self.persistentContainer.viewContext)
                     
                     if let selected = self.shoppingListItem?.priceTypeSelected {
@@ -355,7 +351,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         validationState.handle(event: .onSaveItem(onSaveEventhandler), handleNextStateUiAttributes: nil)
     }
     
-    func persistImagePickedFromCamera() -> URL? {
+    func writePicturePickedFromCameraToFile() -> URL? {
         
         if let image = itemImage {
             let cameraUtil = CameraUtil()
@@ -386,7 +382,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             item.brand = brandTextField.text
             item.countryOfOrigin = countryOriginTextField.text
             item.itemDescription = descriptionTextField.text
-            processPicture(of: item, in: moc)
+            handlePictureEventAction(of: item, in: moc)
             updateUnitPrice(of: item)
             updateBundlePrice(of: item)
             
@@ -412,7 +408,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         if let shoppingLineItem = shoppingListItem, let item = shoppingLineItem.item {
             
-            processPicture(of: item, in: moc)
+            handlePictureEventAction(of: item, in: moc)
             item.countryOfOrigin = countryOriginTextField.text
             item.brand = brandTextField.text
             item.itemDescription = descriptionTextField.text
@@ -541,31 +537,14 @@ class ShoppingListItemEditorViewController: UIViewController {
     @IBAction func onPictureAction(_ sender: UIButton) {
         
         //Create a action sheet
-        let pictureActionSheet = UIAlertController(title: "Show a picture of the item", message: nil, preferredStyle: .actionSheet)
-        
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            pictureActionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: onPictureActionHandler))
-        }
-        
-        pictureActionSheet.addAction(UIAlertAction(title: "Album", style: .default, handler: nil))
-        
-        //The following will not be displayed in iPad
-        pictureActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        
-        switch pictureState {
-        case .none, .delete:
-            break
-        default:
-            pictureActionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: onPictureActionHandler))
-        }
+        let pictureActionSheetController = pictureActionSheet
         
         //The following will cause app to adapt to iPad by presenting action sheet as popover on an iPad.
-        pictureActionSheet.modalPresentationStyle = .popover
-        let popoverMenuPresentationController = pictureActionSheet.popoverPresentationController
+        pictureActionSheetController.modalPresentationStyle = .popover
+        let popoverMenuPresentationController = pictureActionSheetController.popoverPresentationController
         popoverMenuPresentationController?.sourceView = sender
         popoverMenuPresentationController?.sourceRect = sender.frame
-        
-        present(pictureActionSheet, animated: true, completion: nil)
+        present(pictureActionSheetController, animated: true, completion: nil)
     }
     
     /*
@@ -582,6 +561,30 @@ class ShoppingListItemEditorViewController: UIViewController {
 // MARK: - Handle picture actions and states
 extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    var pictureActionSheet: UIAlertController {
+        //Create a action sheet
+        let pictureActionSheet = UIAlertController(title: "Show a picture of the item", message: nil, preferredStyle: .actionSheet)
+
+        //HIG: A Cancel button instills confidence when the user is abandoning a task. Cancel button will not be displayed in iPad.
+        pictureActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        switch pictureState {
+        case .none, .delete:
+            break
+        default:
+            //HIG: Make destructive choices prominent. Use red for buttons that perform destructive or dangerous actions, and display these buttons at the top of an action sheet.
+            pictureActionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: onPictureActionHandler))
+        }
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            pictureActionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: onPictureActionHandler))
+        }
+        
+        pictureActionSheet.addAction(UIAlertAction(title: "Album", style: .default, handler: nil))
+        
+        return pictureActionSheet
+    }
+    
     var onPictureActionHandler: (UIAlertAction) -> Void {
         get {
             return { action in
@@ -589,45 +592,55 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 case "Camera":
                     self.activateCamera()
                 case "Delete":
-                    self.deletePicture()
+                    self.pictureState.transition(event: .onDelete, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+                    self.changeState.transition(event: .onDeletePicture, handleNextStateUiAttributes: self.changeStateAttributeHandler)
                 default:
                     break
                 }
-                
             }
         }
     }
-    
-    var noPictureState: (PictureState) -> Void {
+
+    var nextPictureStateUiAttributes: (PictureState, UIImage?) -> Void {
         
-        return { pictureState in
+        return { (pictureState: PictureState, newItemPicture: UIImage?) -> Void in
             
             switch pictureState {
-            case .delete:
-                self.itemImageView.image = UIImage(named: "empty-photo")
-            default:
-                break
-            }
+                
+            case .delete, .none:
+                self.itemImage = UIImage(named: "empty-photo")
+                
+            case .new:
+                self.itemImage = newItemPicture!
             
+            case .existing:
+                if let pictureStringPath = self.shoppingListItem?.item?.picture?.fileUrl {
+                    self.itemImage = UIImage(contentsOfFile: pictureStringPath)
+                }
+                
+            case .replacement:
+                self.itemImage = newItemPicture!
+            }
         }
     }
     
-
-    
     /**
-     Depending on picture state, the image will either be written/deleted to/from app document folder
+     Depending on picture state, the image file will either be written/deleted to/from app document folder
      */
-    func processPicture(of item: Item, in moc: NSManagedObjectContext) {
-        print(">>> \(#function) picture state is \(pictureState)")
+    func handlePictureEventAction(of item: Item, in moc: NSManagedObjectContext) {
+        
         pictureState.transition(event: .onSaveImage({ pictureState in
             
             switch pictureState {
+                
             case .new:
-                if let itemImageUrl = self.persistImagePickedFromCamera() {
+                let itemImageUrl = self.writePicturePickedFromCameraToFile()
+                if let itemImageUrl = itemImageUrl {
                     let newPicture = Picture(context: moc)
                     newPicture.fileUrl = itemImageUrl.path
                     item.picture = newPicture
                 }
+                
             case .replacement:
                 
                 let fileMgr = FileManager.default
@@ -636,15 +649,20 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                         //Delete existing picture from document folder
                         try fileMgr.removeItem(atPath: imageStringPath)
                         
+                        //Delete existing picture from database
+                        moc.delete(item.picture!)
+                        
+                        let itemImageUrl = self.writePicturePickedFromCameraToFile()
+                        
                         //Create new picture
-                        if let itemNewImageUrl = self.persistImagePickedFromCamera() {
+                        if let itemNewImageUrl = itemImageUrl{
                             let newPicture = Picture(context: moc)
                             newPicture.fileUrl = itemNewImageUrl.path
                             item.picture = newPicture
                         }
                     } catch {
                         let nserror = error as NSError
-                        print("\(#function) Failed to delete previous picture -> \(nserror): \(nserror.userInfo)")
+                        print("\(#function) Failed to delete previous picture from document folder -> \(nserror): \(nserror.userInfo)")
                     }
                 }
                 
@@ -655,12 +673,12 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                         //Delete existing picture from document folder
                         try fileMgr.removeItem(atPath: imageStringPath)
                         
-                        //Delete picture string path from database
-                        item.picture = nil
+                        //Delete picture from database
+                        moc.delete(item.picture!)
                         
                     } catch {
                         let nserror = error as NSError
-                        print("\(#function) Failed to delete existing picture -> \(nserror): \(nserror.userInfo)")
+                        print("\(#function) Failed to delete existing picture from document folder -> \(nserror): \(nserror.userInfo)")
                     }
                 }
                 
@@ -668,14 +686,6 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 break
             }
         }))
-    }
-    
-    /**
-     Set picture state to delete
-     */
-    func deletePicture() {
-        pictureState.transition(event: .onDelete, handleNextStateUiAttributes: noPictureState)
-        changeState.transition(event: .onDeletePicture, handleNextStateUiAttributes: changeStateAttributeHandler)
     }
     
     /**
@@ -706,9 +716,9 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        itemImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+        let itemImage = info[UIImagePickerControllerOriginalImage] as! UIImage
         
-        pictureState.transition(event: .onFinishPickingCameraMedia)
+        pictureState.transition(event: .onFinishPickingCameraMedia(itemImage), handleNextStateUiAttributes: nextPictureStateUiAttributes)
         
         changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
         
@@ -717,7 +727,8 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        print(#function)
+        
+        self.dismiss(animated: true, completion: nil)
     }
     
 }
@@ -726,7 +737,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
     
     var changeStateAttributeHandler: (ChangeState) -> Void {
         return { changeState in
-        
+            
             switch changeState {
                 
             case .changed:
@@ -735,7 +746,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
             default:
                 break
             }
-        
+            
         }
     }
     

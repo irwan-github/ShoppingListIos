@@ -20,7 +20,7 @@ enum PictureState {
     //Events
     enum Event {
         case onSaveImage((PictureState) -> Void)
-        case onFinishPickingCameraMedia
+        case onFinishPickingCameraMedia(UIImage)
         case onDelete
         case onExist
     }
@@ -29,7 +29,7 @@ enum PictureState {
         self = .none
     }
     
-    mutating func transition(event: PictureState.Event, handleNextStateUiAttributes: ((PictureState) -> Void)? = nil) {
+    mutating func transition(event: PictureState.Event, handleNextStateUiAttributes: ((PictureState, UIImage?) -> Void)? = nil) {
         
         switch self {
             
@@ -39,22 +39,47 @@ enum PictureState {
                 
             case .onExist:
                 self = .existing
+                handleNextStateUiAttributes?(self, nil)
                 
-            case .onFinishPickingCameraMedia:
+            case .onFinishPickingCameraMedia(let itemPicture):
                 self = .new
+                handleNextStateUiAttributes?(self, itemPicture)
                 
             default:
                 break
             }
             
+        case .new:
+            switch event {
+                
+            case .onFinishPickingCameraMedia(let itemPicture):
+                self = .new
+                handleNextStateUiAttributes?(self, itemPicture)
+                
+            case .onSaveImage(let action):
+                action(self)
+                self = .existing
+                handleNextStateUiAttributes?(self, nil)
+                
+            case .onDelete:
+                self = .none
+                handleNextStateUiAttributes?(self, nil)
+                
+            default:
+                break
+                
+            }
+            
         case .existing:
             switch event {
                 
-            case .onFinishPickingCameraMedia:
+            case .onFinishPickingCameraMedia(let itemPicture):
                 self = .replacement
+                handleNextStateUiAttributes?(self, itemPicture)
                 
             case .onDelete:
                 self = .delete
+                handleNextStateUiAttributes?(self, nil)
                 
             default:
                 break
@@ -63,32 +88,42 @@ enum PictureState {
         case .replacement:
             switch event {
                 
-            case .onSaveImage(let action):
+            case .onFinishPickingCameraMedia(let itemPicture):
+                self = .replacement
+                handleNextStateUiAttributes?(self, itemPicture)
                 
+            case .onSaveImage(let action):
                 action(self)
                 self = .existing
+                handleNextStateUiAttributes?(self, nil)
+                
+            case .onDelete:
+                self = .existing
+                handleNextStateUiAttributes?(self, nil)
                 
             default:
                 break
                 
             }
             
-        case .new, .delete:
+        case .delete:
             switch event {
                 
             case .onSaveImage(let action):
                 action(self)
                 self = .existing
+                handleNextStateUiAttributes?(self, nil)
+                
+            case .onFinishPickingCameraMedia(let itemPicture):
+                self = .replacement
+                handleNextStateUiAttributes?(self, itemPicture)
                 
             default:
                 break
                 
             }
-
         }
         
-        
-        handleNextStateUiAttributes?(self)
     }
     
 }
