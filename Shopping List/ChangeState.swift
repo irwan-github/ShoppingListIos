@@ -12,7 +12,6 @@ enum ChangeState {
     
     case unchanged
     case changed
-    case alert
     
     enum Event {
         case onStart
@@ -53,22 +52,10 @@ enum ChangeState {
                 
             case .onCancel(let cancel):
                 cancel(self)
-                self = .alert
                 
             default:
                 break
-            }
-            
-        case .alert:
-            switch event {
-                
-            case .onStay:
-                self = .changed
-                
-            default:
-                break
-            }
-            
+            }            
         }
         
         handleNextStateUiAttributes?(self)

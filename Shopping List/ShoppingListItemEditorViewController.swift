@@ -86,6 +86,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var descriptionTextField: UITextField!
     
+    @IBOutlet weak var cancelButton: UIBarButtonItem!
+    
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
     @IBOutlet weak var deleteItemButton: UIButton!
@@ -297,7 +299,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     @IBAction func onCancel(_ sender: UIBarButtonItem) {
-        presentingViewController?.dismiss(animated: true, completion: nil)
+        changeState.transition(event: .onCancel(changeStateOnCancelEventAction), handleNextStateUiAttributes: changeStateAttributeHandler)
     }
     
     @IBAction func onDone(_ sender: UIBarButtonItem) {
@@ -733,7 +735,9 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     
 }
 
+// MARK: - Handle change state transition event action and ui attributes
 extension ShoppingListItemEditorViewController: UITextFieldDelegate {
+    
     
     var changeStateAttributeHandler: (ChangeState) -> Void {
         return { changeState in
@@ -743,6 +747,33 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
             case .changed:
                 self.doneButton.isEnabled = true
                 
+            default:
+                break
+            }
+            
+        }
+    }
+    
+    var changeStateOnCancelEventAction: (ChangeState) -> Void {
+        return { (changeState: ChangeState) -> Void  in
+            
+            switch changeState {
+            case .changed:
+                //Alert vc will adapt. iPad will show as popover. iPhone present modally from bottom.
+                let alertVc = UIAlertController(title: "Warning", message: "You may have unsaved change(s)", preferredStyle: .actionSheet)
+                
+                //Apple HIG
+                alertVc.addAction(UIAlertAction(title: "Leave", style: .destructive) {
+                    action in
+                    self.presentingViewController?.dismiss(animated: true, completion: nil)
+                    })
+                
+                alertVc.addAction(UIAlertAction(title: "Stay", style: .cancel, handler: nil))
+                alertVc.modalPresentationStyle = .popover
+                let ppc = alertVc.popoverPresentationController
+                ppc?.barButtonItem = self.cancelButton
+                
+                self.present(alertVc, animated: true, completion: nil)
             default:
                 break
             }

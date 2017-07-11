@@ -422,6 +422,7 @@
                         <outlet property="bundleQtyLabel" destination="BLx-Eh-bGd" id="waG-wN-qCj"/>
                         <outlet property="bundleQtyStackView" destination="MjT-os-JL5" id="69d-wa-lOm"/>
                         <outlet property="bundleQtyStepper" destination="ggF-WB-wOI" id="bk3-FD-h0l"/>
+                        <outlet property="cancelButton" destination="cDa-72-SsS" id="nZe-iu-Q7u"/>
                         <outlet property="countryOriginTextField" destination="lrO-Ru-z27" id="hUQ-Ph-QtD"/>
                         <outlet property="currencyCodeField" destination="vlr-7P-KIk" id="rc1-xX-3AD"/>
                         <outlet property="deleteItemButton" destination="Afq-kB-cA1" id="Xrx-rq-fPj"/>
