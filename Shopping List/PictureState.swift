@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum PictureState {
     
@@ -21,6 +22,7 @@ enum PictureState {
         case onSaveImage((PictureState) -> Void)
         case onFinishPickingCameraMedia
         case onDelete
+        case onExist
     }
     
     init() {
@@ -34,6 +36,9 @@ enum PictureState {
         case .none:
             
             switch event {
+                
+            case .onExist:
+                self = .existing
                 
             case .onFinishPickingCameraMedia:
                 self = .new
@@ -68,7 +73,7 @@ enum PictureState {
                 
             }
             
-        case .new:
+        case .new, .delete:
             switch event {
                 
             case .onSaveImage(let action):
@@ -79,9 +84,7 @@ enum PictureState {
                 break
                 
             }
-            
-        default:
-            break
+
         }
         
         

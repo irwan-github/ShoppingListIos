@@ -14,18 +14,11 @@ class ShoppingListItemEditorViewController: UIViewController {
     // MARK: - API
     var shoppingList: ShoppingList!
     
-    var shoppingListItem: ShoppingListItem? {
-        didSet {
-            if shoppingListItem?.item?.picture == nil {
-                pictureState = .none
-            } else {
-                pictureState = .existing
-            }
-        }
-    }
+    var shoppingListItem: ShoppingListItem?
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
+    // MARK: - Properties
     private var prices: [Price]? {
         didSet {
             unitPriceDisplay = unitPrice?.valueDisplay
@@ -79,7 +72,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    // MARK: - Properties
     fileprivate var validationState = ValidationState()
     
     fileprivate var changeState = ChangeState()
@@ -271,6 +263,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                     
                     if let pathString = self.shoppingListItem?.item?.picture?.fileUrl {
                         self.itemImage = UIImage(contentsOfFile: pathString)
+                        self.pictureState.transition(event: .onExist)
                     }
                     
                     //Although I can traverse from item to get prices, it is difficult to work with NSSet.
@@ -297,36 +290,14 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
         
-        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: { nextState in
-            
-            switch nextState {
-                
-            case .changed:
-                self.doneButton.isEnabled = true
-                self.quantityToBuyDisplay = Int(sender.value)
-                
-            default:
-                break
-            }
-        })
+        quantityToBuyDisplay = Int(sender.value)
+        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
     }
     
     @IBAction func onBundleQtyChange(_ sender: UIStepper) {
         
-        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: { nextState in
-            
-            switch nextState {
-                
-            case .changed:
-                self.doneButton.isEnabled = true
-                self.bundleQtyDisplay = Int(sender.value)
-                
-            default:
-                break
-            }
-        })
-        
-        
+        self.bundleQtyDisplay = Int(sender.value)
+        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
     }
     
     @IBAction func onCancel(_ sender: UIBarButtonItem) {
@@ -396,7 +367,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     /**
      Save new item
-    */
+     */
     fileprivate func saveNew() {
         
         let moc = persistentContainer.viewContext
@@ -433,8 +404,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     /**
-        Save existing item
-    */
+     Save existing item
+     */
     fileprivate func saveUpdate() {
         
         let moc = persistentContainer.viewContext
@@ -606,10 +577,9 @@ class ShoppingListItemEditorViewController: UIViewController {
      // Pass the selected object to the new view controller.
      }
      */
-    
 }
 
-// MARK: Handle picture actions and states
+// MARK: - Handle picture actions and states
 extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var onPictureActionHandler: (UIAlertAction) -> Void {
@@ -625,7 +595,6 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 }
                 
             }
-            
         }
     }
     
@@ -641,14 +610,15 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
             }
             
         }
-        
     }
+    
+
     
     /**
      Depending on picture state, the image will either be written/deleted to/from app document folder
      */
     func processPicture(of item: Item, in moc: NSManagedObjectContext) {
-        
+        print(">>> \(#function) picture state is \(pictureState)")
         pictureState.transition(event: .onSaveImage({ pictureState in
             
             switch pictureState {
@@ -704,8 +674,8 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
      Set picture state to delete
      */
     func deletePicture() {
-        print(#function)
         pictureState.transition(event: .onDelete, handleNextStateUiAttributes: noPictureState)
+        changeState.transition(event: .onDeletePicture, handleNextStateUiAttributes: changeStateAttributeHandler)
     }
     
     /**
@@ -740,7 +710,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         
         pictureState.transition(event: .onFinishPickingCameraMedia)
         
-        changeState.transition(event: .onCameraCapture)
+        changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
         
         self.dismiss(animated: true, completion: { print("completion dismiss imagePickerVc")})
         
@@ -754,22 +724,24 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
 
 extension ShoppingListItemEditorViewController: UITextFieldDelegate {
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    var changeStateAttributeHandler: (ChangeState) -> Void {
+        return { changeState in
         
-        changeState.transition(event: .onChangeCharacters) {
-            
-            [weak self] changeState in
-            
             switch changeState {
                 
             case .changed:
-                self?.doneButton.isEnabled = true
+                self.doneButton.isEnabled = true
                 
             default:
                 break
             }
-            
+        
         }
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
+        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
         
         validationState.handle(event: .onChangeCharacters) {
             
