@@ -394,6 +394,9 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    /**
+     Save new item
+    */
     fileprivate func saveNew() {
         
         let moc = persistentContainer.viewContext
@@ -407,28 +410,12 @@ class ShoppingListItemEditorViewController: UIViewController {
                 return
             }
             
-            var itemPicture: Picture? = nil
-            
-            pictureState.transition(event: .onSaveImage({ pictureState in
-                
-                switch pictureState {
-                case .new:
-                    if let itemImageUrl = self.persistImagePickedFromCamera() {
-                        itemPicture = Picture(context: moc)
-                        itemPicture?.fileUrl = itemImageUrl.path
-                    }
-                    
-                default:
-                    break
-                }
-            }))
-            
             let item = Item(context: moc)
             item.name = itemNameTextField.text!
             item.brand = brandTextField.text
             item.countryOfOrigin = countryOriginTextField.text
             item.itemDescription = descriptionTextField.text
-            item.picture = itemPicture
+            processPicture(of: item, in: moc)
             updateUnitPrice(of: item)
             updateBundlePrice(of: item)
             
@@ -445,46 +432,19 @@ class ShoppingListItemEditorViewController: UIViewController {
         
     }
     
+    /**
+        Save existing item
+    */
     fileprivate func saveUpdate() {
         
         let moc = persistentContainer.viewContext
         
         if let shoppingLineItem = shoppingListItem, let item = shoppingLineItem.item {
             
-            var itemPicture: Picture? = item.picture
-            pictureState.transition(event: .onSaveImage({ pictureState in
-                
-                switch pictureState {
-                case .new:
-                    if let itemImageUrl = self.persistImagePickedFromCamera() {
-                        itemPicture = Picture(context: moc)
-                        itemPicture?.fileUrl = itemImageUrl.path
-                    }
-                case .replacement:
-                    
-                    let fileMgr = FileManager.default
-                    if let imageStringPath = item.picture?.fileUrl {
-                        do {
-                            try fileMgr.removeItem(atPath: imageStringPath)
-                            if let itemImageUrl = self.persistImagePickedFromCamera() {
-                                itemPicture = Picture(context: moc)
-                                itemPicture?.fileUrl = itemImageUrl.path
-                            }
-                        } catch {
-                            let nserror = error as NSError
-                            print("\(#function) Failed to delete previous picture -> \(nserror): \(nserror.userInfo)")
-                        }
-                    }
-                    
-                default:
-                    break
-                }
-            }))
-            
+            processPicture(of: item, in: moc)
             item.countryOfOrigin = countryOriginTextField.text
             item.brand = brandTextField.text
             item.itemDescription = descriptionTextField.text
-            item.picture = itemPicture
             shoppingLineItem.quantity = quantityToBuyDisplay
             shoppingLineItem.priceTypeSelected = selectedPrice
             updateUnitPrice(of: item)
@@ -589,6 +549,10 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private func deleteItemFromShoppingList() {
         
+        if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
+            deletePicture(at: stringPath)
+        }
+        
         let moc = persistentContainer.viewContext
         
         moc.delete(shoppingListItem!)
@@ -599,8 +563,6 @@ class ShoppingListItemEditorViewController: UIViewController {
             let nserror = error as NSError
             print("Error \(nserror) : \(nserror.userInfo)")
         }
-        
-        
     }
     
     // MARK: - Picture
@@ -608,20 +570,31 @@ class ShoppingListItemEditorViewController: UIViewController {
     @IBAction func onPictureAction(_ sender: UIButton) {
         
         //Create a action sheet
-        let popoverMenu = UIAlertController(title: "Show a picture of the item", message: nil, preferredStyle: .actionSheet)
+        let pictureActionSheet = UIAlertController(title: "Show a picture of the item", message: nil, preferredStyle: .actionSheet)
         
-        popoverMenu.addAction(UIAlertAction(title: "Camera", style: .default, handler: onPictureActionHandler))
-        popoverMenu.addAction(UIAlertAction(title: "Album", style: .default, handler: nil))
-        popoverMenu.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: onPictureActionHandler))
-        popoverMenu.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            pictureActionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: onPictureActionHandler))
+        }
+        
+        pictureActionSheet.addAction(UIAlertAction(title: "Album", style: .default, handler: nil))
+        
+        //The following will not be displayed in iPad
+        pictureActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        switch pictureState {
+        case .none, .delete:
+            break
+        default:
+            pictureActionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: onPictureActionHandler))
+        }
         
         //The following will cause app to adapt to iPad by presenting action sheet as popover on an iPad.
-        popoverMenu.modalPresentationStyle = .popover
-        let popoverMenuPresentationController = popoverMenu.popoverPresentationController
+        pictureActionSheet.modalPresentationStyle = .popover
+        let popoverMenuPresentationController = pictureActionSheet.popoverPresentationController
         popoverMenuPresentationController?.sourceView = sender
         popoverMenuPresentationController?.sourceRect = sender.frame
         
-        present(popoverMenu, animated: true, completion: nil)
+        present(pictureActionSheet, animated: true, completion: nil)
     }
     
     /*
@@ -636,6 +609,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
 }
 
+// MARK: Handle picture actions and states
 extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var onPictureActionHandler: (UIAlertAction) -> Void {
@@ -655,31 +629,100 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         }
     }
     
-    func deletePicture() {
-        print(#function)
-        pictureState.transition(event: .onDelete, handleNextStateUiAttributes: { pictureState in
+    var noPictureState: (PictureState) -> Void {
         
+        return { pictureState in
+            
             switch pictureState {
             case .delete:
-                print("")
+                self.itemImageView.image = UIImage(named: "empty-photo")
+            default:
+                break
+            }
+            
+        }
+        
+    }
+    
+    /**
+     Depending on picture state, the image will either be written/deleted to/from app document folder
+     */
+    func processPicture(of item: Item, in moc: NSManagedObjectContext) {
+        
+        pictureState.transition(event: .onSaveImage({ pictureState in
+            
+            switch pictureState {
+            case .new:
+                if let itemImageUrl = self.persistImagePickedFromCamera() {
+                    let newPicture = Picture(context: moc)
+                    newPicture.fileUrl = itemImageUrl.path
+                    item.picture = newPicture
+                }
+            case .replacement:
+                
+                let fileMgr = FileManager.default
+                if let imageStringPath = item.picture?.fileUrl {
+                    do {
+                        //Delete existing picture from document folder
+                        try fileMgr.removeItem(atPath: imageStringPath)
+                        
+                        //Create new picture
+                        if let itemNewImageUrl = self.persistImagePickedFromCamera() {
+                            let newPicture = Picture(context: moc)
+                            newPicture.fileUrl = itemNewImageUrl.path
+                            item.picture = newPicture
+                        }
+                    } catch {
+                        let nserror = error as NSError
+                        print("\(#function) Failed to delete previous picture -> \(nserror): \(nserror.userInfo)")
+                    }
+                }
+                
+            case .delete:
+                let fileMgr = FileManager.default
+                if let imageStringPath = item.picture?.fileUrl {
+                    do {
+                        //Delete existing picture from document folder
+                        try fileMgr.removeItem(atPath: imageStringPath)
+                        
+                        //Delete picture string path from database
+                        item.picture = nil
+                        
+                    } catch {
+                        let nserror = error as NSError
+                        print("\(#function) Failed to delete existing picture -> \(nserror): \(nserror.userInfo)")
+                    }
+                }
                 
             default:
                 break
             }
-        
-        })
+        }))
     }
-        
-    func deletePicture(pathString: String) {
+    
+    /**
+     Set picture state to delete
+     */
+    func deletePicture() {
         print(#function)
+        pictureState.transition(event: .onDelete, handleNextStateUiAttributes: noPictureState)
+    }
+    
+    /**
+     Delete picture from app document folder
+     */
+    func deletePicture(at pathString: String) {
+        let fileMgr = FileManager.default
+        do {
+            try fileMgr.removeItem(atPath: pathString)
+        } catch {
+            let nserror = error as NSError
+            print("\(#function) Failed to delete existing picture \(pathString) -> \(nserror): \(nserror.userInfo)")
+        }
+        
     }
     
     func activateCamera() {
-        
-        if !UIImagePickerController.isSourceTypeAvailable(.camera) {
-            print("Camera is NOT available on this device")
-            return
-        }
         
         let cameraController = UIImagePickerController()
         cameraController.delegate = self

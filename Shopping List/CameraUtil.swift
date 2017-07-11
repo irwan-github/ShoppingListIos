@@ -39,7 +39,6 @@ struct CameraUtil {
     
     static var pathToImageFile: URL {
         let url = directoryContainingImageFile.appendingPathComponent(filename)
-        print(">>>>>> \(url)")
         return url
     }
     
