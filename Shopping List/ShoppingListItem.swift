@@ -11,12 +11,24 @@ import CoreData
 
 class ShoppingListItem: NSManagedObject {
     
+    //Fetched Property. Represent weak, one-way relationship
+    @NSManaged public var selectedPrice: NSArray
+    
     var quantity: Int {
         get {
             return Int(quantityToBuy)
         }
         set {
             quantityToBuy = Int32(newValue)
+        }
+    }
+    
+    var priceTypeSelectedConvert: Int {
+        get {
+            return Int(priceTypeSelected)
+        }
+        set {
+            priceTypeSelected = Int16(newValue)
         }
     }
 }

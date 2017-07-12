@@ -37,7 +37,6 @@ class SwitchButton: UIButton {
     
     internal var buttonState: State = .uncheck {
         didSet {
-            print("buttonState didSet")
             doToggle()
         }
     }

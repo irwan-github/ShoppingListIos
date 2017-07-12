@@ -11,7 +11,7 @@ import CoreData
 
 class Price: NSManagedObject {
     
-    var valueDisplay: Int {
+    var valueConvert: Int {
         get {
             return Int(value)
         }
@@ -20,7 +20,7 @@ class Price: NSManagedObject {
         }
     }
     
-    var quantityDisplay: Int {
+    var quantityConvert: Int {
         set {
             quantity = Int32(newValue)
         }

@@ -18,15 +18,22 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
+    // MARK: - State Transition Logic
+    fileprivate var validationState = ValidationState()
+    
+    fileprivate var changeState = ChangeState()
+    
+    fileprivate var pictureState = PictureState()
+    
     // MARK: - Properties
     private var prices: [Price]? {
         didSet {
-            unitPriceDisplay = unitPrice?.valueDisplay
-            bundlePriceDisplay = bundlePrice?.valueDisplay
+            unitPriceDisplay = unitPrice?.valueConvert
+            bundlePriceDisplay = bundlePrice?.valueConvert
             
             if let bundlePrice = bundlePrice {
-                bundleQtyStepper.value = Double(bundlePrice.quantityDisplay)
-                bundleQtyDisplay = bundlePrice.quantityDisplay
+                bundleQtyStepper.value = Double(bundlePrice.quantityConvert)
+                bundleQtyDisplay = bundlePrice.quantityConvert
                 
             } else {
                 bundleQtyStepper.value = Double(2)
@@ -72,12 +79,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    fileprivate var validationState = ValidationState()
-    
-    fileprivate var changeState = ChangeState()
-    
-    fileprivate var pictureState = PictureState()
-    
     @IBOutlet weak var itemNameTextField: UITextErrorField!
     
     @IBOutlet weak var brandTextField: UITextField!
@@ -96,7 +97,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var quantityToBuyStepper: UIStepper!
     
-    @IBOutlet weak var priceTypeSc: UISegmentedControl!
+    @IBOutlet weak var pricingInformationSc: UISegmentedControl!
     
     @IBOutlet weak var priceStackView: UIStackView!
     
@@ -108,18 +109,13 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var bundlePriceTextField: UITextField!
     
-    enum PriceType: Int {
-        case unit_price = 0
-        case bundle_price = 1
-    }
-    
     @IBOutlet weak var bundleQtyLabel: UILabel!
     
     @IBOutlet weak var bundleQtyStepper: UIStepper!
     
-    private var quantityToBuyDisplay: Int {
+    private var quantityToBuyDisplay: Int? {
         set {
-            quantityToBuyLabel.text = String(newValue)
+            quantityToBuyLabel.text = String(newValue!)
         }
         
         get {
@@ -179,18 +175,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    @IBOutlet weak var selectedPriceTypeSc: UISegmentedControl!
-    
-    private var selectedPrice: Int16 {
-        get {
-            return Int16(selectedPriceTypeSc.selectedSegmentIndex)
-        }
-        
-        set {
-            selectedPriceTypeSc.selectedSegmentIndex = Int(newValue)
-        }
-    }
-    
     fileprivate var itemImage: UIImage? {
         didSet {
             itemImageView.image = itemImage
@@ -200,26 +184,6 @@ class ShoppingListItemEditorViewController: UIViewController {
     @IBOutlet weak var itemImageView: UIImageView!
     
     private let moneyTextFieldDelegate = MoneyUITextFieldDelegate()
-    
-    @IBAction func onDisplayPriceTypeInformation(_ sender: UISegmentedControl) {
-        
-        if let priceType = PriceType(rawValue: sender.selectedSegmentIndex) {
-            
-            switch priceType {
-            case .unit_price:
-                bundleQtyStackView.isHidden = true
-                unitPriceTextField.placeholder = "Unit price"
-                unitPriceTextField.isHidden = false
-                bundlePriceTextField.isHidden = true
-                
-            case .bundle_price:
-                bundleQtyStackView.isHidden = false
-                bundlePriceTextField.placeholder = "Bundle Price"
-                unitPriceTextField.isHidden = true
-                bundlePriceTextField.isHidden = false
-            }
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -241,9 +205,9 @@ class ShoppingListItemEditorViewController: UIViewController {
                 switch nextState {
                 case .newItem:
                     self.deleteItemButton.isHidden = true
-                    self.selectedPrice = Int16(PriceType.unit_price.rawValue)
-                    self.priceTypeSc.selectedSegmentIndex = Int(PriceType.unit_price.rawValue)
-                    self.onDisplayPriceTypeInformation(self.priceTypeSc)
+                    
+                    let selectedPriceTypeEvent = SelectedPriceState.Event(rawValue: SelectedPriceState.unitPrice.rawValue)!
+                    self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
                     
                 default:
                     break
@@ -268,16 +232,11 @@ class ShoppingListItemEditorViewController: UIViewController {
                     //Therefore I do a fetch prices to get an array of prices at the cost of a round trip to database
                     self.prices = try! Price.findPrices(of: (self.shoppingListItem?.item)!, moc: self.persistentContainer.viewContext)
                     
-                    if let selected = self.shoppingListItem?.priceTypeSelected {
-                        self.priceTypeSc.selectedSegmentIndex = Int(selected)
-                    } else {
-                        self.priceTypeSc.selectedSegmentIndex = Int(PriceType.unit_price.rawValue)
-                    }
-                    
-                    self.onDisplayPriceTypeInformation(self.priceTypeSc)
                     self.itemNameTextField.isEnabled = false
                     self.deleteItemButton.isHidden = false
-                    self.selectedPrice = (self.shoppingListItem?.priceTypeSelected)!
+                    
+                    let selectedPriceTypeEvent = SelectedPriceState.Event(rawValue: (self.shoppingListItem?.priceTypeSelectedConvert)!)!
+                    self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
                     
                 default:
                     break
@@ -363,6 +322,108 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    // MARK: - Selected price type
+    
+    private var selectedPriceState = SelectedPriceState()
+    
+    @IBOutlet weak var selectedPriceTypeSc: UISegmentedControl!
+    
+    enum PriceType: Int {
+        case unit_price = 0
+        case bundle_price = 1
+    }
+    
+    @IBAction func onDisplayPriceTypeInformation(_ sender: UISegmentedControl) {
+        
+        if let priceType = PriceType(rawValue: sender.selectedSegmentIndex) {
+            
+            switch priceType {
+            case .unit_price:
+                bundleQtyStackView.isHidden = true
+                unitPriceTextField.placeholder = "Unit price"
+                unitPriceTextField.isHidden = false
+                bundlePriceTextField.isHidden = true
+                
+            case .bundle_price:
+                bundleQtyStackView.isHidden = false
+                bundlePriceTextField.placeholder = "Bundle Price"
+                unitPriceTextField.isHidden = true
+                bundlePriceTextField.isHidden = false
+            }
+        }
+    }
+    
+    @IBAction func onSelectPriceType(_ sender: UISegmentedControl) {
+        changeState.transition(event: .onSelectPrice, handleNextStateUiAttributes: {
+            changeState in
+            
+            switch changeState {
+            case .changed:
+                self.doneButton.isEnabled = true
+                
+            default:
+                break
+            }
+        })
+        
+        selectedPriceState.transition(event: SelectedPriceState.Event(rawValue: sender.selectedSegmentIndex)!, handleStateUiAttribute: priceStateAttributeHandler)
+    }
+    
+    var priceStateAttributeHandler: (SelectedPriceState) -> Void {
+        
+        return { selectedPrice in
+            
+            switch selectedPrice {
+            case .bundlePrice:
+                
+                //Update the quantity to buy to bundle quantity
+                self.quantityToBuyDisplay = self.bundleQtyDisplay
+                
+                //Update the quantity to buy stepper
+                self.quantityToBuyStepper.minimumValue = Double(self.bundleQtyDisplay!)
+                self.quantityToBuyStepper.value = Double(self.bundleQtyDisplay!)
+                self.quantityToBuyStepper.stepValue = Double(self.bundleQtyDisplay!)
+                
+                //Show bundle pricing information
+                self.pricingInformationSc.selectedSegmentIndex = SelectedPriceState.bundlePrice.rawValue
+                //self.onDisplayPriceTypeInformation(self.pricingInformationSc)
+                self.bundleQtyStackView.isHidden = false
+                self.bundlePriceTextField.placeholder = "Bundle Price"
+                self.unitPriceTextField.isHidden = true
+                self.bundlePriceTextField.isHidden = false
+                
+                
+                //Display the price type chosen
+                self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.bundlePrice.rawValue
+                
+            case .unitPrice:
+                
+                //Update the quantity to buy to bundle quantity
+                self.quantityToBuyDisplay = 1
+                
+                //Update the quantity to buy stepper
+                self.quantityToBuyStepper.minimumValue = 1
+                self.quantityToBuyStepper.value = 1
+                self.quantityToBuyStepper.stepValue = 1
+                
+                //Show unit pricing information
+                self.pricingInformationSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
+                //self.onDisplayPriceTypeInformation(self.pricingInformationSc)
+                
+                self.bundleQtyStackView.isHidden = true
+                self.unitPriceTextField.placeholder = "Unit price"
+                self.unitPriceTextField.isHidden = false
+                self.bundlePriceTextField.isHidden = true
+                
+                //Display the price type chosen
+                self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
+            }
+        }
+        
+    }
+    
+    // MARK: - Create, Read, Update, Delete
+    
     /**
      Save new item
      */
@@ -388,9 +449,9 @@ class ShoppingListItemEditorViewController: UIViewController {
             updateUnitPrice(of: item)
             updateBundlePrice(of: item)
             
-            let shoppingLineItem = shoppingList.add(item: item, quantity: quantityToBuyDisplay)
+            let shoppingLineItem = shoppingList.add(item: item, quantity: quantityToBuyDisplay!)
             
-            shoppingLineItem.priceTypeSelected = selectedPrice
+            shoppingLineItem.priceTypeSelectedConvert = selectedPriceState.rawValue
             
             try persistentContainer.viewContext.save()
             
@@ -414,8 +475,8 @@ class ShoppingListItemEditorViewController: UIViewController {
             item.countryOfOrigin = countryOriginTextField.text
             item.brand = brandTextField.text
             item.itemDescription = descriptionTextField.text
-            shoppingLineItem.quantity = quantityToBuyDisplay
-            shoppingLineItem.priceTypeSelected = selectedPrice
+            shoppingLineItem.quantity = quantityToBuyDisplay!
+            shoppingLineItem.priceTypeSelectedConvert = selectedPriceState.rawValue
             updateUnitPrice(of: item)
             updateBundlePrice(of: item)
         }
@@ -437,14 +498,15 @@ class ShoppingListItemEditorViewController: UIViewController {
             if let unitPrice = unitPrice {
                 //Update existing price
                 unitPrice.currencyCode = "SGD"
-                unitPrice.valueDisplay = unitPriceDisplay
-                unitPrice.quantityDisplay = 1
+                unitPrice.valueConvert = unitPriceDisplay
+                unitPrice.quantityConvert = 1
             } else {
                 //Create new price
                 let unitPrice = Price(context: persistentContainer.viewContext)
                 unitPrice.currencyCode = "SGD"
-                unitPrice.quantityDisplay = 1
-                unitPrice.valueDisplay = unitPriceDisplay
+                unitPrice.quantityConvert = 1
+                unitPrice.valueConvert = unitPriceDisplay
+                unitPrice.type = 0
                 item.addToPrices(unitPrice)
             }
             
@@ -457,45 +519,27 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private func updateBundlePrice(of item: Item) {
         
-        if let bundlePriceDisplay = bundlePriceDisplay {
-            
-            if let bundlePrice = bundlePrice {
-                
-                bundlePrice.currencyCode = "SGD"
-                bundlePrice.valueDisplay = bundlePriceDisplay
-                print("Bundle Qty display \(bundleQtyDisplay ?? -1)")
-                bundlePrice.quantityDisplay = bundleQtyDisplay ?? 2
-            } else {
-                
-                let bundlePrice = Price(context: persistentContainer.viewContext)
-                bundlePrice.currencyCode = "SGD"
-                print("Bundle Qty \(bundleQtyDisplay ?? -1)")
-                bundlePrice.quantityDisplay = bundleQtyDisplay ?? 2
-                bundlePrice.valueDisplay = bundlePriceDisplay
-                print("Bundle Price \(bundlePriceDisplay)")
-                item.addToPrices(bundlePrice)
+        if let bundlePrice = bundlePrice {
+            //Existing bundle price
+            bundlePrice.currencyCode = "SGD"
+            if let bundlePriceDisplay = bundlePriceDisplay {
+                bundlePrice.valueConvert = bundlePriceDisplay
             }
-            
+            print("Bundle Qty display \(bundleQtyDisplay ?? -1)")
+            bundlePrice.quantityConvert = bundleQtyDisplay ?? 2
         } else {
-            
-            if let bundlePrice = bundlePrice {
-                persistentContainer.viewContext.delete(bundlePrice)
+            //New bundle price
+            let bundlePrice = Price(context: persistentContainer.viewContext)
+            bundlePrice.currencyCode = "SGD"
+            print("Bundle Qty \(bundleQtyDisplay ?? -1)")
+            bundlePrice.quantityConvert = bundleQtyDisplay ?? 2
+            if let bundlePriceDisplay = bundlePriceDisplay {
+                bundlePrice.valueConvert = bundlePriceDisplay
+                print("Bundle Price \(bundlePriceDisplay)")
             }
+            bundlePrice.type = 1
+            item.addToPrices(bundlePrice)
         }
-    }
-    
-    @IBAction func onSelectPriceType(_ sender: UISegmentedControl) {
-        changeState.transition(event: .onSelectPrice, handleNextStateUiAttributes: {
-            changeState in
-            
-            switch changeState {
-            case .changed:
-                self.doneButton.isEnabled = true
-                
-            default:
-                break
-            }
-        })
     }
     
     @IBAction func onDeleteItem(_ sender: UIButton) {
@@ -566,7 +610,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     var pictureActionSheet: UIAlertController {
         //Create a action sheet
         let pictureActionSheet = UIAlertController(title: "Show a picture of the item", message: nil, preferredStyle: .actionSheet)
-
+        
         //HIG: A Cancel button instills confidence when the user is abandoning a task. Cancel button will not be displayed in iPad.
         pictureActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
@@ -602,7 +646,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
             }
         }
     }
-
+    
     var nextPictureStateUiAttributes: (PictureState, UIImage?) -> Void {
         
         return { (pictureState: PictureState, newItemPicture: UIImage?) -> Void in
@@ -614,7 +658,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 
             case .new:
                 self.itemImage = newItemPicture!
-            
+                
             case .existing:
                 if let pictureStringPath = self.shoppingListItem?.item?.picture?.fileUrl {
                     self.itemImage = UIImage(contentsOfFile: pictureStringPath)
@@ -760,7 +804,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
             switch changeState {
                 
             case .unchanged:
-
+                
                 self.performSegue(withIdentifier: "return to shopping list", sender: self)
                 
             case .changed:
@@ -779,7 +823,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
                 ppc?.barButtonItem = self.cancelButton
                 
                 self.present(alertVc, animated: true, completion: nil)
-
+                
             }
             
         }

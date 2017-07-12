@@ -20,6 +20,7 @@
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="quantity" attributeType="Integer 32" minValueString="1" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="storeId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="value" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="prices" inverseEntity="Item" syncable="YES"/>
     </entity>
@@ -34,12 +35,15 @@
         <attribute name="quantityToBuy" attributeType="Integer 32" defaultValueString="1" usesScalarValueType="YES" syncable="YES"/>
         <relationship name="item" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="listItems" inverseEntity="Item" syncable="YES"/>
         <relationship name="shoppingList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ShoppingList" inverseName="lineItems" inverseEntity="ShoppingList" syncable="YES"/>
+        <fetchedProperty name="selectedPrice" optional="YES" syncable="YES">
+            <fetchRequest name="fetchedPropertyFetchRequest" entity="Price" predicateString="type = $FETCH_SOURCE.priceTypeSelected AND item = $FETCH_SOURCE.item"/>
+        </fetchedProperty>
     </entity>
     <elements>
         <element name="Item" positionX="988" positionY="900" width="128" height="163"/>
         <element name="Picture" positionX="1323" positionY="981" width="128" height="88"/>
-        <element name="Price" positionX="576" positionY="1179" width="128" height="133"/>
+        <element name="Price" positionX="682" positionY="929" width="128" height="148"/>
         <element name="ShoppingList" positionX="988" positionY="1436" width="128" height="103"/>
-        <element name="ShoppingListItem" positionX="990" positionY="1187" width="128" height="103"/>
+        <element name="ShoppingListItem" positionX="997" positionY="1193" width="128" height="131"/>
     </elements>
 </model>
