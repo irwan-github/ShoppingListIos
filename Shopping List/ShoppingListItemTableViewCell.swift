@@ -19,9 +19,12 @@ class ShoppingListItemTableViewCell: UITableViewCell {
     // MARK: - Model
     var shoppingListItem: ShoppingListItem? {
         didSet {
+            //********* Put the following here causes an infinite loop ***************//
+            //shoppingListItem?.managedObjectContext?.refresh(shoppingListItem!, mergeChanges: true)
+
             itemName.text = shoppingListItem?.item?.name
             brand.text = shoppingListItem?.item?.brand
-            quantityToBuy.setTitle(String(describing: (shoppingListItem?.quantity)!), for: .normal)
+            quantityToBuy.setTitle(String(describing: (shoppingListItem?.quantityToBuyConvert)!), for: .normal)
             
             if let selectedPriceRes = shoppingListItem?.selectedPrice {
                 let price = selectedPriceRes[0] as! Price
@@ -33,10 +36,10 @@ class ShoppingListItemTableViewCell: UITableViewCell {
                 itemPicture.image = UIImage(contentsOfFile: stringPath)
                 
                 //The following is an alternative to reading & displaying image file from web and filesystem.
-//                let url = URL(fileURLWithPath: stringPath)
-//                if let imageData = try? Data(contentsOf: url) {
-//                    itemPicture.image = UIImage(data: imageData)
-//                }
+                //                let url = URL(fileURLWithPath: stringPath)
+                //                if let imageData = try? Data(contentsOf: url) {
+                //                    itemPicture.image = UIImage(data: imageData)
+                //                }
             } else {
                 itemPicture.image = UIImage(named: "empty-photo")
             }

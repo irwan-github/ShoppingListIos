@@ -14,7 +14,7 @@ class ShoppingListItem: NSManagedObject {
     //Fetched Property. Represent weak, one-way relationship
     @NSManaged public var selectedPrice: NSArray
     
-    var quantity: Int {
+    var quantityToBuyConvert: Int {
         get {
             return Int(quantityToBuy)
         }

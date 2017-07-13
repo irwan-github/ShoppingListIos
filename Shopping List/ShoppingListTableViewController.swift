@@ -39,6 +39,12 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         super.viewWillAppear(animated)
     }
     
+    @IBAction func unwindToShoppingListTableViewController(segue: UIStoryboardSegue, shoppingListItem: ShoppingListItem){
+        
+        print(">>> \(#function)")
+        
+    }
+    
     func updateUi() {
         fetchItemsInShoppingList()
     }
@@ -99,6 +105,9 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     }
     
     @IBAction func unwindToShoppingList(for segue: UIStoryboardSegue) {
+        
+        print(">>> \(#function) - \(type(of: self))")
+        
         //viewWillAppear is not called when using popover. My solution is use an unwind segue and manually clear the cell selection
         if let indexPathForSelectedRow = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: indexPathForSelectedRow, animated: true)
@@ -128,11 +137,11 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
             let indexPath = tableView.indexPath(for: cell)!
             
             let shoppingListItem = fetchedResultsController?.object(at: indexPath)
-                
+            
             shoppingEditorVc.shoppingListItem = shoppingListItem
             
         }
-     }
+    }
 }
 
 extension ShoppingListTableViewController {

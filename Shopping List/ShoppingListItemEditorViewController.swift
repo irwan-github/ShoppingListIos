@@ -12,72 +12,49 @@ import CoreData
 class ShoppingListItemEditorViewController: UIViewController {
     
     // MARK: - API and Model
+    
     var shoppingList: ShoppingList!
     
     var shoppingListItem: ShoppingListItem?
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
-    // MARK: - State Transition Logic
-    fileprivate var validationState = ValidationState()
+    // MARK: - State Transition variables
     
     fileprivate var changeState = ChangeState()
     
     fileprivate var pictureState = PictureState()
     
+    private var selectedPriceState = SelectedPriceState()
+    
+    fileprivate var validationState = ValidationState()
+    
     // MARK: - Properties
+    
     private var prices: [Price]? {
         didSet {
-            unitPriceDisplay = unitPrice?.valueConvert
-            bundlePriceDisplay = bundlePrice?.valueConvert
+            
+            unitPrice = Price.filter(prices: prices!, match: .unit)
+            unitPriceVc = unitPrice?.valueConvert
+            
+            bundlePrice = Price.filter(prices: prices!, match: .bundle)
+            bundlePriceVc = bundlePrice?.valueConvert
             
             if let bundlePrice = bundlePrice {
                 bundleQtyStepper.value = Double(bundlePrice.quantityConvert)
-                bundleQtyDisplay = bundlePrice.quantityConvert
+                bundleQtyPricingInfoVc = bundlePrice.quantityConvert
                 
             } else {
                 bundleQtyStepper.value = Double(2)
-                bundleQtyDisplay = 2
+                bundleQtyPricingInfoVc = 2
             }
             
         }
     }
     
-    private var unitPrice: Price? {
-        get {
-            
-            if let prices = prices, prices.count > 0 {
-                let nsprices = prices as NSArray
-                let unitPriceFilter = NSPredicate(format: "quantity == 1")
-                let unitPriceRes = nsprices.filtered(using: unitPriceFilter)
-                if unitPriceRes.count > 0 {
-                    return unitPriceRes[0] as? Price
-                } else {
-                    return nil
-                }
-            } else {
-                return nil
-            }
-        }
-    }
+    private var unitPrice: Price?
     
-    private var bundlePrice: Price? {
-        get {
-            
-            if let prices = prices, prices.count > 0 {
-                let nsprices = prices as NSArray
-                let bundlePriceFilter = NSPredicate(format: "quantity >= 2")
-                let bundlePriceRes = nsprices.filtered(using: bundlePriceFilter)
-                if bundlePriceRes.count > 0 {
-                    return bundlePriceRes[0] as? Price
-                } else {
-                    return nil
-                }
-            } else {
-                return nil
-            }
-        }
-    }
+    private var bundlePrice: Price?
     
     @IBOutlet weak var itemNameTextField: UITextErrorField!
     
@@ -93,7 +70,14 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var deleteItemButton: UIButton!
     
+    /**
+     Shared by bundle pricing and unit pricing.
+    */
     @IBOutlet weak var quantityToBuyLabel: UILabel!
+    
+    /**
+     Shared by bundle pricing and unit pricing.
+     */
     
     @IBOutlet weak var quantityToBuyStepper: UIStepper!
     
@@ -113,9 +97,13 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var bundleQtyStepper: UIStepper!
     
-    private var quantityToBuyDisplay: Int? {
+    /**
+     Shared by bundle pricing and unit pricing. The value of this property depends on the state of the price selected.
+     Set quantityToBuyStepper from Int to Double and vice-versa
+     */
+    private var quantityToBuyStepperConvert: Int {
         set {
-            quantityToBuyLabel.text = String(newValue!)
+            quantityToBuyStepper.value = Double(newValue)
         }
         
         get {
@@ -123,7 +111,12 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    private var bundleQtyDisplay: Int? {
+    /**
+     Pricing information for bundle.
+     Converts Double to Int for getter.
+     Set value of bundleQtyLabel.text after converting Double to String.
+     */
+    private var bundleQtyPricingInfoVc: Int? {
         set {
             let setValue = newValue ?? 2
             bundleQtyLabel.text = String(describing: setValue)
@@ -134,7 +127,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    private var unitPriceDisplay: Int? {
+    /**
+     Pricing information for unit
+     */
+    private var unitPriceVc: Int? {
         get {
             if let val = unitPriceTextField.text, !val.isEmpty {
                 let dblVal = (Double(val))! * 100
@@ -153,7 +149,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    private var bundlePriceDisplay: Int? {
+    /**
+     Pricing information for bundle
+     */
+    private var bundlePriceVc: Int? {
         
         get {
             
@@ -200,61 +199,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         bundlePriceTextField.delegate = moneyTextFieldDelegate
         
         if shoppingListItem == nil {
-            validationState.handle(event: .onItemNew, handleNextStateUiAttributes: { nextState in
-                
-                switch nextState {
-                case .newItem:
-                    self.deleteItemButton.isHidden = true
-                    
-                    let selectedPriceTypeEvent = SelectedPriceState.Event(rawValue: SelectedPriceState.unitPrice.rawValue)!
-                    self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
-                    
-                default:
-                    break
-                }
-            })
+            validationState.handle(event: .onItemNew, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
         } else {
-            validationState.handle(event: .onItemExist, handleNextStateUiAttributes: { nextState in
-                
-                switch nextState {
-                    
-                case .existingItem:
-                    
-                    self.itemNameTextField.text = self.shoppingListItem?.item?.name
-                    self.brandTextField.text = self.shoppingListItem?.item?.brand
-                    self.quantityToBuyDisplay = (self.shoppingListItem?.quantity)!
-                    self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantity)!)
-                    self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
-                    self.descriptionTextField.text = self.shoppingListItem?.item?.itemDescription
-                    self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
-                    
-                    //Although I can traverse from item to get prices of type NSSet, it is difficult to work with NSSet.
-                    //Therefore I do a fetch prices to get an array of prices at the cost of a round trip to database
-                    self.prices = try! Price.findPrices(of: (self.shoppingListItem?.item)!, moc: self.persistentContainer.viewContext)
-                    
-                    self.itemNameTextField.isEnabled = false
-                    self.deleteItemButton.isHidden = false
-                    
-                    let selectedPriceTypeEvent = SelectedPriceState.Event(rawValue: (self.shoppingListItem?.priceTypeSelectedConvert)!)!
-                    self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
-                    
-                default:
-                    break
-                }
-            })
+            validationState.handle(event: .onItemExist, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
         }
-    }
-    
-    @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
-        
-        quantityToBuyDisplay = Int(sender.value)
-        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
-    }
-    
-    @IBAction func onBundleQtyChange(_ sender: UIStepper) {
-        
-        self.bundleQtyDisplay = Int(sender.value)
-        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
     }
     
     @IBAction func onCancel(_ sender: UIBarButtonItem) {
@@ -312,39 +260,46 @@ class ShoppingListItemEditorViewController: UIViewController {
         validationState.handle(event: .onSaveItem(onSaveEventhandler), handleNextStateUiAttributes: nil)
     }
     
-    func writePicturePickedFromCameraToFile() -> URL? {
-        
-        if let image = itemImage {
-            let cameraUtil = CameraUtil()
-            return cameraUtil.persistImage(data: image)
-        } else {
-            return nil
+    // MARK: - State: Selected price type, Pricing information, Quantity to buy logic
+    
+    /**
+     I need a stored property for quantity to buy at UNIT pricing because the quantity to buy stepper is used for both unit and quantity price.
+     A property observer set the quantityToBuyLabel
+     */
+    private var quantityToBuyAtUnit: Int = 0 {
+        didSet {
+            quantityToBuyLabel.text = String(quantityToBuyAtUnit)
         }
     }
     
-    // MARK: - Selected price type
+    /**
+     I need a stored property for quantity to buy at BUNDLE pricing because the quantity to buy stepper is used for both unit and quantity price.
+     A property observer set the quantityToBuyLabel
+     */
+    private var quantityToBuyAtBundle: Int = 0 {
+        didSet {
+            quantityToBuyLabel.text = String(quantityToBuyAtBundle)
+        }
+    }
     
-    private var selectedPriceState = SelectedPriceState()
     
     @IBOutlet weak var selectedPriceTypeSc: UISegmentedControl!
     
-    enum PriceType: Int {
-        case unit_price = 0
-        case bundle_price = 1
-    }
-    
+    /**
+     Event causes the display of relevent pricing information and hiding of irrelevant pricing information depending on the price type.
+    */
     @IBAction func onDisplayPriceTypeInformation(_ sender: UISegmentedControl) {
         
         if let priceType = PriceType(rawValue: sender.selectedSegmentIndex) {
             
             switch priceType {
-            case .unit_price:
+            case .unit:
                 bundleQtyStackView.isHidden = true
                 unitPriceTextField.placeholder = "Unit price"
                 unitPriceTextField.isHidden = false
                 bundlePriceTextField.isHidden = true
                 
-            case .bundle_price:
+            case .bundle:
                 bundleQtyStackView.isHidden = false
                 bundlePriceTextField.placeholder = "Bundle Price"
                 unitPriceTextField.isHidden = true
@@ -353,6 +308,44 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    /**
+     The requirement is to sync the quantity to buy value with pricing info's bundle quantity when the selected price is bundle quantity.
+     If the selected price is unit price, the quantity to buy value is NOT changed.
+     */
+    @IBAction func onBundleQtyChange(_ sender: UIStepper) {
+        
+        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
+        selectedPriceState.transition(event: .onBundleQtyChange(Int(sender.value), onBundleQtyChangeEventHandler), handleStateUiAttribute: nil)
+    }
+    
+    /**
+     The requirement is to sync the quantity to buy value with pricing info's bundle quantity when the selected price is bundle quantity.
+     If the selected price is unit price, the quantity to buy value is NOT changed.
+     The pricing info's bundle quantity will change at all times.
+     */
+    lazy var onBundleQtyChangeEventHandler: (SelectedPriceState, Int) -> Void = { selectedPriceState, newBundleQty in
+        
+        switch selectedPriceState {
+        case .bundlePrice:
+            self.quantityToBuyAtBundle = newBundleQty
+            self.quantityToBuyStepperConvert = newBundleQty
+            
+            self.bundleQtyPricingInfoVc = newBundleQty
+            
+            //Set the stepper config for bundle pricing
+            self.quantityToBuyStepper.minimumValue = Double(newBundleQty)
+            self.quantityToBuyStepper.stepValue = Double(newBundleQty)
+            
+        case .unitPrice:
+            
+            //The pricing info's bundle quantity will change at all times.
+            self.bundleQtyPricingInfoVc = newBundleQty
+        }
+    }
+    
+    /**
+     The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
+     */
     @IBAction func onSelectPriceType(_ sender: UISegmentedControl) {
         changeState.transition(event: .onSelectPrice, handleNextStateUiAttributes: {
             changeState in
@@ -366,9 +359,86 @@ class ShoppingListItemEditorViewController: UIViewController {
             }
         })
         
-        selectedPriceState.transition(event: SelectedPriceState.Event(rawValue: sender.selectedSegmentIndex)!, handleStateUiAttribute: priceStateAttributeHandler)
+        let k = (PriceType(rawValue: sender.selectedSegmentIndex))!
+        
+        selectedPriceState.transition(event: .onSelectPriceType(k, onSelectPriceTypeEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
     }
     
+    /**
+     The handler of the event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type. Because there is only one stepper for quantity to buy, for either unit or bundle price, I need to do book-keeping in order for the proper quantities to buy to be valid and not lost. Upon changing bundle price, use the stored property quantityToBuyAtBundle to update the quantity to buy label.
+     */
+    lazy var onSelectPriceTypeEventHandler: (PriceType) -> Void = { priceType in
+        
+        switch priceType {
+        case .bundle:
+            
+            //Use the stored property quantityToBuyAtBundle to update the quantity to buy label
+            if self.quantityToBuyAtBundle == 0 {
+                self.quantityToBuyAtBundle = self.bundleQtyPricingInfoVc ?? 2
+                
+            } else {
+                //Artificially set the value to notify property observer
+                self.quantityToBuyAtBundle = self.quantityToBuyAtBundle + 0
+            }
+            
+            //Set the stepper config for bundle pricing
+            self.quantityToBuyStepper.minimumValue = Double(self.bundleQtyPricingInfoVc ?? 2)
+            self.quantityToBuyStepper.stepValue = self.quantityToBuyStepper.minimumValue
+            
+            //Set the stepper to the correct value for bundle price
+            self.quantityToBuyStepperConvert = self.quantityToBuyAtBundle
+            
+        case .unit:
+            
+            //Update the quantity to buy to unit quantity
+            if self.quantityToBuyAtUnit == 0 {
+                self.quantityToBuyAtUnit = 1
+            } else {
+                //Artificially set the value to notify property observer
+                self.quantityToBuyAtUnit = self.quantityToBuyAtUnit + 0
+            }
+            
+            //Set the stepper config for bundle pricing
+            self.quantityToBuyStepper.minimumValue = 1
+            self.quantityToBuyStepper.stepValue = self.quantityToBuyStepper.minimumValue
+            
+            //Set the stepper to the correct value for unit price
+            self.quantityToBuyStepperConvert = self.quantityToBuyAtUnit
+        }
+        
+    }
+    
+    /**
+     The logic depends on the state of the selected price type. The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
+    */
+    @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
+        
+        selectedPriceState.transition(event: .onChangeQtyToBuy(onChangeQtyToBuyEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
+        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
+    }
+    
+    /**
+     The handler uses quantityToBuyStepper control to set the quantity to buy display. Prior to this event, the event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
+     */
+    lazy var onChangeQtyToBuyEventHandler: (SelectedPriceState) -> Void = { selectedPriceState in
+        
+        switch selectedPriceState {
+        case .bundlePrice:
+            
+            //Update the quantity to buy to bundle quantity
+            self.quantityToBuyAtBundle = self.quantityToBuyStepperConvert
+            
+        case .unitPrice:
+            
+            //Update the quantity to buy to bundle quantity
+            self.quantityToBuyAtUnit = self.quantityToBuyStepperConvert
+        }
+        
+    }
+    
+    /**
+     Control the state of quantity to buy stepper
+     */
     var priceStateAttributeHandler: (SelectedPriceState) -> Void {
         
         return { selectedPrice in
@@ -376,44 +446,18 @@ class ShoppingListItemEditorViewController: UIViewController {
             switch selectedPrice {
             case .bundlePrice:
                 
-                //Update the quantity to buy to bundle quantity
-                self.quantityToBuyDisplay = self.bundleQtyDisplay
-                
-                //Update the quantity to buy stepper
-                self.quantityToBuyStepper.minimumValue = Double(self.bundleQtyDisplay!)
-                self.quantityToBuyStepper.value = Double(self.bundleQtyDisplay!)
-                self.quantityToBuyStepper.stepValue = Double(self.bundleQtyDisplay!)
-                
                 //Show bundle pricing information
                 self.pricingInformationSc.selectedSegmentIndex = SelectedPriceState.bundlePrice.rawValue
-                //self.onDisplayPriceTypeInformation(self.pricingInformationSc)
-                self.bundleQtyStackView.isHidden = false
-                self.bundlePriceTextField.placeholder = "Bundle Price"
-                self.unitPriceTextField.isHidden = true
-                self.bundlePriceTextField.isHidden = false
-                
+                self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                 
                 //Display the price type chosen
                 self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.bundlePrice.rawValue
                 
             case .unitPrice:
                 
-                //Update the quantity to buy to bundle quantity
-                self.quantityToBuyDisplay = 1
-                
-                //Update the quantity to buy stepper
-                self.quantityToBuyStepper.minimumValue = 1
-                self.quantityToBuyStepper.value = 1
-                self.quantityToBuyStepper.stepValue = 1
-                
-                //Show unit pricing information
+                //Show unit pricing informationß∫
                 self.pricingInformationSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
-                //self.onDisplayPriceTypeInformation(self.pricingInformationSc)
-                
-                self.bundleQtyStackView.isHidden = true
-                self.unitPriceTextField.placeholder = "Unit price"
-                self.unitPriceTextField.isHidden = false
-                self.bundlePriceTextField.isHidden = true
+                self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                 
                 //Display the price type chosen
                 self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
@@ -449,17 +493,18 @@ class ShoppingListItemEditorViewController: UIViewController {
             updateUnitPrice(of: item)
             updateBundlePrice(of: item)
             
-            let shoppingLineItem = shoppingList.add(item: item, quantity: quantityToBuyDisplay!)
+            let shoppingLineItem = shoppingList.add(item: item, quantity: quantityToBuyStepperConvert)
             
             shoppingLineItem.priceTypeSelectedConvert = selectedPriceState.rawValue
             
             try persistentContainer.viewContext.save()
             
+            persistentContainer.viewContext.refresh(shoppingLineItem, mergeChanges: true)
+            
         } catch  {
             let nserror = error as NSError
             print(">>>>>\(nserror) : \(nserror.userInfo)")
         }
-        
     }
     
     /**
@@ -469,21 +514,25 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         let moc = persistentContainer.viewContext
         
-        if let shoppingLineItem = shoppingListItem, let item = shoppingLineItem.item {
-            
-            handlePictureEventAction(of: item, in: moc)
-            item.countryOfOrigin = countryOriginTextField.text
-            item.brand = brandTextField.text
-            item.itemDescription = descriptionTextField.text
-            shoppingLineItem.quantity = quantityToBuyDisplay!
-            shoppingLineItem.priceTypeSelectedConvert = selectedPriceState.rawValue
-            updateUnitPrice(of: item)
-            updateBundlePrice(of: item)
-        }
+        handlePictureEventAction(of: (shoppingListItem?.item)!, in: moc)
+        
+        shoppingListItem?.item?.countryOfOrigin = countryOriginTextField.text
+        shoppingListItem?.item?.brand = brandTextField.text
+        shoppingListItem?.item?.itemDescription = descriptionTextField.text
+        shoppingListItem?.quantityToBuyConvert = quantityToBuyStepperConvert
+        shoppingListItem?.priceTypeSelectedConvert = selectedPriceState.rawValue
+        print(">>>>\(#function) - \(selectedPriceState.rawValue)")
+        
+        updateUnitPrice(of: (shoppingListItem?.item)!)
+        updateBundlePrice(of: (shoppingListItem?.item)!)
         
         do {
             if let hasChanges = shoppingListItem?.managedObjectContext?.hasChanges, hasChanges {
                 try shoppingListItem?.managedObjectContext?.save()
+            }
+            
+            if shoppingListItem != nil {
+                persistentContainer.viewContext.refresh(shoppingListItem!, mergeChanges: true)
             }
         } catch  {
             let nserror = error as NSError
@@ -493,53 +542,31 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private func updateUnitPrice(of item: Item) {
         
-        if let unitPriceDisplay = unitPriceDisplay {
-            
-            if let unitPrice = unitPrice {
-                //Update existing price
-                unitPrice.currencyCode = "SGD"
-                unitPrice.valueConvert = unitPriceDisplay
-                unitPrice.quantityConvert = 1
-            } else {
-                //Create new price
-                let unitPrice = Price(context: persistentContainer.viewContext)
-                unitPrice.currencyCode = "SGD"
-                unitPrice.quantityConvert = 1
-                unitPrice.valueConvert = unitPriceDisplay
-                unitPrice.type = 0
-                item.addToPrices(unitPrice)
-            }
-            
-        } else {
-            if let unitPrice = unitPrice {
-                persistentContainer.viewContext.delete(unitPrice)
-            }
+        if unitPrice == nil {
+            //Create new price
+            unitPrice = Price(context: persistentContainer.viewContext)
+            item.addToPrices(unitPrice!)
         }
+        
+        unitPrice?.currencyCode = "SGD"
+        unitPrice?.quantityConvert = 1
+        print(">>>>\(#function) - \(unitPriceVc!)")
+        unitPrice?.valueConvert = unitPriceVc ?? 0
+        unitPrice?.type = 0
     }
     
     private func updateBundlePrice(of item: Item) {
         
-        if let bundlePrice = bundlePrice {
-            //Existing bundle price
-            bundlePrice.currencyCode = "SGD"
-            if let bundlePriceDisplay = bundlePriceDisplay {
-                bundlePrice.valueConvert = bundlePriceDisplay
-            }
-            print("Bundle Qty display \(bundleQtyDisplay ?? -1)")
-            bundlePrice.quantityConvert = bundleQtyDisplay ?? 2
-        } else {
+        if bundlePrice == nil {
             //New bundle price
-            let bundlePrice = Price(context: persistentContainer.viewContext)
-            bundlePrice.currencyCode = "SGD"
-            print("Bundle Qty \(bundleQtyDisplay ?? -1)")
-            bundlePrice.quantityConvert = bundleQtyDisplay ?? 2
-            if let bundlePriceDisplay = bundlePriceDisplay {
-                bundlePrice.valueConvert = bundlePriceDisplay
-                print("Bundle Price \(bundlePriceDisplay)")
-            }
-            bundlePrice.type = 1
-            item.addToPrices(bundlePrice)
+            bundlePrice = Price(context: persistentContainer.viewContext)
+            item.addToPrices(bundlePrice!)
         }
+        
+        bundlePrice?.currencyCode = "SGD"
+        bundlePrice?.valueConvert = bundlePriceVc ?? 0
+        bundlePrice?.quantityConvert = bundleQtyPricingInfoVc ?? 2
+        bundlePrice?.type = 1
     }
     
     @IBAction func onDeleteItem(_ sender: UIButton) {
@@ -593,6 +620,58 @@ class ShoppingListItemEditorViewController: UIViewController {
         present(pictureActionSheetController, animated: true, completion: nil)
     }
     
+    // MARK: - State: Handle validation state transition and state-based ui properties
+    
+    lazy var validationStateUiPropertiesHandler: (ValidationState) -> Void = { nextState in
+        
+        switch nextState {
+        case .newItem:
+            self.deleteItemButton.isHidden = true
+            
+            let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(.unit, nil)
+            self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
+            self.itemNameTextField.errorText = nil
+            
+        case .existingItem:
+            
+            self.itemNameTextField.text = self.shoppingListItem?.item?.name
+            self.brandTextField.text = self.shoppingListItem?.item?.brand
+            //self.q = self.shoppingListItem?.quantityToBuyConvert ?? 1
+            
+            self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
+            self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
+            self.descriptionTextField.text = self.shoppingListItem?.item?.itemDescription
+            self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+            
+            //Although I can traverse from item to get prices of type NSSet, it is difficult to work with NSSet.
+            //Therefore I do a fetch prices to get an array of prices at the cost of a round trip to database
+            self.prices = try! Price.findPrices(of: (self.shoppingListItem?.item)!, moc: self.persistentContainer.viewContext)
+            
+            self.itemNameTextField.isEnabled = false
+            self.deleteItemButton.isHidden = false
+            
+            let k = self.shoppingListItem?.priceTypeSelectedConvert ?? PriceType.unit.rawValue
+            let savedSelectedPriceType = PriceType(rawValue:k)!
+            
+            switch savedSelectedPriceType {
+                
+            case .unit:
+                self.quantityToBuyAtUnit = self.shoppingListItem?.quantityToBuyConvert ?? 1
+            case .bundle:
+                self.quantityToBuyAtBundle = self.shoppingListItem?.quantityToBuyConvert ?? 2
+            }
+            
+            let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(savedSelectedPriceType, self.onSelectPriceTypeEventHandler)
+            
+            self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
+            
+            self.itemNameTextField.errorText = nil
+            
+        default:
+            break
+        }
+    }
+    
     /*
      // MARK: - Navigation
      
@@ -604,7 +683,8 @@ class ShoppingListItemEditorViewController: UIViewController {
      */
 }
 
-// MARK: - Handle picture actions and states
+// MARK: - State: Handle picture actions and states
+
 extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var pictureActionSheet: UIAlertController {
@@ -667,6 +747,16 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
             case .replacement:
                 self.itemImage = newItemPicture!
             }
+        }
+    }
+    
+    func writePicturePickedFromCameraToFile() -> URL? {
+        
+        if let image = itemImage {
+            let cameraUtil = CameraUtil()
+            return cameraUtil.persistImage(data: image)
+        } else {
+            return nil
         }
     }
     
@@ -833,11 +923,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         
         changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
         
-        validationState.handle(event: .onChangeCharacters) {
-            
-            validationState in
-            self.itemNameTextField.errorText = nil
-        }
+        validationState.handle(event: .onChangeCharacters, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
         
         return true
     }

@@ -70,7 +70,7 @@ class ShoppingList: NSManagedObject {
         
         let shoppingListItem = ShoppingListItem(context: item.managedObjectContext!)
         shoppingListItem.item = item
-        shoppingListItem.quantity = quantity
+        shoppingListItem.quantityToBuyConvert = quantity
         self.addToLineItems(shoppingListItem)
         return shoppingListItem
     }

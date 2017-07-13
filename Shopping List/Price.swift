@@ -29,6 +29,31 @@ class Price: NSManagedObject {
         }
     }
     
+    class func filter(prices: [Price], match: PriceType) -> Price? {
+        let priceTypeFilter: NSPredicate
+        
+        switch match {
+        case .unit:
+            priceTypeFilter = NSPredicate(format: "quantity == 1")
+        case .bundle:
+            priceTypeFilter = NSPredicate(format: "quantity >= 2")
+            
+        }
+        
+        if prices.count > 0 {
+            let nsprices = prices as NSArray
+            
+            let priceRes = nsprices.filtered(using: priceTypeFilter)
+            if priceRes.count > 0 {
+                return priceRes[0] as? Price
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
     class func findPrices(of item: Item, moc: NSManagedObjectContext) throws -> [Price]? {
         
         //Create request

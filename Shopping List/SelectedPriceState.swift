@@ -13,9 +13,11 @@ enum SelectedPriceState: Int {
     case unitPrice = 0
     case bundlePrice = 1
     
-    enum Event: Int {
-        case onSelectUnitPrice = 0
-        case onSelectBundlePrice = 1
+    enum Event {
+        case onSelectPriceType(PriceType, ((PriceType) -> Void)?)
+        case onChangeQtyToBuy((SelectedPriceState) -> Void)
+
+        case onBundleQtyChange(Int, (SelectedPriceState, Int) -> Void)
     }
     
     init() {
@@ -28,18 +30,36 @@ enum SelectedPriceState: Int {
             
         case .unitPrice:
             switch event {
-            case .onSelectBundlePrice:
-                self = .bundlePrice
-            default:
-                break
+                
+            case .onSelectPriceType(let priceType, let eventHandler):
+                eventHandler?(priceType)
+                if priceType == .bundle {
+                    self = .bundlePrice
+                }
+                
+            case .onChangeQtyToBuy(let eventHandler):
+                eventHandler(self)
+                
+            case .onBundleQtyChange(let bundleQty, let eventHandler):
+                eventHandler(self, bundleQty)
+                
             }
             
         case .bundlePrice:
             switch event {
-            case .onSelectUnitPrice:
-                self = .unitPrice
-            default:
-                break
+                
+            case .onSelectPriceType(let priceType, let eventHandler):
+                eventHandler?(priceType)
+                if priceType == .unit {
+                    self = .unitPrice
+                }
+                
+            case .onChangeQtyToBuy(let eventHandler):
+                eventHandler(self)
+                
+            case .onBundleQtyChange(let bundleQty, let eventHandler):
+                eventHandler(self, bundleQty)
+                
             }
         }
         
