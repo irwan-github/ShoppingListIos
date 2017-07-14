@@ -12,6 +12,11 @@ import CoreData
 class ShoppingListTableViewController: FetchedResultsTableViewController {
     
     // MARK : - API
+    
+    /**
+     Public API.
+     Display all the items in the shopping list
+    */
     var shoppingList: ShoppingList? {
         didSet {
             print("\(#function) - \(type(of: self))")
@@ -37,12 +42,6 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     override func viewWillAppear(_ animated: Bool) {
         print("\(#function) - \(type(of: self))")
         super.viewWillAppear(animated)
-    }
-    
-    @IBAction func unwindToShoppingListTableViewController(segue: UIStoryboardSegue, shoppingListItem: ShoppingListItem){
-        
-        print(">>> \(#function)")
-        
     }
     
     func updateUi() {
@@ -126,11 +125,11 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
             destinationVc = navigationController.visibleViewController!
         }
         
-        let shoppingEditorVc = destinationVc as! ShoppingListItemEditorViewController
-        
-        shoppingEditorVc.shoppingList = shoppingList
-        
         if let id = segue.identifier, id == "Update Shopping List Item" {
+            
+            let shoppingEditorVc = destinationVc as! ShoppingListItemEditorViewController
+            
+            shoppingEditorVc.shoppingList = shoppingList
             
             let cell = sender as! ShoppingListItemTableViewCell
             
@@ -140,6 +139,29 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
             
             shoppingEditorVc.shoppingListItem = shoppingListItem
             
+        }
+        
+        if let id = segue.identifier, id == "New Shopping List Item" {
+            
+            let shoppingEditorVc = destinationVc as! ShoppingListItemEditorViewController
+            
+            shoppingEditorVc.shoppingList = shoppingList
+        }
+        
+        if let id = segue.identifier, id == "item detail" {
+            
+            let itemDetailVc = destinationVc as! ItemDetailViewController
+            
+            itemDetailVc.shoppingListItem = selectedShoppingListItem
+        }
+    }
+    
+    var selectedShoppingListItem: ShoppingListItem? {
+        let indexOfSelectedShoppingListItem = tableView.indexPathForSelectedRow
+        if let indexPathSelected = indexOfSelectedShoppingListItem {
+            return fetchedResultsController?.object(at: indexPathSelected)
+        } else {
+            return nil
         }
     }
 }

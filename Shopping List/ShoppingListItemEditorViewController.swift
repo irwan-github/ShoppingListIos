@@ -107,7 +107,9 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
         
         get {
-            return Int(quantityToBuyStepper.value)
+            let p = quantityToBuyStepper.value
+            let q = Int(p)
+            return q
         }
     }
     
@@ -207,57 +209,6 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBAction func onCancel(_ sender: UIBarButtonItem) {
         changeState.transition(event: .onCancel(changeStateOnCancelEventAction), handleNextStateUiAttributes: changeStateAttributeHandler)
-    }
-    
-    @IBAction func onDone(_ sender: UIBarButtonItem) {
-        
-        let onSaveEventhandler = ValidationState.OnSaveItemEventHandler(validate: { currentState in
-            
-            if let name = self.itemNameTextField.text, !name.isEmpty {
-                
-                switch currentState {
-                    
-                case .newItem:
-                    do {
-                        if try Item.isNameExist(self.itemNameTextField.text!, moc: self.persistentContainer.viewContext) {
-                            self.itemNameTextField.errorText = "Name already exist"
-                            return false
-                        } else {
-                            return true
-                        }
-                    } catch {
-                        let nserror = error as NSError
-                        print("Error \(nserror) : \(nserror.userInfo)")
-                        return false
-                    }
-                    
-                default:
-                    return true
-                }
-                
-            } else {
-                self.itemNameTextField.errorText = "Name cannot be empty"
-                return false
-            }
-            
-        }, actionIfValidateTrue: {currentState in
-            
-            switch currentState {
-                
-            case .newItem:
-                self.saveNew()
-                self.presentingViewController?.dismiss(animated: true, completion: nil)
-                
-            case .existingItem:
-                self.saveUpdate()
-                self.presentingViewController?.dismiss(animated: true, completion: nil)
-                
-            default:
-                break
-            }
-        })
-        
-        validationState.handle(event: .onSaveItem(onSaveEventhandler), handleNextStateUiAttributes: nil)
     }
     
     // MARK: - State: Selected price type, Pricing information, Quantity to buy logic
@@ -467,6 +418,57 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     // MARK: - Create, Read, Update, Delete
+    
+    @IBAction func onDone(_ sender: UIBarButtonItem) {
+        
+        let onSaveEventhandler = ValidationState.OnSaveItemEventHandler(validate: { currentState in
+            
+            if let name = self.itemNameTextField.text, !name.isEmpty {
+                
+                switch currentState {
+                    
+                case .newItem:
+                    do {
+                        if try Item.isNameExist(self.itemNameTextField.text!, moc: self.persistentContainer.viewContext) {
+                            self.itemNameTextField.errorText = "Name already exist"
+                            return false
+                        } else {
+                            return true
+                        }
+                    } catch {
+                        let nserror = error as NSError
+                        print("Error \(nserror) : \(nserror.userInfo)")
+                        return false
+                    }
+                    
+                default:
+                    return true
+                }
+                
+            } else {
+                self.itemNameTextField.errorText = "Name cannot be empty"
+                return false
+            }
+            
+        }, actionIfValidateTrue: {currentState in
+            
+            switch currentState {
+                
+            case .newItem:
+                self.saveNew()
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+                
+            case .existingItem:
+                self.saveUpdate()
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+                
+            default:
+                break
+            }
+        })
+        
+        validationState.handle(event: .onSaveItem(onSaveEventhandler), handleNextStateUiAttributes: nil)
+    }
     
     /**
      Save new item
@@ -923,7 +925,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         
         changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
         
-        validationState.handle(event: .onChangeCharacters, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
+        validationState.handle(event: .onChangeCharacters, handleNextStateUiAttributes: nil)
         
         return true
     }

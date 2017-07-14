@@ -14,6 +14,16 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
     // MARK: API
     var persistContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
+    var selectedShoppingList: ShoppingList? {
+        get {
+            if let indexPathForSelectedShoppingList = tableView.indexPathForSelectedRow {
+                return fetchedResultsController?.object(at: indexPathForSelectedShoppingList)
+            } else {
+                return nil
+            }
+        }
+    }
+    
     // MARK: - Model
     fileprivate var fetchedResultsController: NSFetchedResultsController<ShoppingList>? = nil
     
@@ -137,9 +147,7 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         // Pass the selected object to the new view controller.
         print("\(#function) - \(type(of: self))")
         
-        if segue.identifier != "showShoppingList" {
-            return
-        }
+        let identifier = segue.identifier!
         
         var targetCtlr = segue.destination
         
@@ -149,19 +157,21 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
             
         }
         
-        if let shoppingListCtlr = targetCtlr as? ShoppingListTableViewController {
+        if identifier == "showShoppingList" {
             
-            if let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) {
+            if let shoppingListCtlr = targetCtlr as? ShoppingListTableViewController {
                 
-                let aShoppingList = fetchedResultsController?.object(at: indexPath)
-                
-                shoppingListCtlr.shoppingList = aShoppingList
-                
-                shoppingListCtlr.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-                shoppingListCtlr.navigationItem.leftItemsSupplementBackButton = true
+                if let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) {
+                    
+                    let aShoppingList = fetchedResultsController?.object(at: indexPath)
+                    
+                    shoppingListCtlr.shoppingList = aShoppingList
+                    
+//                    shoppingListCtlr.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+//                    shoppingListCtlr.navigationItem.leftItemsSupplementBackButton = true
+                }
             }
         }
-        
     }
 }
 

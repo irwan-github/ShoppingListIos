@@ -54,6 +54,34 @@ class Price: NSManagedObject {
         }
     }
     
+    static let unitPriceTypeFilter = NSPredicate(format: "quantity == 1")
+    
+    static let bundlePriceTypeFilter = NSPredicate(format: "quantity >= 2")
+        
+    class func filterSet(of prices: NSSet, match: PriceType) -> Price? {
+        let priceTypeFilter: NSPredicate
+        
+        switch match {
+        case .unit:
+            priceTypeFilter = unitPriceTypeFilter
+        case .bundle:
+            priceTypeFilter = bundlePriceTypeFilter
+            
+        }
+        
+        if prices.count > 0 {
+            
+            let priceRes = prices.filtered(using: priceTypeFilter)
+            if priceRes.count > 0 {
+                return priceRes.first as? Price
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
     class func findPrices(of item: Item, moc: NSManagedObjectContext) throws -> [Price]? {
         
         //Create request

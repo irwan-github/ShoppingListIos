@@ -47,9 +47,23 @@ class Item: NSManagedObject {
         let sortBy = [NSSortDescriptor(key: "name", ascending: true)]
         fetchRequest.sortDescriptors = sortBy
         
+        var item: Item
         //Fetch request
-        return try moc.fetch(fetchRequest).first
+        do {
+            let result = try moc.fetch(fetchRequest)
+            if result.count > 0 {
+            item =  result[0]
+                
+            let resultPrices = try Price.findPrices(of: item, moc: item.managedObjectContext!)
+            item.prices = NSSet(array: resultPrices!)
+            } else {
+                return nil
+            }
+        } catch  {
+            fatalError("Fetching item")
+        }
         
+        return item
     }
     
     class func isNameExist(_ name: String, moc: NSManagedObjectContext) throws -> Bool {
