@@ -15,18 +15,21 @@ class ItemDetailViewController: UIViewController {
     
     var shoppingListItem: ShoppingListItem? {
         didSet {
-            item = try! Item.find(name: (shoppingListItem?.item?.name)!,
-                             moc: (shoppingListItem?.managedObjectContext)!)
+            item = shoppingListItem?.item
         }
     }
     
-    var item: Item?
+    var item: Item? {
+        didSet {
+            updateUi()
+        }
+    }
     
     var persistentContainer: NSPersistentContainer? = AppDelegate.persistentContainer
     
     // MARK: - Properties
     
-    // MARK: - Item Basic information
+    // MARK: - UIViewController's version of model
     
     @IBOutlet weak var itemNameLabel: UILabel!
     
@@ -38,35 +41,22 @@ class ItemDetailViewController: UIViewController {
     
     // MARK: - Item pricing information
     
+    /**
+     Consist of unit price and bundle price. Set property observer to populate price fields.
+    */
     private var prices: NSSet? {
         didSet {
             if let prices = prices {
-                unitPrice = Price.filterSet(of: prices, match: .unit)
+                let unitPrice = Price.filterSet(of: prices, match: .unit)
                 unitPriceVc = unitPrice?.valueConvert
                 
-                bundlePrice = Price.filterSet(of: prices, match: .bundle)
+                let bundlePrice = Price.filterSet(of: prices, match: .bundle)
                 bundlePriceVc = bundlePrice?.valueConvert
-                bundleQtyPricingInfoVc = bundlePrice?.quantityConvert
+                bundleQtyVc = bundlePrice?.quantityConvert
                 
             }
         }
     }
-    
-    /**
-     Pricing information for bundle.
-     Converts Double to Int for getter.
-     Set value of bundleQtyLabel.text after converting Double to String.
-     */
-    private var bundleQtyPricingInfoVc: Int? {
-        didSet {
-            let setValue = bundleQtyPricingInfoVc ?? 2
-            bundleQtyValueLabel?.text = String(describing: setValue)
-        }
-    }
-    
-    private var unitPrice: Price?
-    
-    private var bundlePrice: Price?
     
     @IBOutlet weak var pricingInformationSc: UISegmentedControl!
     
@@ -83,11 +73,11 @@ class ItemDetailViewController: UIViewController {
     @IBOutlet weak var bundleQtyValueLabel: UILabel!
     
     @IBOutlet weak var unitPriceGroup: UIStackView!
-
+    
     @IBOutlet weak var bundlePriceGroup: UIStackView!
     
     /**
-     Pricing information for unit
+     Currency-formatted pricing information for unit price. Acts as a adapter to Price model which stores data as type Int32. Set property observer to populate unit price field.
      */
     private var unitPriceVc: Int? {
         didSet {
@@ -101,7 +91,7 @@ class ItemDetailViewController: UIViewController {
     }
     
     /**
-     Pricing information for bundle
+     Currency-formatted pricing information for bundle. Functions as a adapter to Price model which stores data as type Int32. Set property observer to populate bundle price fielda.
      */
     private var bundlePriceVc: Int? {
         didSet {
@@ -114,18 +104,55 @@ class ItemDetailViewController: UIViewController {
         }
     }
     
+    /**
+     Pricing information for bundle.
+     Converts Double to Int for getter.
+     Set value of bundleQtyLabel.text after converting Double to String.
+     */
+    private var bundleQtyVc: Int? {
+        didSet {
+            let setValue = bundleQtyVc ?? 2
+            bundleQtyValueLabel?.text = String(describing: setValue)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
+        listenForNotificationOfChangesToItem()
         updateUi()
-        
-        // Do any additional setup after loading the view.
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("\(#function) - \(type(of: self))")
-        //updateUi()
+    }
+    
+    var changesToItemObserver: NSObjectProtocol?
+    
+    func listenForNotificationOfChangesToItem() {
+        let notificationCtr = NotificationCenter.default
+        changesToItemObserver = notificationCtr.addObserver(forName: NSNotification.Name.NSManagedObjectContextDidSave,
+                                               object: item?.managedObjectContext, //Broadcaster
+            queue: OperationQueue.main,
+            using: { notification in
+                
+                let info = notification.userInfo
+                let changedObjects = info?[NSUpdatedObjectsKey] as! NSSet
+                
+                for changedObject in changedObjects {
+                    if let changedItem = changedObject as? Item {
+                        self.item = changedItem
+                    }
+                }
+        })
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        if let observer = changesToItemObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     func updateUi() {
@@ -139,23 +166,23 @@ class ItemDetailViewController: UIViewController {
     }
     
     @IBAction func onSelectPriceInformation(_ sender: UISegmentedControl) {
-            let priceIndicator = sender.selectedSegmentIndex
-            onDisplayPriceTypeInformation(priceType: PriceType(rawValue: priceIndicator) ?? .unit)
+        let priceIndicator = sender.selectedSegmentIndex
+        onDisplayPriceTypeInformation(priceType: PriceType(rawValue: priceIndicator) ?? .unit)
     }
     
     func onDisplayPriceTypeInformation(priceType: PriceType) {
         
-            switch priceType {
-            case .unit:
-                
-                unitPriceGroup.isHidden = false
-                bundlePriceGroup.isHidden = true
-                
-            case .bundle:
-                
-                bundlePriceGroup.isHidden = false
-                unitPriceGroup.isHidden = true
-            }
+        switch priceType {
+        case .unit:
+            
+            unitPriceGroup?.isHidden = false
+            bundlePriceGroup?.isHidden = true
+            
+        case .bundle:
+            
+            bundlePriceGroup?.isHidden = false
+            unitPriceGroup?.isHidden = true
+        }
     }
     
     

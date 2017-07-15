@@ -136,9 +136,9 @@ class SearchItemsTableViewController: FetchedResultsTableViewController, UITextF
             
             let indexPathItemSelected = tableView.indexPathForSelectedRow
             
-            let item = fetchedResultsController?.object(at: indexPathItemSelected!)
+            _ = fetchedResultsController?.object(at: indexPathItemSelected!)
             
-            let itemViewController = destinationVc as! ItemDetailViewController
+            _ = destinationVc as! ItemDetailViewController
             
             //itemViewController.item = item
         }

@@ -11,6 +11,9 @@ import CoreData
 
 class Price: NSManagedObject {
     
+    /**
+     The value of price. Convert Int32 to Int and vice-versa. Conveient to work with Int type in view controllers
+     */
     var valueConvert: Int {
         get {
             return Int(value)
@@ -20,6 +23,9 @@ class Price: NSManagedObject {
         }
     }
     
+    /**
+     Convert Int32 to Int and vice-versa. Conveient to work with Int type in view controllers
+     */
     var quantityConvert: Int {
         set {
             quantity = Int32(newValue)
@@ -29,60 +35,25 @@ class Price: NSManagedObject {
         }
     }
     
-    class func filter(prices: [Price], match: PriceType) -> Price? {
+    /**
+     By definition, unit price is price of one unit.
+     By definition, bundle price is price of more than 1 unit
+     */
+    class func filterSet(of prices: NSSet, match: PriceType) -> Price? {
         let priceTypeFilter: NSPredicate
         
         switch match {
         case .unit:
             priceTypeFilter = NSPredicate(format: "quantity == 1")
         case .bundle:
-            priceTypeFilter = NSPredicate(format: "quantity >= 2")
-            
+            priceTypeFilter = NSPredicate(format: "quantity > 1")
         }
         
-        if prices.count > 0 {
-            let nsprices = prices as NSArray
-            
-            let priceRes = nsprices.filtered(using: priceTypeFilter)
-            if priceRes.count > 0 {
-                return priceRes[0] as? Price
-            } else {
-                return nil
-            }
-        } else {
-            return nil
-        }
+        let priceRes = prices.filtered(using: priceTypeFilter)
+        return priceRes.first as? Price
     }
     
-    static let unitPriceTypeFilter = NSPredicate(format: "quantity == 1")
-    
-    static let bundlePriceTypeFilter = NSPredicate(format: "quantity >= 2")
-        
-    class func filterSet(of prices: NSSet, match: PriceType) -> Price? {
-        let priceTypeFilter: NSPredicate
-        
-        switch match {
-        case .unit:
-            priceTypeFilter = unitPriceTypeFilter
-        case .bundle:
-            priceTypeFilter = bundlePriceTypeFilter
-            
-        }
-        
-        if prices.count > 0 {
-            
-            let priceRes = prices.filtered(using: priceTypeFilter)
-            if priceRes.count > 0 {
-                return priceRes.first as? Price
-            } else {
-                return nil
-            }
-        } else {
-            return nil
-        }
-    }
-    
-    class func findPrices(of item: Item, moc: NSManagedObjectContext) throws -> [Price]? {
+    class func findPrices(of item: Item, in managedObjectContext: NSManagedObjectContext) throws -> [Price]? {
         
         //Create request
         let fetchRequest: NSFetchRequest<Price> = Price.fetchRequest()
@@ -96,7 +67,7 @@ class Price: NSManagedObject {
         fetchRequest.sortDescriptors = sortBy
         
         //Go fetch
-        return try? moc.fetch(fetchRequest)
+        return try? managedObjectContext.fetch(fetchRequest)
         
     }
 }

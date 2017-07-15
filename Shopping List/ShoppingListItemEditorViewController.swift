@@ -31,13 +31,15 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     // MARK: - Properties
     
-    private var prices: [Price]? {
+    private var prices: NSSet? {
         didSet {
             
-            unitPrice = Price.filter(prices: prices!, match: .unit)
+            guard let prices = prices else { return }
+            
+            unitPrice = Price.filterSet(of: prices, match: .unit)
             unitPriceVc = unitPrice?.valueConvert
             
-            bundlePrice = Price.filter(prices: prices!, match: .bundle)
+            bundlePrice = Price.filterSet(of: prices, match: .bundle)
             bundlePriceVc = bundlePrice?.valueConvert
             
             if let bundlePrice = bundlePrice {
@@ -48,7 +50,6 @@ class ShoppingListItemEditorViewController: UIViewController {
                 bundleQtyStepper.value = Double(2)
                 bundleQtyPricingInfoVc = 2
             }
-            
         }
     }
     
@@ -72,7 +73,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     /**
      Shared by bundle pricing and unit pricing.
-    */
+     */
     @IBOutlet weak var quantityToBuyLabel: UILabel!
     
     /**
@@ -238,7 +239,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     /**
      Event causes the display of relevent pricing information and hiding of irrelevant pricing information depending on the price type.
-    */
+     */
     @IBAction func onDisplayPriceTypeInformation(_ sender: UISegmentedControl) {
         
         if let priceType = PriceType(rawValue: sender.selectedSegmentIndex) {
@@ -361,7 +362,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     /**
      The logic depends on the state of the selected price type. The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
-    */
+     */
     @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
         
         selectedPriceState.transition(event: .onChangeQtyToBuy(onChangeQtyToBuyEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
@@ -552,7 +553,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         unitPrice?.currencyCode = "SGD"
         unitPrice?.quantityConvert = 1
-        print(">>>>\(#function) - \(unitPriceVc!)")
         unitPrice?.valueConvert = unitPriceVc ?? 0
         unitPrice?.type = 0
     }
@@ -629,7 +629,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         switch nextState {
         case .newItem:
             self.deleteItemButton.isHidden = true
-            
             let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(.unit, nil)
             self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
             self.itemNameTextField.errorText = nil
@@ -638,22 +637,16 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.itemNameTextField.text = self.shoppingListItem?.item?.name
             self.brandTextField.text = self.shoppingListItem?.item?.brand
-            //self.q = self.shoppingListItem?.quantityToBuyConvert ?? 1
-            
             self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
             self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
             self.descriptionTextField.text = self.shoppingListItem?.item?.itemDescription
             self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
-            
-            //Although I can traverse from item to get prices of type NSSet, it is difficult to work with NSSet.
-            //Therefore I do a fetch prices to get an array of prices at the cost of a round trip to database
-            self.prices = try! Price.findPrices(of: (self.shoppingListItem?.item)!, moc: self.persistentContainer.viewContext)
-            
+            self.prices = self.shoppingListItem?.item?.prices
             self.itemNameTextField.isEnabled = false
             self.deleteItemButton.isHidden = false
             
-            let k = self.shoppingListItem?.priceTypeSelectedConvert ?? PriceType.unit.rawValue
-            let savedSelectedPriceType = PriceType(rawValue:k)!
+            let priceTypeVal = self.shoppingListItem?.priceTypeSelectedConvert ?? PriceType.unit.rawValue
+            let savedSelectedPriceType = PriceType(rawValue:priceTypeVal)!
             
             switch savedSelectedPriceType {
                 

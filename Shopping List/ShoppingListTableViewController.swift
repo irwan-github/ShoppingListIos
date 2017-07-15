@@ -15,7 +15,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     
     /**
      Public API.
-     Display all the items in the shopping list
+     Set this property to display all the items in the shopping list
     */
     var shoppingList: ShoppingList? {
         didSet {
