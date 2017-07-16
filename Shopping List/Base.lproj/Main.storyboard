@@ -29,40 +29,121 @@
             </objects>
             <point key="canvasLocation" x="136" y="-271"/>
         </scene>
+        <!--Shopping List Metadata View Controller-->
+        <scene sceneID="8Uy-o2-qsh">
+            <objects>
+                <viewController id="3mW-47-NcJ" customClass="ShoppingListMetadataViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Y17-9k-e77"/>
+                        <viewControllerLayoutGuide type="bottom" id="xPI-bz-pR2"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="hB3-4a-j8P">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Shopping List Name" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="dF0-oT-Dii">
+                                <rect key="frame" x="20" y="80" width="728" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Description" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="WvH-FC-vrY">
+                                <rect key="frame" x="20" y="137" width="728" height="30"/>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="dF0-oT-Dii" firstAttribute="top" secondItem="Y17-9k-e77" secondAttribute="bottom" constant="16" id="1hU-RE-WcO"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="dF0-oT-Dii" secondAttribute="trailing" id="Tuw-g5-RUc"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="dF0-oT-Dii" secondAttribute="leading" id="aNj-SP-LTW"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="WvH-FC-vrY" secondAttribute="trailing" id="b1t-Tj-1DS"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="WvH-FC-vrY" secondAttribute="leading" id="tv2-qx-RO8"/>
+                            <constraint firstItem="WvH-FC-vrY" firstAttribute="top" secondItem="dF0-oT-Dii" secondAttribute="bottom" constant="27" id="uJ4-4d-xeT"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="3OY-P4-9Uu">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="fWK-e3-Wfd">
+                            <connections>
+                                <action selector="onCancel:" destination="3mW-47-NcJ" id="ZIp-Du-3Uf"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="OCp-nd-s1P">
+                            <connections>
+                                <action selector="onSave:" destination="3mW-47-NcJ" id="b2H-Tb-0n3"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="commentsTextField" destination="WvH-FC-vrY" id="ur8-bw-EYU"/>
+                        <outlet property="shoppingListNameTextView" destination="dF0-oT-Dii" id="Tk1-lD-TrI"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="EBx-0u-p3S" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1699.21875" y="-943.35937499999989"/>
+        </scene>
         <!--Shopping Lists-->
         <scene sceneID="AN0-1P-huu">
             <objects>
                 <tableViewController title="Shopping Lists" clearsSelectionOnViewWillAppear="NO" id="sTz-Tn-Hag" customClass="ShoppingListsTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="2nv-UY-jxe">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="66" sectionHeaderHeight="28" sectionFooterHeight="28" id="2nv-UY-jxe">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="Shopping List" textLabel="aJX-hf-d5X" detailTextLabel="7dH-1L-ZtM" style="IBUITableViewCellStyleSubtitle" id="jBR-AZ-Vdw">
-                                <rect key="frame" x="0.0" y="28" width="320" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="Shopping List" rowHeight="66" id="jBR-AZ-Vdw" customClass="ShoppingListSummaryTableViewCell" customModule="Shopping_List" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="320" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jBR-AZ-Vdw" id="sV6-kS-MqP">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="66"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aJX-hf-d5X">
-                                            <rect key="frame" x="15" y="5" width="33.5" height="20.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="7dH-1L-ZtM">
-                                            <rect key="frame" x="15" y="25.5" width="44" height="14.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="KLq-yZ-n5V">
+                                            <rect key="frame" x="8" y="8" width="271" height="49.5"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3sl-Ss-g9y">
+                                                    <rect key="frame" x="0.0" y="0.0" width="24" height="49.5"/>
+                                                    <state key="normal" image="ic_mode_edit"/>
+                                                    <connections>
+                                                        <action selector="onChangeShoppingListMetaData:" destination="jBR-AZ-Vdw" eventType="touchUpInside" id="24M-t6-Dcy"/>
+                                                        <segue destination="bef-bj-4II" kind="presentation" identifier="Edit shopping list metadata" id="xrE-Bw-vUi"/>
+                                                    </connections>
+                                                </button>
+                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="QsW-dD-eBj">
+                                                    <rect key="frame" x="32" y="0.0" width="239" height="49.5"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Shopping list name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Jo-Ks-4zf">
+                                                            <rect key="frame" x="0.0" y="0.0" width="153" height="29"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                            <nil key="textColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Comments" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="otN-5m-4id">
+                                                            <rect key="frame" x="0.0" y="29" width="61" height="20.5"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                        </stackView>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstAttribute="trailingMargin" secondItem="KLq-yZ-n5V" secondAttribute="trailing" id="4Ja-Eh-aRm"/>
+                                        <constraint firstItem="KLq-yZ-n5V" firstAttribute="leading" secondItem="sV6-kS-MqP" secondAttribute="leadingMargin" id="Gyd-NO-TAY"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="KLq-yZ-n5V" secondAttribute="bottom" id="H0M-ap-lU0"/>
+                                        <constraint firstAttribute="topMargin" secondItem="KLq-yZ-n5V" secondAttribute="top" id="gPD-id-9Mu"/>
+                                    </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="0Z4-sc-yBF" kind="show" identifier="showShoppingList" id="bHv-Qz-NB5"/>
+                                    <outlet property="shoppingListCommentLabel" destination="otN-5m-4id" id="2tv-A6-txX"/>
+                                    <outlet property="shoppingListNameLabel" destination="3Jo-Ks-4zf" id="Y0H-Mc-EBW"/>
+                                    <outlet property="updateButton" destination="3sl-Ss-g9y" id="2v1-6t-If2"/>
+                                    <segue destination="0Z4-sc-yBF" kind="show" identifier="Show shopping list" id="lEU-oa-VW4"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -71,16 +152,25 @@
                             <outlet property="delegate" destination="sTz-Tn-Hag" id="h2S-Gv-XnD"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Shopping Lists" id="PZ3-yz-ODf"/>
+                    <navigationItem key="navigationItem" title="Shopping Lists" id="PZ3-yz-ODf">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="7D1-ma-Cxw">
+                            <connections>
+                                <segue destination="bef-bj-4II" kind="presentation" identifier="Edit shopping list metadata" id="Ac5-FM-fMp"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="addShoppingListButton" destination="7D1-ma-Cxw" id="DVF-ne-DwN"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RHd-xa-b0Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="935" y="-271"/>
+            <point key="canvasLocation" x="934.375" y="-271.2890625"/>
         </scene>
         <!--Shopping List Table View Controller-->
         <scene sceneID="jmR-Bi-bYL">
             <objects>
-                <tableViewController id="0Z4-sc-yBF" customClass="ShoppingListTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController clearsSelectionOnViewWillAppear="NO" id="0Z4-sc-yBF" customClass="ShoppingListTableViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="91" sectionHeaderHeight="28" sectionFooterHeight="28" id="kwK-iJ-0ss">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -232,7 +322,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tJJ-dk-p6b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3598" y="-521"/>
+            <point key="canvasLocation" x="4363.28125" y="-521.484375"/>
         </scene>
         <!--EmptyViewController-->
         <scene sceneID="fDM-I0-pCi">
@@ -367,127 +457,128 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="753" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="mvj-T2-NBb" userLabel="Item group">
-                                <rect key="frame" x="20" y="72" width="728" height="952"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lFp-C2-OMB">
+                                <rect key="frame" x="20" y="72" width="728" height="20.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brand" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ewO-ad-gFy" userLabel="Brand">
+                                <rect key="frame" x="20" y="109" width="728" height="20.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6xV-8a-cmx">
+                                <rect key="frame" x="20" y="145.5" width="728" height="14.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4JZ-B2-3Zq">
+                                <rect key="frame" x="19" y="175.5" width="729" height="14.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="hwN-6X-CiR">
+                                <rect key="frame" x="292.5" y="216" width="183" height="29"/>
+                                <segments>
+                                    <segment title="Unit Price"/>
+                                    <segment title="Bundle Price"/>
+                                </segments>
+                                <connections>
+                                    <action selector="onSelectPriceInformation:" destination="MgN-ZP-gvQ" eventType="valueChanged" id="GbW-FC-bUN"/>
+                                </connections>
+                            </segmentedControl>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3QW-Uw-2Yh">
+                                <rect key="frame" x="20" y="512" width="728" height="512"/>
+                            </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="gz7-nw-O3g" userLabel="Price Stack View">
+                                <rect key="frame" x="20" y="269" width="728" height="43.5"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="248" verticalCompressionResistancePriority="751" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="tMR-kR-vP4" userLabel="Information group">
-                                        <rect key="frame" x="0.0" y="0.0" width="728" height="83"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fK0-N0-reB" userLabel="Unit group">
+                                        <rect key="frame" x="332.5" y="0.0" width="63.5" height="14.5"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lFp-C2-OMB">
-                                                <rect key="frame" x="0.0" y="0.0" width="728" height="15"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brand" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ewO-ad-gFy" userLabel="Brand">
-                                                <rect key="frame" x="0.0" y="23" width="728" height="14.5"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6xV-8a-cmx">
-                                                <rect key="frame" x="0.0" y="45.5" width="728" height="15"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X5o-RA-edS" userLabel="Currency Code">
+                                                <rect key="frame" x="0.0" y="0.0" width="8" height="14.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4JZ-B2-3Zq">
-                                                <rect key="frame" x="0.0" y="68.5" width="728" height="14.5"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unit Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YZu-xG-W4Y" userLabel="Unit Price">
+                                                <rect key="frame" x="8" y="0.0" width="55.5" height="14.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
                                     </stackView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="syx-xi-sDE" userLabel="Pricing information">
-                                        <rect key="frame" x="0.0" y="99" width="728" height="24"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle3"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="hwN-6X-CiR">
-                                        <rect key="frame" x="0.0" y="139" width="728" height="29"/>
-                                        <segments>
-                                            <segment title="Unit Price"/>
-                                            <segment title="Bundle Price"/>
-                                        </segments>
-                                        <connections>
-                                            <action selector="onSelectPriceInformation:" destination="MgN-ZP-gvQ" eventType="valueChanged" id="GbW-FC-bUN"/>
-                                        </connections>
-                                    </segmentedControl>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="gz7-nw-O3g" userLabel="Price Stack View">
-                                        <rect key="frame" x="0.0" y="183" width="728" height="43.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="ab7-0k-HAG" userLabel="Bundle group">
+                                        <rect key="frame" x="311.5" y="14.5" width="105.5" height="29"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fK0-N0-reB" userLabel="Unit group">
-                                                <rect key="frame" x="0.0" y="0.0" width="728" height="14.5"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" translatesAutoresizingMaskIntoConstraints="NO" id="HRq-qq-8wr" userLabel="Price Stack View">
+                                                <rect key="frame" x="13" y="0.0" width="79.5" height="14.5"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X5o-RA-edS" userLabel="Currency Code">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTy-0A-mH9" userLabel="currency code">
                                                         <rect key="frame" x="0.0" y="0.0" width="8" height="14.5"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unit Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YZu-xG-W4Y" userLabel="Unit Price">
-                                                        <rect key="frame" x="8" y="0.0" width="720" height="14.5"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bundle Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ghF-w4-NsL" userLabel="Bundle Price">
+                                                        <rect key="frame" x="8" y="0.0" width="71.5" height="14.5"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ab7-0k-HAG" userLabel="bundle group">
-                                                <rect key="frame" x="0.0" y="14.5" width="728" height="29"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gFW-nl-Ozn" userLabel="Quantity Stack View">
+                                                <rect key="frame" x="0.0" y="14.5" width="105.5" height="14.5"/>
                                                 <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" translatesAutoresizingMaskIntoConstraints="NO" id="HRq-qq-8wr">
-                                                        <rect key="frame" x="0.0" y="0.0" width="728" height="14.5"/>
-                                                        <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTy-0A-mH9" userLabel="currency code">
-                                                                <rect key="frame" x="0.0" y="0.0" width="8" height="14.5"/>
-                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bundle Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ghF-w4-NsL" userLabel="Bundle Price">
-                                                                <rect key="frame" x="8" y="0.0" width="720" height="14.5"/>
-                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
-                                                        </subviews>
-                                                    </stackView>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gFW-nl-Ozn">
-                                                        <rect key="frame" x="0.0" y="14.5" width="728" height="14.5"/>
-                                                        <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="300" verticalHuggingPriority="251" text="Bundle Quantity: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ipC-JQ-woD" userLabel="Buble Qty Label">
-                                                                <rect key="frame" x="0.0" y="0.0" width="98" height="14.5"/>
-                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vqf-gI-eIO" userLabel="Bundle Qty Display">
-                                                                <rect key="frame" x="98" y="0.0" width="630" height="14.5"/>
-                                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                                                <nil key="highlightedColor"/>
-                                                            </label>
-                                                        </subviews>
-                                                    </stackView>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="300" verticalHuggingPriority="251" text="Bundle Quantity: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ipC-JQ-woD" userLabel="Buble Qty Label">
+                                                        <rect key="frame" x="0.0" y="0.0" width="98" height="14.5"/>
+                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                        <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vqf-gI-eIO" userLabel="Bundle Qty Display">
+                                                        <rect key="frame" x="98" y="0.0" width="7.5" height="14.5"/>
+                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
                                                 </subviews>
                                             </stackView>
                                         </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="cnR-wy-Ozl" userLabel="Bundle Qty Stack View">
-                                        <rect key="frame" x="0.0" y="242.5" width="728" height="709.5"/>
                                     </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="leadingMargin" secondItem="mvj-T2-NBb" secondAttribute="leading" id="Oft-jT-X52"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="mvj-T2-NBb" secondAttribute="trailing" id="RA7-91-pT1"/>
-                            <constraint firstItem="mvj-T2-NBb" firstAttribute="top" secondItem="M8j-Gy-qOf" secondAttribute="bottom" constant="8" id="gQ5-Nc-hVg"/>
-                            <constraint firstItem="AB2-7W-hwc" firstAttribute="top" secondItem="mvj-T2-NBb" secondAttribute="bottom" id="rhO-Pf-q1h"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="lFp-C2-OMB" secondAttribute="trailing" id="5dZ-L8-jHH"/>
+                            <constraint firstItem="3QW-Uw-2Yh" firstAttribute="height" secondItem="Hzy-qG-k4E" secondAttribute="height" multiplier="1:2" id="7JE-ij-J50"/>
+                            <constraint firstItem="gz7-nw-O3g" firstAttribute="leading" secondItem="Hzy-qG-k4E" secondAttribute="leadingMargin" id="9G8-wZ-oWZ"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="6xV-8a-cmx" secondAttribute="leading" id="9Kk-Mz-Nm0"/>
+                            <constraint firstItem="4JZ-B2-3Zq" firstAttribute="top" secondItem="6xV-8a-cmx" secondAttribute="bottom" constant="15.5" id="C20-cY-cfE"/>
+                            <constraint firstItem="lFp-C2-OMB" firstAttribute="leading" secondItem="Hzy-qG-k4E" secondAttribute="leadingMargin" id="F5f-wX-CI1"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="6xV-8a-cmx" secondAttribute="trailing" id="GGl-Sj-WHO"/>
+                            <constraint firstItem="lFp-C2-OMB" firstAttribute="top" secondItem="M8j-Gy-qOf" secondAttribute="bottom" constant="8" id="IHh-Br-b9i"/>
+                            <constraint firstItem="ewO-ad-gFy" firstAttribute="top" secondItem="lFp-C2-OMB" secondAttribute="bottom" constant="16.5" id="N8Z-pd-kvn"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="ewO-ad-gFy" secondAttribute="leading" id="NLS-G6-QJa"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="gz7-nw-O3g" secondAttribute="trailing" id="Qea-ws-g43"/>
+                            <constraint firstItem="gz7-nw-O3g" firstAttribute="top" secondItem="hwN-6X-CiR" secondAttribute="bottom" constant="25" id="VG9-pL-sP4"/>
+                            <constraint firstItem="4JZ-B2-3Zq" firstAttribute="leading" secondItem="Hzy-qG-k4E" secondAttribute="leadingMargin" constant="-1" id="W8C-TM-NkP"/>
+                            <constraint firstItem="hwN-6X-CiR" firstAttribute="centerX" secondItem="Hzy-qG-k4E" secondAttribute="centerX" id="Yoc-8g-RkM"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="3QW-Uw-2Yh" secondAttribute="trailing" id="fWc-wP-bkH"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="4JZ-B2-3Zq" secondAttribute="trailing" id="gUr-bH-kmd"/>
+                            <constraint firstItem="hwN-6X-CiR" firstAttribute="top" secondItem="4JZ-B2-3Zq" secondAttribute="bottom" constant="26" id="gxG-1h-eZM"/>
+                            <constraint firstItem="AB2-7W-hwc" firstAttribute="top" secondItem="3QW-Uw-2Yh" secondAttribute="bottom" id="jnU-vJ-Hub"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="ewO-ad-gFy" secondAttribute="trailing" id="nbf-37-mfy"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="3QW-Uw-2Yh" secondAttribute="leading" id="oHg-KV-Cev"/>
+                            <constraint firstItem="6xV-8a-cmx" firstAttribute="top" secondItem="ewO-ad-gFy" secondAttribute="bottom" constant="16" id="pUE-mu-Mn8"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="pqN-id-obJ">
@@ -506,6 +597,7 @@
                         <outlet property="itemBrandLabel" destination="ewO-ad-gFy" id="opd-gh-TzX"/>
                         <outlet property="itemCountryLabel" destination="6xV-8a-cmx" id="qfC-Id-GHv"/>
                         <outlet property="itemDescriptionLabel" destination="4JZ-B2-3Zq" id="rbp-uH-bsx"/>
+                        <outlet property="itemImageView" destination="3QW-Uw-2Yh" id="Kax-TC-KOr"/>
                         <outlet property="itemNameLabel" destination="lFp-C2-OMB" id="UEm-uG-Ql7"/>
                         <outlet property="pricingInformationSc" destination="hwN-6X-CiR" id="mDT-PP-ssd"/>
                         <outlet property="unitCurrencyCodeLabel" destination="X5o-RA-edS" id="ose-z0-TAd"/>
@@ -555,7 +647,7 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="753" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="CKT-yf-y8F" userLabel="Item group">
                                         <rect key="frame" x="0.0" y="94" width="728" height="858"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="knq-sT-nSM" userLabel="Item name" customClass="UITextErrorField" customModule="Shopping_List" customModuleProvider="target">
+                                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="knq-sT-nSM" userLabel="Item name" customClass="UITextErrorField" customModule="Shopping_List" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="728" height="50"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="color" keyPath="errorTextColor">
@@ -564,28 +656,28 @@
                                                     <userDefinedRuntimeAttribute type="string" keyPath="placeHolder" value="Name"/>
                                                 </userDefinedRuntimeAttributes>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="248" verticalCompressionResistancePriority="751" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="RDf-zB-WeA" userLabel="Information group">
+                                            <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="248" verticalCompressionResistancePriority="751" ambiguous="YES" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="RDf-zB-WeA" userLabel="Information group">
                                                 <rect key="frame" x="0.0" y="66" width="728" height="144"/>
                                                 <subviews>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="usF-vr-deq">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="usF-vr-deq">
                                                         <rect key="frame" x="0.0" y="0.0" width="728" height="30"/>
                                                         <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Quantity to buy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ueW-mM-7Ld">
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" ambiguous="YES" text="Quantity to buy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ueW-mM-7Ld">
                                                                 <rect key="frame" x="0.0" y="0.0" width="118" height="30"/>
                                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CtK-HP-luv">
+                                                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CtK-HP-luv">
                                                                 <rect key="frame" x="118" y="0.0" width="610" height="30"/>
                                                                 <subviews>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i9w-bW-egx" userLabel="Qty to buy">
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i9w-bW-egx" userLabel="Qty to buy">
                                                                         <rect key="frame" x="0.0" y="0.0" width="516" height="30"/>
                                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="RQN-pf-Vcy">
+                                                                    <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="RQN-pf-Vcy">
                                                                         <rect key="frame" x="516" y="0.0" width="94" height="29"/>
                                                                         <connections>
                                                                             <action selector="onChangeQtyToBuy:" destination="m5J-7J-iQ3" eventType="valueChanged" id="vZs-zj-UHW"/>
@@ -595,36 +687,36 @@
                                                             </stackView>
                                                         </subviews>
                                                     </stackView>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Brand" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="tmf-gJ-jY3" userLabel="Brand">
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Brand" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="tmf-gJ-jY3" userLabel="Brand">
                                                         <rect key="frame" x="0.0" y="38" width="728" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                     </textField>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Country" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="g5c-i1-FMJ" userLabel="Country">
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Country" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="g5c-i1-FMJ" userLabel="Country">
                                                         <rect key="frame" x="0.0" y="76" width="728" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <textInputTraits key="textInputTraits"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                     </textField>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Description" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Hbw-vf-Cqj" userLabel="Description">
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Description" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="Hbw-vf-Cqj" userLabel="Description">
                                                         <rect key="frame" x="0.0" y="114" width="728" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <textInputTraits key="textInputTraits"/>
+                                                        <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                                                     </textField>
                                                 </subviews>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="wct-vf-wEx" userLabel="Select price">
+                                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="wct-vf-wEx" userLabel="Select price">
                                                 <rect key="frame" x="0.0" y="226" width="728" height="28"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select price type:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e61-7p-cJy">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Select price type:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e61-7p-cJy">
                                                         <rect key="frame" x="0.0" y="0.0" width="134" height="28"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="jeC-GG-qVw" userLabel="Selected price type">
+                                                    <segmentedControl opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="jeC-GG-qVw" userLabel="Selected price type">
                                                         <rect key="frame" x="150" y="0.0" width="578" height="29"/>
                                                         <segments>
                                                             <segment title="Unit Price"/>
@@ -636,13 +728,13 @@
                                                     </segmentedControl>
                                                 </subviews>
                                             </stackView>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Gg-SH-cb3" userLabel="Pricing information">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Gg-SH-cb3" userLabel="Pricing information">
                                                 <rect key="frame" x="0.0" y="270" width="728" height="33.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Maj-2q-Vhq">
+                                            <segmentedControl opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Maj-2q-Vhq">
                                                 <rect key="frame" x="0.0" y="319.5" width="728" height="29"/>
                                                 <segments>
                                                     <segment title="Unit Price"/>
@@ -652,53 +744,53 @@
                                                     <action selector="onDisplayPriceTypeInformation:" destination="m5J-7J-iQ3" eventType="valueChanged" id="5uV-nw-IWK"/>
                                                 </connections>
                                             </segmentedControl>
-                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EzY-PC-JXQ" userLabel="Price Stack View">
+                                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EzY-PC-JXQ" userLabel="Price Stack View">
                                                 <rect key="frame" x="0.0" y="363.5" width="728" height="30"/>
                                                 <subviews>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SYi-bK-DxL" userLabel="Currency Code">
+                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SYi-bK-DxL" userLabel="Currency Code">
                                                         <rect key="frame" x="0.0" y="0.0" width="56" height="30"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                         <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" spellCheckingType="no" keyboardType="alphabet"/>
                                                     </textField>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Son-ap-3QZ">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="Son-ap-3QZ">
                                                         <rect key="frame" x="56" y="0.0" width="672" height="30"/>
                                                         <subviews>
-                                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Unit price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="stE-Yg-r4c" userLabel="Unit Price">
+                                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="249" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Unit price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="stE-Yg-r4c" userLabel="Unit Price">
                                                                 <rect key="frame" x="0.0" y="0.0" width="336" height="30"/>
                                                                 <nil key="textColor"/>
                                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" spellCheckingType="no" keyboardType="numberPad"/>
+                                                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" spellCheckingType="no" keyboardType="phonePad"/>
                                                             </textField>
-                                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Bundle price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tBf-4i-Mkh" userLabel="Bundle Price">
+                                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Bundle price" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tBf-4i-Mkh" userLabel="Bundle Price">
                                                                 <rect key="frame" x="336" y="0.0" width="336" height="30"/>
                                                                 <nil key="textColor"/>
                                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                                <textInputTraits key="textInputTraits"/>
+                                                                <textInputTraits key="textInputTraits" keyboardType="phonePad"/>
                                                             </textField>
                                                         </subviews>
                                                     </stackView>
                                                 </subviews>
                                             </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="Kcn-8f-2Zs" userLabel="Bundle Qty Stack View">
+                                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="Kcn-8f-2Zs" userLabel="Bundle Qty Stack View">
                                                 <rect key="frame" x="0.0" y="409.5" width="728" height="333.5"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Bundle Quantity " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1kS-Wt-Vkw" userLabel="Buble Qty Label">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" ambiguous="YES" text="Bundle Quantity " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1kS-Wt-Vkw" userLabel="Buble Qty Label">
                                                         <rect key="frame" x="0.0" y="0.0" width="127" height="20.5"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JTt-h5-7Y4">
+                                                    <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JTt-h5-7Y4">
                                                         <rect key="frame" x="127" y="0.0" width="601" height="29"/>
                                                         <subviews>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yGP-c6-iou" userLabel="Bundle Qty Display">
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yGP-c6-iou" userLabel="Bundle Qty Display">
                                                                 <rect key="frame" x="0.0" y="0.0" width="507" height="29"/>
                                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" minimumValue="2" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Zc2-WG-Ot0" userLabel="Bundle Qty Stepper">
+                                                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="2" minimumValue="2" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Zc2-WG-Ot0" userLabel="Bundle Qty Stepper">
                                                                 <rect key="frame" x="507" y="0.0" width="94" height="29"/>
                                                                 <connections>
                                                                     <action selector="onBundleQtyChange:" destination="m5J-7J-iQ3" eventType="valueChanged" id="gDb-XN-IDL"/>
@@ -708,7 +800,7 @@
                                                     </stackView>
                                                 </subviews>
                                             </stackView>
-                                            <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="mbC-cv-LGE">
+                                            <view contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="749" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mbC-cv-LGE">
                                                 <rect key="frame" x="0.0" y="759" width="728" height="50"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </view>
@@ -771,12 +863,13 @@
                         <outlet property="selectedPriceTypeSc" destination="jeC-GG-qVw" id="Awy-T0-YcX"/>
                         <outlet property="unitPriceTextField" destination="stE-Yg-r4c" id="Ugt-kY-Dlw"/>
                         <segue destination="ALQ-Ck-P71" kind="unwind" identifier="return to shopping list" unwindAction="unwindToShoppingListFor:" id="udV-Sa-78y"/>
+                        <segue destination="ALQ-Ck-P71" kind="unwind" identifier="back to shopping list" unwindAction="unwindToShoppingListFor:" id="MP1-jO-rK2"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pqX-VB-Zn3" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="ALQ-Ck-P71" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="4457" y="-521"/>
+            <point key="canvasLocation" x="5221.875" y="-521.484375"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="JbP-RS-4li">
@@ -796,12 +889,32 @@
             </objects>
             <point key="canvasLocation" x="2137.5" y="569.53125"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="uxU-uQ-ZU1">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bef-bj-4II" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="e05-NZ-xdq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="3mW-47-NcJ" kind="relationship" relationship="rootViewController" id="RG2-c5-Pyy"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="g6w-9Q-T0T" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="933.59375" y="-943.35937499999989"/>
+        </scene>
     </scenes>
     <resources>
         <image name="empty-photo" width="640" height="640"/>
+        <image name="ic_mode_edit" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
+        <segue reference="1bm-BA-i1k"/>
+        <segue reference="Ac5-FM-fMp"/>
         <segue reference="GDk-fS-7Cc"/>
-        <segue reference="TAZ-jC-yuw"/>
     </inferredMetricsTieBreakers>
 </document>

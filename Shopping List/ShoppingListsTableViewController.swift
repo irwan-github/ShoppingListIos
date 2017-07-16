@@ -28,6 +28,8 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
     fileprivate var fetchedResultsController: NSFetchedResultsController<ShoppingList>? = nil
     
     // MARK: - Properties
+    @IBOutlet weak var addShoppingListButton: UIBarButtonItem!
+    
     var indexPathOfDefaultShoppingList = IndexPath(row: 0, section: 0)
     
     fileprivate var defaultShoppingList: ShoppingList? {
@@ -42,10 +44,11 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
         print("\(#function) - \(type(of: self))")
         
         // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        self.clearsSelectionOnViewWillAppear = true
         
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        // Display an Edit button in the navigation bar for this view controller.
+        self.navigationItem.leftBarButtonItem = self.editButtonItem
+        
         
         //Fetch all shopping list
         fetchShoppingLists()
@@ -55,8 +58,9 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        clearsSelectionOnViewWillAppear = (splitViewController?.isCollapsed)!
+        //clearsSelectionOnViewWillAppear = (splitViewController?.isCollapsed)!
     }
+    
     
     // MARK: - Business
     private func initializeShoppingList() {
@@ -157,7 +161,7 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
             
         }
         
-        if identifier == "showShoppingList" {
+        if identifier == "Show shopping list" {
             
             if let shoppingListCtlr = targetCtlr as? ShoppingListTableViewController {
                 
@@ -167,11 +171,23 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
                     
                     shoppingListCtlr.shoppingList = aShoppingList
                     
-//                    shoppingListCtlr.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-//                    shoppingListCtlr.navigationItem.leftItemsSupplementBackButton = true
+                    //                    shoppingListCtlr.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+                    //                    shoppingListCtlr.navigationItem.leftItemsSupplementBackButton = true
                 }
             }
+        } else if identifier == segueToEditMetadataId, let shoppingList = sender as? ShoppingList {
+            
+            if let shoopingListMetadataEditorVc = targetCtlr as? ShoppingListMetadataViewController  {
+            
+                shoopingListMetadataEditorVc.shoppingList = shoppingList
+            }
         }
+    }
+    
+    private let segueToEditMetadataId = "Edit shopping list metadata"
+    
+    lazy var onChangeShoppingListMetaDataHandler: (ShoppingList) -> Void = { shoppingList in
+        self.performSegue(withIdentifier: self.segueToEditMetadataId, sender: shoppingList)
     }
 }
 
@@ -190,13 +206,72 @@ extension ShoppingListsTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List", for: indexPath)
+        print("\(#function) - \(type(of: self))")
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List", for: indexPath) as! ShoppingListSummaryTableViewCell
         
         // Configure the cell...
+        cell.updateButton?.isHidden = !tableView.isEditing
+        cell.updateButton?.isEnabled = tableView.isEditing
         let shoppingList = fetchedResultsController?.object(at: indexPath)
-        cell.textLabel?.text = shoppingList?.name
-        cell.detailTextLabel?.text = shoppingList?.comments
+        
+        cell.shoppingList = shoppingList
+        
         return cell
     }
+    
+
 }
+
+extension ShoppingListsTableViewController {
+    
+    
+    // Override to support conditional editing of the table view.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        // Return false if you do not want the specified item to be editable.
+        print("\(#function) - \(type(of: self))")
+        let cell = tableView.cellForRow(at: indexPath) as? ShoppingListSummaryTableViewCell
+        
+        if tableView.isEditing {
+            cell?.updateButton?.isHidden = false
+            cell?.updateButton?.isEnabled = true
+            cell?.onChangeShoppingListMetaDataHandler = onChangeShoppingListMetaDataHandler
+        } else {
+            cell?.updateButton?.isHidden = true
+            cell?.updateButton?.isEnabled = false
+            cell?.onChangeShoppingListMetaDataHandler = nil
+        }
+        
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        print("\(#function) - \(type(of: self))")
+        return .delete
+    }
+    
+    // Override to support editing the table view.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        print("\(#function) - \(type(of: self))")
+        print("\(#function) - \(type(of: self)) - \(editingStyle.rawValue)")
+        if editingStyle == .delete {
+            // Delete the row from the data source
+            
+            guard let shoppingList = fetchedResultsController?.object(at: indexPath) else { return }
+            
+            persistContainer.viewContext.delete(shoppingList)
+            
+            try? persistContainer.viewContext.save()
+            
+            //tableView.deleteRows(at: [indexPath], with: .fade)
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }
+    }
+    
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        addShoppingListButton.isEnabled = !editing
+    }
+    
+}
+

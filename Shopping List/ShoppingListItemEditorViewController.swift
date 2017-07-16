@@ -187,6 +187,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private let moneyTextFieldDelegate = MoneyUITextFieldDelegate()
     
+    // MARK: - ViewController lifecycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
@@ -458,6 +460,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             case .newItem:
                 self.saveNew()
                 self.presentingViewController?.dismiss(animated: true, completion: nil)
+                self.performSegue(withIdentifier: "back to shopping list", sender: self)
                 
             case .existingItem:
                 self.saveUpdate()
@@ -640,7 +643,12 @@ class ShoppingListItemEditorViewController: UIViewController {
             self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
             self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
             self.descriptionTextField.text = self.shoppingListItem?.item?.itemDescription
-            self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+            
+            if self.shoppingListItem?.item?.picture != nil {
+            
+                self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+            }
+            
             self.prices = self.shoppingListItem?.item?.prices
             self.itemNameTextField.isEnabled = false
             self.deleteItemButton.isHidden = false

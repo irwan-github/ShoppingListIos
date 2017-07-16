@@ -15,7 +15,7 @@ class ShoppingList: NSManagedObject {
     
     static let entityName = "ShoppingList"
     
-    convenience init(name: String, comments: String, insertInto context: NSManagedObjectContext) {
+    convenience init(name: String, comments: String?, insertInto context: NSManagedObjectContext) {
         
         //Returns the entity with the specified name from the managed object model associated with the specified managed object context’s persistent store coordinator.
         let shoppingListEntity = NSEntityDescription.entity(forEntityName: ShoppingList.entityName, in: context)

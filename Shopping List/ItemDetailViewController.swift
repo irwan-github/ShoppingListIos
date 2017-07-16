@@ -39,6 +39,8 @@ class ItemDetailViewController: UIViewController {
     
     @IBOutlet weak var itemDescriptionLabel: UILabel!
     
+    @IBOutlet weak var itemImageView: UIImageView!
+    
     // MARK: - Item pricing information
     
     /**
@@ -149,7 +151,7 @@ class ItemDetailViewController: UIViewController {
         
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    deinit {
         if let observer = changesToItemObserver {
             NotificationCenter.default.removeObserver(observer)
         }
@@ -163,6 +165,16 @@ class ItemDetailViewController: UIViewController {
         itemDescriptionLabel?.text = item?.itemDescription
         prices = item?.prices
         onDisplayPriceTypeInformation(priceType: .unit)
+        
+        if let stringPath = item?.picture?.fileUrl {
+            itemImageView?.image = UIImage(contentsOfFile: stringPath)
+            
+            //The following is an alternative to reading & displaying image file from web and filesystem.
+            //                let url = URL(fileURLWithPath: stringPath)
+            //                if let imageData = try? Data(contentsOf: url) {
+            //                    itemPicture.image = UIImage(data: imageData)
+            //                }
+        }
     }
     
     @IBAction func onSelectPriceInformation(_ sender: UISegmentedControl) {

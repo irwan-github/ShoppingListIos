@@ -16,7 +16,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
     /**
      Public API.
      Set this property to display all the items in the shopping list
-    */
+     */
     var shoppingList: ShoppingList? {
         didSet {
             print("\(#function) - \(type(of: self))")
@@ -34,7 +34,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         super.viewDidLoad()
         
         //The following does not work because viewWillAppear is not called when using popover. My solution is use an unwind segue and manually clear the cell selection
-        clearsSelectionOnViewWillAppear = true
+        //clearsSelectionOnViewWillAppear = true
         
         navigationItem.title = shoppingList?.name
     }
@@ -107,9 +107,14 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         
         print(">>> \(#function) - \(type(of: self))")
         
-        //viewWillAppear is not called when using popover. My solution is use an unwind segue and manually clear the cell selection
-        if let indexPathForSelectedRow = tableView.indexPathForSelectedRow {
-            tableView.deselectRow(at: indexPathForSelectedRow, animated: true)
+        let splitViewDisplayMode = splitViewController?.displayMode
+        
+        if let splitViewDisplayMode = splitViewDisplayMode, splitViewDisplayMode != .allVisible {
+            
+            //viewWillAppear is not called when using popover. My solution is use an unwind segue and manually clear the cell selection
+            if let indexPathForSelectedRow = tableView.indexPathForSelectedRow {
+                tableView.deselectRow(at: indexPathForSelectedRow, animated: true)
+            }
         }
     }
     

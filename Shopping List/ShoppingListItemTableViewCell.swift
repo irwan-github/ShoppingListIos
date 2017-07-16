@@ -26,7 +26,7 @@ class ShoppingListItemTableViewCell: UITableViewCell {
             brand.text = shoppingListItem?.item?.brand
             quantityToBuy.setTitle(String(describing: (shoppingListItem?.quantityToBuyConvert)!), for: .normal)
             
-            if let selectedPriceRes = shoppingListItem?.selectedPrice {
+            if let selectedPriceRes = shoppingListItem?.selectedPrice, selectedPriceRes.count > 0 {
                 let price = selectedPriceRes[0] as! Price
                 selectedPrice.text = "$" + Helper.formatMoney(amount: price.valueConvert)
             }
