@@ -59,6 +59,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var itemNameTextField: UITextErrorField!
     
+    @IBOutlet weak var itemNameTextField2: UITextField!
+    
     @IBOutlet weak var brandTextField: UITextField!
     
     @IBOutlet weak var countryOriginTextField: UITextField!
@@ -193,7 +195,8 @@ class ShoppingListItemEditorViewController: UIViewController {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
         doneButton.isEnabled = false
-        itemNameTextField.delegate = self
+        //itemNameTextField.delegate = self
+        itemNameTextField2.delegate = self
         brandTextField.delegate = self
         countryOriginTextField.delegate = self
         descriptionTextField.delegate = self
@@ -426,14 +429,15 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         let onSaveEventhandler = ValidationState.OnSaveItemEventHandler(validate: { currentState in
             
-            if let name = self.itemNameTextField.text, !name.isEmpty {
+            if let name = self.itemNameTextField2.text, !name.isEmpty {
                 
                 switch currentState {
                     
                 case .newItem:
                     do {
-                        if try Item.isNameExist(self.itemNameTextField.text!, moc: self.persistentContainer.viewContext) {
-                            self.itemNameTextField.errorText = "Name already exist"
+                        if try Item.isNameExist(self.itemNameTextField2.text!, moc: self.persistentContainer.viewContext) {
+                            //self.itemNameTextField2.errorText = "Name already exist"
+                            print("Error name")
                             return false
                         } else {
                             return true
@@ -449,7 +453,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                 }
                 
             } else {
-                self.itemNameTextField.errorText = "Name cannot be empty"
+                //self.itemNameTextField.errorText = "Name cannot be empty"
                 return false
             }
             
@@ -482,16 +486,16 @@ class ShoppingListItemEditorViewController: UIViewController {
         let moc = persistentContainer.viewContext
         
         do {
-            let isExist = try Item.isNameExist(itemNameTextField.text!, moc: moc)
+            let isExist = try Item.isNameExist(itemNameTextField2.text!, moc: moc)
             
             if isExist {
                 
-                itemNameTextField.errorText = "Name already exist"
+                //itemNameTextField.errorText = "Name already exist"
                 return
             }
             
             let item = Item(context: moc)
-            item.name = itemNameTextField.text!
+            item.name = itemNameTextField2.text!
             item.brand = brandTextField.text
             item.countryOfOrigin = countryOriginTextField.text
             item.itemDescription = descriptionTextField.text
@@ -634,11 +638,11 @@ class ShoppingListItemEditorViewController: UIViewController {
             self.deleteItemButton.isHidden = true
             let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(.unit, nil)
             self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
-            self.itemNameTextField.errorText = nil
+            //self.itemNameTextField2.errorText = nil
             
         case .existingItem:
             
-            self.itemNameTextField.text = self.shoppingListItem?.item?.name
+            self.itemNameTextField2.text = self.shoppingListItem?.item?.name
             self.brandTextField.text = self.shoppingListItem?.item?.brand
             self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
             self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
@@ -650,7 +654,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             }
             
             self.prices = self.shoppingListItem?.item?.prices
-            self.itemNameTextField.isEnabled = false
+            self.itemNameTextField2.isEnabled = false
             self.deleteItemButton.isHidden = false
             
             let priceTypeVal = self.shoppingListItem?.priceTypeSelectedConvert ?? PriceType.unit.rawValue
@@ -668,7 +672,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
             
-            self.itemNameTextField.errorText = nil
+            //self.itemNameTextField.errorText = nil
             
         default:
             break
