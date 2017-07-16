@@ -33,90 +33,7 @@ class ItemDetailViewController: UIViewController {
     
     @IBOutlet weak var itemNameLabel: UILabel!
     
-    @IBOutlet weak var itemBrandLabel: UILabel!
-    
-    @IBOutlet weak var itemCountryLabel: UILabel!
-    
-    @IBOutlet weak var itemDescriptionLabel: UILabel!
-    
     @IBOutlet weak var itemImageView: UIImageView!
-    
-    // MARK: - Item pricing information
-    
-    /**
-     Consist of unit price and bundle price. Set property observer to populate price fields.
-    */
-    private var prices: NSSet? {
-        didSet {
-            if let prices = prices {
-                let unitPrice = Price.filterSet(of: prices, match: .unit)
-                unitPriceVc = unitPrice?.valueConvert
-                
-                let bundlePrice = Price.filterSet(of: prices, match: .bundle)
-                bundlePriceVc = bundlePrice?.valueConvert
-                bundleQtyVc = bundlePrice?.quantityConvert
-                
-            }
-        }
-    }
-    
-    @IBOutlet weak var pricingInformationSc: UISegmentedControl!
-    
-    @IBOutlet weak var unitCurrencyCodeLabel: UILabel!
-    
-    @IBOutlet weak var unitPriceLabel: UILabel!
-    
-    @IBOutlet weak var bundleCurrencyCodeLabel: UILabel!
-    
-    @IBOutlet weak var bundlePriceLabel: UILabel!
-    
-    @IBOutlet weak var bundleQtyLabel: UILabel!
-    
-    @IBOutlet weak var bundleQtyValueLabel: UILabel!
-    
-    @IBOutlet weak var unitPriceGroup: UIStackView!
-    
-    @IBOutlet weak var bundlePriceGroup: UIStackView!
-    
-    /**
-     Currency-formatted pricing information for unit price. Acts as a adapter to Price model which stores data as type Int32. Set property observer to populate unit price field.
-     */
-    private var unitPriceVc: Int? {
-        didSet {
-            
-            if let unitPriceVc = unitPriceVc {
-                unitPriceLabel?.text = Helper.formatMoney(amount: unitPriceVc)
-            } else {
-                unitPriceLabel?.text = nil
-            }
-        }
-    }
-    
-    /**
-     Currency-formatted pricing information for bundle. Functions as a adapter to Price model which stores data as type Int32. Set property observer to populate bundle price fielda.
-     */
-    private var bundlePriceVc: Int? {
-        didSet {
-            
-            if let bundlePriceVc = bundlePriceVc {
-                bundlePriceLabel?.text = Helper.formatMoney(amount: bundlePriceVc)
-            } else {
-                bundlePriceLabel?.text = nil
-            }
-        }
-    }
-    
-    /**
-     Pricing information for bundle.
-     Converts Double to Int for getter.
-     Set value of bundleQtyLabel.text after converting Double to String.
-     */
-    private var bundleQtyVc: Int? {
-        didSet {
-            let setValue = bundleQtyVc ?? 2
-            bundleQtyValueLabel?.text = String(describing: setValue)
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,11 +77,6 @@ class ItemDetailViewController: UIViewController {
     func updateUi() {
         
         itemNameLabel?.text = item?.name
-        itemBrandLabel?.text = item?.brand
-        itemCountryLabel?.text = item?.countryOfOrigin
-        itemDescriptionLabel?.text = item?.itemDescription
-        prices = item?.prices
-        onDisplayPriceTypeInformation(priceType: .unit)
         
         if let stringPath = item?.picture?.fileUrl {
             itemImageView?.image = UIImage(contentsOfFile: stringPath)
@@ -176,27 +88,6 @@ class ItemDetailViewController: UIViewController {
             //                }
         }
     }
-    
-    @IBAction func onSelectPriceInformation(_ sender: UISegmentedControl) {
-        let priceIndicator = sender.selectedSegmentIndex
-        onDisplayPriceTypeInformation(priceType: PriceType(rawValue: priceIndicator) ?? .unit)
-    }
-    
-    func onDisplayPriceTypeInformation(priceType: PriceType) {
-        
-        switch priceType {
-        case .unit:
-            
-            unitPriceGroup?.isHidden = false
-            bundlePriceGroup?.isHidden = true
-            
-        case .bundle:
-            
-            bundlePriceGroup?.isHidden = false
-            unitPriceGroup?.isHidden = true
-        }
-    }
-    
     
     // MARK: - Navigation
     
@@ -215,7 +106,15 @@ class ItemDetailViewController: UIViewController {
             let shoppingListEditorVc = viewController as! ShoppingListItemEditorViewController
             shoppingListEditorVc.shoppingListItem = shoppingListItem
         }
+        
+        if segue.identifier == "More information" {
+            let moreInformationVc = viewController as! ItemAdditionalDataViewController
+            moreInformationVc.item = item
+        }
     }
     
+    @IBAction func showMoreItemInformation(_ sender: UIButton) {
+        
+    }
     
 }
