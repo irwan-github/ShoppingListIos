@@ -23,11 +23,13 @@ class SearchItemsTableViewController: FetchedResultsTableViewController, UITextF
         }
     }
     
+    var selectedItem: Item?
+    
     // MARK : - Properties
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
     // Mark: - Model
-    var fetchedResultsController: NSFetchedResultsController<Item>?
+    fileprivate var fetchedResultsController: NSFetchedResultsController<Item>?
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if textField == searchTextField {
@@ -37,7 +39,7 @@ class SearchItemsTableViewController: FetchedResultsTableViewController, UITextF
         return true
     }
     
-    func searchItem() {
+    private func searchItem() {
         
         //Request items
         let itemRequest: NSFetchRequest<Item> = Item.fetchRequest()
@@ -161,4 +163,12 @@ extension SearchItemsTableViewController {
         return fetchedResultsController?.fetchedObjects?.count ?? 0
     }
     
+}
+
+extension SearchItemsTableViewController {
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectedItem = fetchedResultsController?.object(at: indexPath)
+        performSegue(withIdentifier: "unwind to shopping list item editor", sender: self)
+    }
 }

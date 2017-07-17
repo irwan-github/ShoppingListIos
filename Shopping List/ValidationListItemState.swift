@@ -1,6 +1,7 @@
-//
+
 //  ValidationState.swift
 //  Shopping List
+//  Handle the state of a shopping list item
 //
 //  Created by Mirza Irwan on 2/7/17.
 //  Copyright © 2017 Mirza Irwan <mirza.irwan.osman@gmail.com>. All rights reserved.
@@ -8,25 +9,24 @@
 
 import Foundation
 
-enum ValidationState {
+enum ValidationListItemState {
     
     case transient
-    case existingItem
-    case newItem
-    indirect case warning(ValidationState)
+    case existingListItem
+    case newListItem
     
     enum Event {
-        case onSaveItem(OnSaveItemEventHandler?)
-        case onDelete((ValidationState) -> Void)
-        case onItemExist
-        case onItemNew
+        case onSaveListItem(OnSaveListItemEventHandler?)
+        case onDeleteListItem((ValidationListItemState) -> Void)
+        case onListItemExist
+        case onListItemNew
         case onChangeCharacters
     }
     
-    struct OnSaveItemEventHandler {
+    struct OnSaveListItemEventHandler {
         
-        let validate: ((ValidationState) -> Bool)?
-        let actionIfValidateTrue: ((ValidationState) -> Void)?
+        let validate: ((ValidationListItemState) -> Bool)?
+        let actionIfValidateTrue: ((ValidationListItemState) -> Void)?
         
     }
     
@@ -34,7 +34,7 @@ enum ValidationState {
         self = .transient
     }
     
-    mutating func handle(event: ValidationState.Event, handleNextStateUiAttributes: ((ValidationState) -> Void)?) {
+    mutating func handle(event: ValidationListItemState.Event, handleNextStateUiAttributes: ((ValidationListItemState) -> Void)?) {
         
         switch self {
             
@@ -42,28 +42,26 @@ enum ValidationState {
             
             switch event {
                 
-            case .onItemExist:
-                self = .existingItem
+            case .onListItemExist:
+                self = .existingListItem
                 
             default:
-                self = .newItem
+                self = .newListItem
             }
             
-        case .existingItem:
+        case .existingListItem:
             
             switch event {
                 
-            case .onSaveItem(let eventHandler):
+            case .onSaveListItem(let eventHandler):
                 
                 if (eventHandler?.validate?(self))! {
                     
                     eventHandler?.actionIfValidateTrue?(self)
                     
-                } else {
-                    self = .warning(.existingItem)
                 }
                 
-            case .onDelete(let deleteNote):
+            case .onDeleteListItem(let deleteNote):
                 deleteNote(self)
                 
             default:
@@ -71,31 +69,17 @@ enum ValidationState {
                 
             }
             
-        case .newItem:
+        case .newListItem:
             
             switch event {
                 
-            case .onSaveItem(let eventHandler):
+            case .onSaveListItem(let eventHandler):
                 
                 if (eventHandler?.validate?(self))! {
                     
                     eventHandler?.actionIfValidateTrue?(self)
                     
-                } else {
-                    self = .warning(.newItem)
                 }
-                
-            default:
-                break
-            }
-            
-        case .warning(let history):
-            
-            switch event {
-                
-            case .onChangeCharacters:
-                
-                self = history
                 
             default:
                 break

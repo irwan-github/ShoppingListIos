@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ShoppingListItemTableViewCell: UITableViewCell {
     
@@ -19,11 +20,14 @@ class ShoppingListItemTableViewCell: UITableViewCell {
     // MARK: - Model
     var shoppingListItem: ShoppingListItem? {
         didSet {
-            //********* Put the following here causes an infinite loop ***************//
+            
+            listenForNotificationOfChangesToItem()
+            
+            //********* Cautionary: Put the following here causes an infinite loop ***************//
             //shoppingListItem?.managedObjectContext?.refresh(shoppingListItem!, mergeChanges: true)
 
-            itemName.text = shoppingListItem?.item?.name
-            brand.text = shoppingListItem?.item?.brand
+            item = shoppingListItem?.item
+            
             quantityToBuy.setTitle(String(describing: (shoppingListItem?.quantityToBuyConvert)!), for: .normal)
             
             if let selectedPriceRes = shoppingListItem?.selectedPrice, selectedPriceRes.count > 0 {
@@ -32,7 +36,26 @@ class ShoppingListItemTableViewCell: UITableViewCell {
             }
             
             
-            if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
+//            if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
+//                itemPicture.image = UIImage(contentsOfFile: stringPath)
+//                
+//                //The following is an alternative to reading & displaying image file from web and filesystem.
+//                //                let url = URL(fileURLWithPath: stringPath)
+//                //                if let imageData = try? Data(contentsOf: url) {
+//                //                    itemPicture.image = UIImage(data: imageData)
+//                //                }
+//            } else {
+//                itemPicture.image = UIImage(named: "empty-photo")
+//            }
+        }
+    }
+    
+    var item: Item? {
+        didSet {
+            itemName.text = item?.name
+            brand.text = item?.brand
+            
+            if let stringPath = item?.picture?.fileUrl {
                 itemPicture.image = UIImage(contentsOfFile: stringPath)
                 
                 //The following is an alternative to reading & displaying image file from web and filesystem.
@@ -52,4 +75,35 @@ class ShoppingListItemTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
+    var changesToItemObserver: NSObjectProtocol?
+    
+    deinit {
+        if let observer = changesToItemObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
+}
+
+extension ShoppingListItemTableViewCell {
+    
+    func listenForNotificationOfChangesToItem() {
+        let notificationCtr = NotificationCenter.default
+        changesToItemObserver = notificationCtr.addObserver(forName: NSNotification.Name.NSManagedObjectContextDidSave,
+                                                            object: shoppingListItem?.item?.managedObjectContext, //Broadcaster
+            queue: OperationQueue.main,
+            using: { notification in
+                
+                let info = notification.userInfo
+                let changedObjects = info?[NSUpdatedObjectsKey] as! NSSet
+                
+                for changedObject in changedObjects {
+                    if let changedItem = changedObject as? Item {
+                        self.item = changedItem
+                    }
+                }
+        })
+        
+    }
+    
+
 }

@@ -15,7 +15,25 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     var shoppingList: ShoppingList!
     
-    var shoppingListItem: ShoppingListItem?
+    var shoppingListItem: ShoppingListItem? {
+        didSet {
+            item = shoppingListItem?.item
+        }
+    }
+    
+    private var item: Item? {
+        didSet {
+            
+            //New objects inserted into a managed object context are assigned a temporary ID which is replaced with a permanent one once the object gets saved to a persistent store. Assigning of new item to this property must NOT update UI fields
+            
+            let isNewItem = (item?.objectID.isTemporaryID) ??  true
+            
+            if !isNewItem {
+                populateItemFields(item: item)
+            }
+            
+        }
+    }
     
     var persistentContainer: NSPersistentContainer = AppDelegate.persistentContainer
     
@@ -25,12 +43,17 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     fileprivate var pictureState = PictureState()
     
-    private var selectedPriceState = SelectedPriceState()
+    fileprivate var selectedPriceState = SelectedPriceState()
     
-    fileprivate var validationState = ValidationState()
+    fileprivate var validationListItemState = ValidationListItemState()
+    
+    fileprivate var validationItemState = ValidationItemState()
     
     // MARK: - Properties
     
+    /**
+     An item have more than one price. A property observer will create a unit price and bundle price and set the price fields.
+     */
     private var prices: NSSet? {
         didSet {
             
@@ -43,11 +66,11 @@ class ShoppingListItemEditorViewController: UIViewController {
             bundlePriceVc = bundlePrice?.valueConvert
             
             if let bundlePrice = bundlePrice {
-                bundleQtyStepper.value = Double(bundlePrice.quantityConvert)
+                bundleQtyStepper?.value = Double(bundlePrice.quantityConvert)
                 bundleQtyPricingInfoVc = bundlePrice.quantityConvert
                 
             } else {
-                bundleQtyStepper.value = Double(2)
+                bundleQtyStepper?.value = Double(2)
                 bundleQtyPricingInfoVc = 2
             }
         }
@@ -57,9 +80,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private var bundlePrice: Price?
     
-    @IBOutlet weak var itemNameTextField: UITextErrorField!
-    
-    @IBOutlet weak var itemNameTextField2: UITextField!
+    @IBOutlet weak var itemNameTextField: UITextField!
     
     @IBOutlet weak var brandTextField: UITextField!
     
@@ -74,14 +95,13 @@ class ShoppingListItemEditorViewController: UIViewController {
     @IBOutlet weak var deleteItemButton: UIButton!
     
     /**
-     Shared by bundle pricing and unit pricing.
+     Shared by bundle pricing and unit pricing. Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
      */
     @IBOutlet weak var quantityToBuyLabel: UILabel!
     
     /**
-     Shared by bundle pricing and unit pricing.
+     Shared by bundle pricing and unit pricing. Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
      */
-    
     @IBOutlet weak var quantityToBuyStepper: UIStepper!
     
     @IBOutlet weak var pricingInformationSc: UISegmentedControl!
@@ -124,11 +144,11 @@ class ShoppingListItemEditorViewController: UIViewController {
     private var bundleQtyPricingInfoVc: Int? {
         set {
             let setValue = newValue ?? 2
-            bundleQtyLabel.text = String(describing: setValue)
+            bundleQtyLabel?.text = String(describing: setValue)
         }
         
         get {
-            return Int(bundleQtyStepper.value)
+            return Int(bundleQtyStepper?.value ?? 2)
         }
     }
     
@@ -147,9 +167,9 @@ class ShoppingListItemEditorViewController: UIViewController {
         set {
             
             if let newValue = newValue {
-                unitPriceTextField.text = Helper.formatMoney(amount: newValue)
+                unitPriceTextField?.text = Helper.formatMoney(amount: newValue)
             } else {
-                unitPriceTextField.text = nil
+                unitPriceTextField?.text = nil
             }
         }
     }
@@ -172,19 +192,16 @@ class ShoppingListItemEditorViewController: UIViewController {
         set {
             
             if let newValue = newValue {
-                bundlePriceTextField.text = Helper.formatMoney(amount: newValue)
+                bundlePriceTextField?.text = Helper.formatMoney(amount: newValue)
             } else {
-                bundlePriceTextField.text = nil
+                bundlePriceTextField?.text = nil
             }
         }
     }
     
-//    fileprivate var itemImage: UIImage? {
-//        didSet {
-//            itemImageView.image = itemImage
-//        }
-//    }
-    
+    /**
+     ViewController's image model
+     */
     fileprivate var itemImageVc: ItemPicture? = ItemPicture()
     
     @IBOutlet weak var itemImageView: UIImageView!
@@ -193,8 +210,6 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private var priceSwitchController: PriceUiSelectorController?
     
-    @IBOutlet weak var unitPriceLabel: UILabel!
-    @IBOutlet weak var bundlePriceLabel: UILabel!
     // MARK: - ViewController lifecycle
     
     override func viewDidLoad() {
@@ -205,7 +220,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                                                           bundlePriceUi: (bundlePriceSwitch, bundlePriceLabel))
         
         doneButton.isEnabled = false
-        itemNameTextField2.delegate = self
+        itemNameTextField.delegate = self
         brandTextField.delegate = self
         countryOriginTextField.delegate = self
         descriptionTextField.delegate = self
@@ -216,9 +231,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         bundlePriceTextField.delegate = moneyTextFieldDelegate
         
         if shoppingListItem == nil {
-            validationState.handle(event: .onItemNew, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
+            validationListItemState.handle(event: .onListItemNew, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
         } else {
-            validationState.handle(event: .onItemExist, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
+            validationListItemState.handle(event: .onListItemExist, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
+            validationItemState.handle(event: .onExistingItem)
         }
     }
     
@@ -227,6 +243,16 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     // MARK: - State: Selected price type, Pricing information, Quantity to buy logic
+    
+    @IBAction func onSwitchUnitPrice(_ sender: UISwitch) {
+        priceSwitchController?.selectPriceType(priceType: sender.isOn ? .unit : .bundle)
+        onSelectPriceType(priceType: sender.isOn ? .unit : .bundle)
+    }
+    
+    @IBAction func onSwitchBundlePrice(_ sender: UISwitch) {
+        priceSwitchController?.selectPriceType(priceType: sender.isOn ? .bundle : .unit)
+        onSelectPriceType(priceType: sender.isOn ? .bundle : .unit)
+    }
     
     /**
      I need a stored property for quantity to buy at UNIT pricing because the quantity to buy stepper is used for both unit and quantity price.
@@ -248,8 +274,18 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    /**
+     Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
+     */
     @IBOutlet weak var unitPriceSwitch: UISwitch!
+    
+    /**
+     Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
+     */
     @IBOutlet weak var bundlePriceSwitch: UISwitch!
+    
+    @IBOutlet weak var unitPriceLabel: UILabel!
+    @IBOutlet weak var bundlePriceLabel: UILabel!
     
     /**
      Event causes the display of relevent pricing information and hiding of irrelevant pricing information depending on the price type.
@@ -258,19 +294,27 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         if let priceType = PriceType(rawValue: sender.selectedSegmentIndex) {
             
-            switch priceType {
-            case .unit:
-                bundleQtyStackView.isHidden = true
-                unitPriceTextField.placeholder = "Unit price"
-                unitPriceTextField.isHidden = false
-                bundlePriceTextField.isHidden = true
-                
-            case .bundle:
-                bundleQtyStackView.isHidden = false
-                bundlePriceTextField.placeholder = "Bundle Price"
-                unitPriceTextField.isHidden = true
-                bundlePriceTextField.isHidden = false
-            }
+            setPricingControlAttributes(priceType: priceType)
+        }
+    }
+    
+    /**
+     Display and hide price control depending on the price type
+     */
+    func setPricingControlAttributes(priceType: PriceType) {
+        
+        switch priceType {
+        case .unit:
+            bundleQtyStackView.isHidden = true
+            unitPriceTextField.placeholder = "Unit price"
+            unitPriceTextField.isHidden = false
+            bundlePriceTextField.isHidden = true
+            
+        case .bundle:
+            bundleQtyStackView.isHidden = false
+            bundlePriceTextField.placeholder = "Bundle Price"
+            unitPriceTextField.isHidden = true
+            bundlePriceTextField.isHidden = false
         }
     }
     
@@ -309,37 +353,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    /**
-     The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
-     */
-//    @IBAction func onSelectPriceType(_ sender: UISegmentedControl) {
-//        changeState.transition(event: .onSelectPrice, handleNextStateUiAttributes: {
-//            changeState in
-//            
-//            switch changeState {
-//            case .changed:
-//                self.doneButton.isEnabled = true
-//                
-//            default:
-//                break
-//            }
-//        })
-//        
-//        let k = (PriceType(rawValue: sender.selectedSegmentIndex))!
-//        
-//        selectedPriceState.transition(event: .onSelectPriceType(k, onSelectPriceTypeEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
-//    }
-    
-    @IBAction func onSwitchUnitPrice(_ sender: UISwitch) {
-        priceSwitchController?.selectPriceType(priceType: sender.isOn ? .unit : .bundle)
-        onSelectPriceType(priceType: sender.isOn ? .unit : .bundle)
-    }
-    
-    @IBAction func onSwitchBundlePrice(_ sender: UISwitch) {
-        priceSwitchController?.selectPriceType(priceType: sender.isOn ? .bundle : .unit)
-        onSelectPriceType(priceType: sender.isOn ? .bundle : .unit)
-    }
-    
     func onSelectPriceType(priceType: PriceType) {
         changeState.transition(event: .onSelectPrice, handleNextStateUiAttributes: {
             changeState in
@@ -353,11 +366,9 @@ class ShoppingListItemEditorViewController: UIViewController {
             }
         })
         
-        //let k = (PriceType(rawValue: sender.selectedSegmentIndex))!
-        
-        selectedPriceState.transition(event: .onSelectPriceType(priceType, onSelectPriceTypeEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
+        selectedPriceState.transition(event: .onSelectPriceType(priceType, onSelectPriceTypeEventHandler), handleStateUiAttribute: pricingControlsAttributeHandler)
     }
-
+    
     
     
     
@@ -406,15 +417,6 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     /**
-     The logic depends on the state of the selected price type. The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
-     */
-    @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
-        
-        selectedPriceState.transition(event: .onChangeQtyToBuy(onChangeQtyToBuyEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
-        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
-    }
-    
-    /**
      The handler uses quantityToBuyStepper control to set the quantity to buy display. Prior to this event, the event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
      */
     lazy var onChangeQtyToBuyEventHandler: (SelectedPriceState) -> Void = { selectedPriceState in
@@ -434,9 +436,9 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     /**
-     Control the state of quantity to buy stepper
+     Control the state of controls for pricing data
      */
-    var priceStateAttributeHandler: (SelectedPriceState) -> Void {
+    var pricingControlsAttributeHandler: (SelectedPriceState) -> Void {
         
         return { selectedPrice in
             
@@ -448,7 +450,6 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                 
                 //Display the price type chosen
-                //self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.bundlePrice.rawValue
                 self.priceSwitchController?.selectPriceType(priceType: .bundle)
                 
             case .unitPrice:
@@ -458,7 +459,6 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                 
                 //Display the price type chosen
-                //self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
                 self.priceSwitchController?.selectPriceType(priceType: .unit)
             }
         }
@@ -469,19 +469,43 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBAction func onDone(_ sender: UIBarButtonItem) {
         
-        let onSaveEventhandler = ValidationState.OnSaveItemEventHandler(validate: { currentState in
+        let onSaveEventHandler = ValidationListItemState.OnSaveListItemEventHandler(validate: { currentState in
             
-            if let name = self.itemNameTextField2.text, !name.isEmpty {
+            if let name = self.itemNameTextField.text, !name.isEmpty {
                 
                 switch currentState {
                     
-                case .newItem:
+                case .newListItem:
                     do {
-                        if try Item.isNameExist(self.itemNameTextField2.text!, moc: self.persistentContainer.viewContext) {
-                            //self.itemNameTextField2.errorText = "Name already exist"
-                            print("Error name")
+                        let itemName = self.itemNameTextField.text!
+                        
+                        if try Item.isNameExist(itemName, moc: self.persistentContainer.viewContext) {
+                            
+                            if self.validationItemState == .existingItem {
+                                return true
+                            }
+                            
+                            print("Item exist. Fetching to show user.")
+                            
+                            let alert = UIAlertController(title: "Item with name \(name) exist", message: "Fetching \(name) now", preferredStyle: .alert)
+                            
+                            let action = UIAlertAction(title: "OK", style: .default, handler: { action in
+                                
+                                self.item = (try? Item.find(name: itemName, in: self.persistentContainer.viewContext)) ?? nil
+                                
+                                if self.item != nil {
+                                    self.validationItemState.handle(event: .onExistingItem)
+                                }
+                            })
+                            
+                            alert.addAction(action)
+                            
+                            self.present(alert, animated: true)
+                            
                             return false
+                            
                         } else {
+                            
                             return true
                         }
                     } catch {
@@ -495,7 +519,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                 }
                 
             } else {
-                //self.itemNameTextField.errorText = "Name cannot be empty"
+                
                 return false
             }
             
@@ -503,12 +527,12 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             switch currentState {
                 
-            case .newItem:
-                self.saveNew()
+            case .newListItem:
+                self.saveNewLineItem()
                 self.presentingViewController?.dismiss(animated: true, completion: nil)
                 self.performSegue(withIdentifier: "back to shopping list", sender: self)
                 
-            case .existingItem:
+            case .existingListItem:
                 self.saveUpdate()
                 self.presentingViewController?.dismiss(animated: true, completion: nil)
                 
@@ -517,35 +541,34 @@ class ShoppingListItemEditorViewController: UIViewController {
             }
         })
         
-        validationState.handle(event: .onSaveItem(onSaveEventhandler), handleNextStateUiAttributes: nil)
+        validationListItemState.handle(event: .onSaveListItem(onSaveEventHandler), handleNextStateUiAttributes: nil)
     }
     
     /**
      Save new item
      */
-    fileprivate func saveNew() {
+    fileprivate func saveNewLineItem() {
         
         let moc = persistentContainer.viewContext
         
         do {
-            let isExist = try Item.isNameExist(itemNameTextField2.text!, moc: moc)
+            let isExist = try Item.isNameExist(itemNameTextField.text!, moc: moc)
             
-            if isExist {
+            if !isExist {
                 
-                //itemNameTextField.errorText = "Name already exist"
-                return
+                item = Item(context: moc)
             }
             
-            let item = Item(context: moc)
-            item.name = itemNameTextField2.text!
-            item.brand = brandTextField.text
-            item.countryOfOrigin = countryOriginTextField.text
-            item.itemDescription = descriptionTextField.text
-            handlePictureEventAction(of: item, in: moc)
-            updateUnitPrice(of: item)
-            updateBundlePrice(of: item)
             
-            let shoppingLineItem = shoppingList.add(item: item, quantity: quantityToBuyStepperConvert)
+            item?.name = itemNameTextField.text!
+            item?.brand = brandTextField.text
+            item?.countryOfOrigin = countryOriginTextField.text
+            item?.itemDescription = descriptionTextField.text
+            handlePictureEventAction(of: item!, in: moc)
+            updateUnitPrice(of: item!)
+            updateBundlePrice(of: item!)
+            
+            let shoppingLineItem = shoppingList.add(item: item!, quantity: quantityToBuyStepperConvert)
             
             shoppingLineItem.priceTypeSelectedConvert = selectedPriceState.rawValue
             
@@ -620,24 +643,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         bundlePrice?.type = 1
     }
     
-    @IBAction func onDeleteItem(_ sender: UIButton) {
-        
-        validationState.handle(event: .onDelete({ state in
-            
-            switch state {
-                
-            case .existingItem:
-                self.deleteItemFromShoppingList()
-                self.presentingViewController?.dismiss(animated: true, completion: nil)
-                
-            default:
-                break
-            }
-            
-        }), handleNextStateUiAttributes: nil)
-    }
-    
-    
     private func deleteItemFromShoppingList() {
         
         if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
@@ -656,10 +661,33 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    
-    
-    
     // MARK: - User events
+    
+    /**
+     The logic depends on the state of the selected price type. The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
+     */
+    @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
+        
+        selectedPriceState.transition(event: .onChangeQtyToBuy(onChangeQtyToBuyEventHandler), handleStateUiAttribute: pricingControlsAttributeHandler)
+        changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
+    }
+    
+    @IBAction func onDeleteItem(_ sender: UIButton) {
+        
+        validationListItemState.handle(event: .onDeleteListItem({ state in
+            
+            switch state {
+                
+            case .existingListItem:
+                self.deleteItemFromShoppingList()
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+                
+            default:
+                break
+            }
+            
+        }), handleNextStateUiAttributes: nil)
+    }
     
     @IBAction func onPictureAction(_ sender: UIButton) {
         
@@ -676,35 +704,39 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     // MARK: - State: Handle validation state transition and state-based ui properties
     
-    lazy var validationStateUiPropertiesHandler: (ValidationState) -> Void = { nextState in
+    lazy var validationStateUiPropertiesHandler: (ValidationListItemState) -> Void = { nextState in
         
         switch nextState {
-        case .newItem:
+        case .newListItem:
             self.deleteItemButton.isHidden = true
+            
             let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(.unit, nil)
-            self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
-            //self.itemNameTextField2.errorText = nil
             
-        case .existingItem:
+            self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.pricingControlsAttributeHandler)
             
-            self.itemNameTextField2.text = self.shoppingListItem?.item?.name
-            self.brandTextField.text = self.shoppingListItem?.item?.brand
+        case .existingListItem:
+            
+            self.item = self.shoppingListItem?.item
+            
             self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
-            self.countryOriginTextField.text = self.shoppingListItem?.item?.countryOfOrigin
-            self.descriptionTextField.text = self.shoppingListItem?.item?.itemDescription
             
             if self.shoppingListItem?.item?.picture != nil {
-            
+                
                 self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
             }
             
+            //Contains a property observer that set the price fields
             self.prices = self.shoppingListItem?.item?.prices
-            self.itemNameTextField2.isEnabled = false
+            
+            
+            self.itemNameTextField.isEnabled = false
             self.deleteItemButton.isHidden = false
             
             let priceTypeVal = self.shoppingListItem?.priceTypeSelectedConvert ?? PriceType.unit.rawValue
             let savedSelectedPriceType = PriceType(rawValue:priceTypeVal)!
             
+            
+            //Store the quantity to buy in a special var, depending on the price type chosen
             switch savedSelectedPriceType {
                 
             case .unit:
@@ -713,26 +745,49 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.quantityToBuyAtBundle = self.shoppingListItem?.quantityToBuyConvert ?? 2
             }
             
+            //Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
             let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(savedSelectedPriceType, self.onSelectPriceTypeEventHandler)
             
-            self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.priceStateAttributeHandler)
-            
-            //self.itemNameTextField.errorText = nil
+            self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.pricingControlsAttributeHandler)
             
         default:
             break
         }
     }
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
+    // MARK: - Populate values for user interface controls
+    
+    /**
+     Populate item fields and its associated prices
      */
+    func populateItemFields(item: Item?) {
+        itemNameTextField?.text = item?.name
+        brandTextField?.text = item?.brand
+        countryOriginTextField?.text = item?.countryOfOrigin
+        descriptionTextField?.text = item?.itemDescription
+        
+        prices = item?.prices
+    }
+    
+    // MARK: - Navigation
+    
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
+        
+    }
+    
+    @IBAction func onReceiveUnwind(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if let identifier = segue.identifier, identifier == "unwind to shopping list item editor" {
+            let searchVc = segue.source as! SearchItemsTableViewController
+            item = searchVc.selectedItem
+            changeState.transition(event: .onSearchResult, handleNextStateUiAttributes: changeStateAttributeHandler)
+            validationItemState.handle(event: .onExistingItem)
+        }
+    }
+    
 }
 
 // MARK: - State: Handle picture actions and states
@@ -768,10 +823,10 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
             return { action in
                 switch action.title! {
                 case "Camera":
-                    self.activateCamera()
+                    self.activateImagePicketController(sourceType: .camera)
                     
                 case "Album":
-                    self.displayPicturePicker()
+                    self.activateImagePicketController(sourceType: .savedPhotosAlbum)
                     
                 case "Delete":
                     self.pictureState.transition(event: .onDelete, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
@@ -784,8 +839,8 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     }
     
     /**
-        Handles the setting of properties for UIImage depending on state. State machine will pass the image to this closure.
-    */
+     Handles the setting of properties for UIImage depending on state. State machine will pass the image to this closure.
+     */
     var nextPictureStateUiAttributes: (PictureState, ItemPicture?) -> Void {
         
         return { (pictureState: PictureState, newItemPicture: ItemPicture?) -> Void in
@@ -898,25 +953,15 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         
     }
     
-    func activateCamera() {
+    func activateImagePicketController(sourceType: UIImagePickerControllerSourceType) {
         
-        let cameraController = UIImagePickerController()
-        cameraController.delegate = self
-        cameraController.allowsEditing = false
-        cameraController.sourceType = .camera
-        cameraController.cameraCaptureMode = .photo
-        cameraController.modalPresentationStyle = .fullScreen
-        
-        present(cameraController, animated: true, completion: nil)
-    }
-    
-    func displayPicturePicker() {
-        let pictureAlbumPickerController = UIImagePickerController()
-        pictureAlbumPickerController.delegate = self
-        pictureAlbumPickerController.isEditing = false
-        pictureAlbumPickerController.sourceType = .photoLibrary
-        pictureAlbumPickerController.modalPresentationStyle = .fullScreen
-        present(pictureAlbumPickerController, animated: true, completion: nil)
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.allowsEditing = false
+        imagePickerController.sourceType = sourceType
+        imagePickerController.cameraCaptureMode = .photo
+        imagePickerController.modalPresentationStyle = .fullScreen
+        present(imagePickerController, animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -997,7 +1042,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         
         changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
         
-        validationState.handle(event: .onChangeCharacters, handleNextStateUiAttributes: nil)
+        validationListItemState.handle(event: .onChangeCharacters, handleNextStateUiAttributes: nil)
         
         return true
     }

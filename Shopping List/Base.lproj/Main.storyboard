@@ -279,14 +279,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="1O1-mY-AGV">
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="add" id="pmo-J4-tyi">
-                                <connections>
-                                    <segue destination="RFL-C2-kpI" kind="presentation" identifier="New Shopping List Item" modalPresentationStyle="pageSheet" id="l83-zl-ohz"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="search" id="A5I-oj-efg"/>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="pmo-J4-tyi">
+                            <connections>
+                                <segue destination="RFL-C2-kpI" kind="presentation" identifier="New Shopping List Item" modalPresentationStyle="pageSheet" id="l83-zl-ohz"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="57E-Bu-0aE" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -425,7 +422,7 @@
                                     <outlet property="brandLabel" destination="21q-yA-kIh" id="sT7-yJ-yBr"/>
                                     <outlet property="itemDescriptionLabel" destination="Rvw-w0-lyr" id="D3n-6f-8oe"/>
                                     <outlet property="itemNameLabel" destination="mKK-zL-qVX" id="YIG-Za-6XR"/>
-                                    <segue destination="wEi-ZP-jqD" kind="show" identifier="show item detail" id="TAZ-jC-yuw"/>
+                                    <segue destination="zuT-A6-vo2" kind="unwind" identifier="unwind to shopping list item editor" unwindAction="onReceiveUnwindFor:sender:" id="674-yC-9uw"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -442,8 +439,9 @@
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UuS-Sx-UbV" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="zuT-A6-vo2" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1184" y="570"/>
+            <point key="canvasLocation" x="5987" y="-521"/>
         </scene>
         <!--Item Detail View Controller-->
         <scene sceneID="umx-eG-NGz">
@@ -905,11 +903,18 @@
                                 <action selector="onCancel:" destination="m5J-7J-iQ3" id="ytG-9E-5AC"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="UbO-5p-caz">
-                            <connections>
-                                <action selector="onDone:" destination="m5J-7J-iQ3" id="l19-N6-yqv"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="done" id="UbO-5p-caz">
+                                <connections>
+                                    <action selector="onDone:" destination="m5J-7J-iQ3" id="l19-N6-yqv"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="search" id="XZ6-iU-qIi">
+                                <connections>
+                                    <segue destination="bEI-Jw-FTe" kind="show" identifier="Search item" id="we8-45-Iff"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="brandTextField" destination="tmf-gJ-jY3" id="fjg-TM-LQ7"/>
@@ -926,7 +931,7 @@
                         <outlet property="descriptionTextField" destination="Hbw-vf-Cqj" id="gO4-M3-F3N"/>
                         <outlet property="doneButton" destination="UbO-5p-caz" id="HFb-de-Kq5"/>
                         <outlet property="itemImageView" destination="2lG-B4-4Ex" id="jtN-fj-ERz"/>
-                        <outlet property="itemNameTextField2" destination="Mmb-SA-yLt" id="Ose-Qf-rrK"/>
+                        <outlet property="itemNameTextField" destination="Mmb-SA-yLt" id="Koz-ht-kY3"/>
                         <outlet property="priceStackView" destination="EzY-PC-JXQ" id="EoH-Lr-HXn"/>
                         <outlet property="pricingInformationSc" destination="Maj-2q-Vhq" id="8Ss-S0-dQ9"/>
                         <outlet property="quantityToBuyLabel" destination="i9w-bW-egx" id="RGQ-Dn-xvK"/>
@@ -936,31 +941,12 @@
                         <outlet property="unitPriceTextField" destination="stE-Yg-r4c" id="Ugt-kY-Dlw"/>
                         <segue destination="ALQ-Ck-P71" kind="unwind" identifier="return to shopping list" unwindAction="unwindToShoppingListFor:" id="udV-Sa-78y"/>
                         <segue destination="ALQ-Ck-P71" kind="unwind" identifier="back to shopping list" unwindAction="unwindToShoppingListFor:" id="MP1-jO-rK2"/>
-                        <segue destination="A4N-Py-rDr" kind="show" id="dpn-69-qWE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pqX-VB-Zn3" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="ALQ-Ck-P71" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="5221.875" y="-521.484375"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="v8l-88-aLW">
-            <objects>
-                <viewController id="A4N-Py-rDr" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="1ww-Pn-JX9"/>
-                        <viewControllerLayoutGuide type="bottom" id="FRC-tk-a8q"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="AYK-0H-wnZ">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ZbI-GW-2wI" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="5941" y="-524"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="JbP-RS-4li">
@@ -1179,8 +1165,7 @@
         <image name="ic_photo" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="TAZ-jC-yuw"/>
-        <segue reference="GDk-fS-7Cc"/>
         <segue reference="Ac5-FM-fMp"/>
+        <segue reference="l83-zl-ohz"/>
     </inferredMetricsTieBreakers>
 </document>
