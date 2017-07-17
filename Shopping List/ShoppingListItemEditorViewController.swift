@@ -659,7 +659,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     
     
-    // MARK: - Picture
+    // MARK: - User events
     
     @IBAction func onPictureAction(_ sender: UIButton) {
         
@@ -758,7 +758,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
             pictureActionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: onPictureActionHandler))
         }
         
-        pictureActionSheet.addAction(UIAlertAction(title: "Album", style: .default, handler: nil))
+        pictureActionSheet.addAction(UIAlertAction(title: "Album", style: .default, handler: onPictureActionHandler))
         
         return pictureActionSheet
     }
@@ -769,6 +769,10 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 switch action.title! {
                 case "Camera":
                     self.activateCamera()
+                    
+                case "Album":
+                    self.displayPicturePicker()
+                    
                 case "Delete":
                     self.pictureState.transition(event: .onDelete, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
                     self.changeState.transition(event: .onDeletePicture, handleNextStateUiAttributes: self.changeStateAttributeHandler)
@@ -904,6 +908,15 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         cameraController.modalPresentationStyle = .fullScreen
         
         present(cameraController, animated: true, completion: nil)
+    }
+    
+    func displayPicturePicker() {
+        let pictureAlbumPickerController = UIImagePickerController()
+        pictureAlbumPickerController.delegate = self
+        pictureAlbumPickerController.isEditing = false
+        pictureAlbumPickerController.sourceType = .photoLibrary
+        pictureAlbumPickerController.modalPresentationStyle = .fullScreen
+        present(pictureAlbumPickerController, animated: true, completion: nil)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {

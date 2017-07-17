@@ -712,14 +712,15 @@
                                         </constraints>
                                     </stackView>
                                     <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="300" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EhV-J3-lKJ">
-                                        <rect key="frame" x="0.0" y="128" width="728" height="30"/>
+                                        <rect key="frame" x="0.0" y="128" width="728" height="46"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
                                         <state key="normal" title="Pick Picture"/>
                                         <connections>
                                             <action selector="onPictureAction:" destination="m5J-7J-iQ3" eventType="touchUpInside" id="yeb-Gi-rUi"/>
                                         </connections>
                                     </button>
                                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="300" verticalCompressionResistancePriority="700" distribution="fillProportionally" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="W72-eu-lZd" userLabel="Pick qty and price Stack View">
-                                        <rect key="frame" x="0.0" y="166" width="728" height="99"/>
+                                        <rect key="frame" x="0.0" y="182" width="728" height="99"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0Ik-Xz-R8c" userLabel="Qty to buy Stack View">
                                                 <rect key="frame" x="0.0" y="0.0" width="304.5" height="99"/>
@@ -797,7 +798,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="249" verticalCompressionResistancePriority="753" axis="vertical" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="CKT-yf-y8F" userLabel="Pricing information Stack View">
-                                        <rect key="frame" x="0.0" y="273" width="728" height="161.5"/>
+                                        <rect key="frame" x="0.0" y="289" width="728" height="161.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Gg-SH-cb3" userLabel="Pricing information">
                                                 <rect key="frame" x="0.0" y="0.0" width="728" height="26.5"/>
@@ -874,7 +875,7 @@
                                         </subviews>
                                     </stackView>
                                     <view contentMode="scaleToFill" verticalHuggingPriority="100" verticalCompressionResistancePriority="100" translatesAutoresizingMaskIntoConstraints="NO" id="NNy-um-EH5">
-                                        <rect key="frame" x="0.0" y="442.5" width="728" height="468.5"/>
+                                        <rect key="frame" x="0.0" y="458.5" width="728" height="452.5"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="400" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VA6-1m-hgj" userLabel="Delete from shopping list">
