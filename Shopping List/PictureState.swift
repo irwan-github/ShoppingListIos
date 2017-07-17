@@ -20,7 +20,7 @@ enum PictureState {
     //Events
     enum Event {
         case onSaveImage((PictureState) -> Void)
-        case onFinishPickingCameraMedia(UIImage)
+        case onFinishPickingCameraMedia(ItemPicture)
         case onDelete
         case onExist
     }
@@ -29,7 +29,7 @@ enum PictureState {
         self = .none
     }
     
-    mutating func transition(event: PictureState.Event, handleNextStateUiAttributes: ((PictureState, UIImage?) -> Void)? = nil) {
+    mutating func transition(event: PictureState.Event, handleNextStateUiAttributes: ((PictureState, ItemPicture?) -> Void)? = nil) {
         
         switch self {
             

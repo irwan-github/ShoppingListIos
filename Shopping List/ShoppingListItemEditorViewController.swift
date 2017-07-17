@@ -179,23 +179,32 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    fileprivate var itemImage: UIImage? {
-        didSet {
-            itemImageView.image = itemImage
-        }
-    }
+//    fileprivate var itemImage: UIImage? {
+//        didSet {
+//            itemImageView.image = itemImage
+//        }
+//    }
+    
+    fileprivate var itemImageVc: ItemPicture? = ItemPicture()
     
     @IBOutlet weak var itemImageView: UIImageView!
     
     private let moneyTextFieldDelegate = MoneyUITextFieldDelegate()
     
+    private var priceSwitchController: PriceUiSelectorController?
+    
+    @IBOutlet weak var unitPriceLabel: UILabel!
+    @IBOutlet weak var bundlePriceLabel: UILabel!
     // MARK: - ViewController lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
+        
+        priceSwitchController = PriceUiSelectorController(unitPriceUi: (unitPriceSwitch, unitPriceLabel),
+                                                          bundlePriceUi: (bundlePriceSwitch, bundlePriceLabel))
+        
         doneButton.isEnabled = false
-        //itemNameTextField.delegate = self
         itemNameTextField2.delegate = self
         brandTextField.delegate = self
         countryOriginTextField.delegate = self
@@ -239,8 +248,8 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    
-    @IBOutlet weak var selectedPriceTypeSc: UISegmentedControl!
+    @IBOutlet weak var unitPriceSwitch: UISwitch!
+    @IBOutlet weak var bundlePriceSwitch: UISwitch!
     
     /**
      Event causes the display of relevent pricing information and hiding of irrelevant pricing information depending on the price type.
@@ -303,7 +312,35 @@ class ShoppingListItemEditorViewController: UIViewController {
     /**
      The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
      */
-    @IBAction func onSelectPriceType(_ sender: UISegmentedControl) {
+//    @IBAction func onSelectPriceType(_ sender: UISegmentedControl) {
+//        changeState.transition(event: .onSelectPrice, handleNextStateUiAttributes: {
+//            changeState in
+//            
+//            switch changeState {
+//            case .changed:
+//                self.doneButton.isEnabled = true
+//                
+//            default:
+//                break
+//            }
+//        })
+//        
+//        let k = (PriceType(rawValue: sender.selectedSegmentIndex))!
+//        
+//        selectedPriceState.transition(event: .onSelectPriceType(k, onSelectPriceTypeEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
+//    }
+    
+    @IBAction func onSwitchUnitPrice(_ sender: UISwitch) {
+        priceSwitchController?.selectPriceType(priceType: sender.isOn ? .unit : .bundle)
+        onSelectPriceType(priceType: sender.isOn ? .unit : .bundle)
+    }
+    
+    @IBAction func onSwitchBundlePrice(_ sender: UISwitch) {
+        priceSwitchController?.selectPriceType(priceType: sender.isOn ? .bundle : .unit)
+        onSelectPriceType(priceType: sender.isOn ? .bundle : .unit)
+    }
+    
+    func onSelectPriceType(priceType: PriceType) {
         changeState.transition(event: .onSelectPrice, handleNextStateUiAttributes: {
             changeState in
             
@@ -316,10 +353,13 @@ class ShoppingListItemEditorViewController: UIViewController {
             }
         })
         
-        let k = (PriceType(rawValue: sender.selectedSegmentIndex))!
+        //let k = (PriceType(rawValue: sender.selectedSegmentIndex))!
         
-        selectedPriceState.transition(event: .onSelectPriceType(k, onSelectPriceTypeEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
+        selectedPriceState.transition(event: .onSelectPriceType(priceType, onSelectPriceTypeEventHandler), handleStateUiAttribute: priceStateAttributeHandler)
     }
+
+    
+    
     
     /**
      The handler of the event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type. Because there is only one stepper for quantity to buy, for either unit or bundle price, I need to do book-keeping in order for the proper quantities to buy to be valid and not lost. Upon changing bundle price, use the stored property quantityToBuyAtBundle to update the quantity to buy label.
@@ -408,7 +448,8 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                 
                 //Display the price type chosen
-                self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.bundlePrice.rawValue
+                //self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.bundlePrice.rawValue
+                self.priceSwitchController?.selectPriceType(priceType: .bundle)
                 
             case .unitPrice:
                 
@@ -417,7 +458,8 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                 
                 //Display the price type chosen
-                self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
+                //self.selectedPriceTypeSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
+                self.priceSwitchController?.selectPriceType(priceType: .unit)
             }
         }
         
@@ -614,6 +656,9 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    
+    
+    
     // MARK: - Picture
     
     @IBAction func onPictureAction(_ sender: UIButton) {
@@ -625,7 +670,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         pictureActionSheetController.modalPresentationStyle = .popover
         let popoverMenuPresentationController = pictureActionSheetController.popoverPresentationController
         popoverMenuPresentationController?.sourceView = sender
-        popoverMenuPresentationController?.sourceRect = sender.frame
+        popoverMenuPresentationController?.sourceRect = sender.bounds
         present(pictureActionSheetController, animated: true, completion: nil)
     }
     
@@ -734,32 +779,36 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         }
     }
     
-    var nextPictureStateUiAttributes: (PictureState, UIImage?) -> Void {
+    /**
+        Handles the setting of properties for UIImage depending on state. State machine will pass the image to this closure.
+    */
+    var nextPictureStateUiAttributes: (PictureState, ItemPicture?) -> Void {
         
-        return { (pictureState: PictureState, newItemPicture: UIImage?) -> Void in
+        return { (pictureState: PictureState, newItemPicture: ItemPicture?) -> Void in
             
             switch pictureState {
                 
             case .delete, .none:
-                self.itemImage = UIImage(named: "empty-photo")
+                self.itemImageVc?.scaledDownImage = UIImage(named: "empty-photo")
                 
-            case .new:
-                self.itemImage = newItemPicture!
+            case .new, .replacement:
+                newItemPicture?.scale(widthToScale: self.itemImageView.bounds.width)
+                self.itemImageView.image = newItemPicture?.scaledDownImage
                 
             case .existing:
                 if let pictureStringPath = self.shoppingListItem?.item?.picture?.fileUrl {
-                    self.itemImage = UIImage(contentsOfFile: pictureStringPath)
+                    self.itemImageVc?.fullScaleImage = UIImage(contentsOfFile: pictureStringPath)
+                    self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
+                    self.itemImageView.image = self.itemImageVc?.scaledDownImage
                 }
-                
-            case .replacement:
-                self.itemImage = newItemPicture!
             }
+            
         }
     }
     
     func writePicturePickedFromCameraToFile() -> URL? {
         
-        if let image = itemImage {
+        if let image = itemImageVc?.fullScaleImage {
             let cameraUtil = CameraUtil()
             return cameraUtil.persistImage(data: image)
         } else {
@@ -859,9 +908,14 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        let itemImage = info[UIImagePickerControllerOriginalImage] as! UIImage
+        let originalItemImage = info[UIImagePickerControllerOriginalImage] as! UIImage
         
-        pictureState.transition(event: .onFinishPickingCameraMedia(itemImage), handleNextStateUiAttributes: nextPictureStateUiAttributes)
+        //print(">>>> imageView.width \(itemImageView.bounds.width), height \(itemImageView.bounds.height)")
+        //let scaledDownItemImage = PictureUtil.resizeImage(image: originalItemImage, newWidth: itemImageView.bounds.width, newHeight: itemImageView.bounds.width)
+        
+        itemImageVc?.fullScaleImage = originalItemImage
+        
+        pictureState.transition(event: .onFinishPickingCameraMedia(itemImageVc!), handleNextStateUiAttributes: nextPictureStateUiAttributes)
         
         changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
         

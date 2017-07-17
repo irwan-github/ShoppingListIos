@@ -206,7 +206,7 @@ extension ShoppingListsTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("\(#function) - \(type(of: self))")
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "Shopping List", for: indexPath) as! ShoppingListSummaryTableViewCell
         
         // Configure the cell...
