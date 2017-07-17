@@ -54,9 +54,9 @@ class ShoppingListMetadataViewController: UIViewController {
                 
                 let nserror = error as NSError
                 
-                if let error = nserror.userInfo[AnyHashable("NSValidationErrorKey")] {
+                if let validationError = nserror.userInfo[AnyHashable("NSValidationErrorKey")] {
                     
-                    displayErrorValuesFollowup(fieldName: error as! String)
+                    displayErrorValuesFollowup(fieldName: validationError as! String)
                     
                 }
             }

@@ -467,61 +467,70 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     // MARK: - Create, Read, Update, Delete
     
-    @IBAction func onDone(_ sender: UIBarButtonItem) {
-        
-        let onSaveEventHandler = ValidationListItemState.OnSaveListItemEventHandler(validate: { currentState in
+    func validateItemField(currentState: ValidationListItemState) -> Bool {
+        if let name = self.itemNameTextField.text, !name.isEmpty {
             
-            if let name = self.itemNameTextField.text, !name.isEmpty {
+            switch currentState {
                 
-                switch currentState {
+            case .newListItem:
+                do {
+                    let itemName = self.itemNameTextField.text!
                     
-                case .newListItem:
-                    do {
-                        let itemName = self.itemNameTextField.text!
+                    if try Item.isNameExist(itemName, moc: self.persistentContainer.viewContext) {
                         
-                        if try Item.isNameExist(itemName, moc: self.persistentContainer.viewContext) {
-                            
-                            if self.validationItemState == .existingItem {
-                                return true
-                            }
-                            
-                            print("Item exist. Fetching to show user.")
-                            
-                            let alert = UIAlertController(title: "Item with name \(name) exist", message: "Fetching \(name) now", preferredStyle: .alert)
-                            
-                            let action = UIAlertAction(title: "OK", style: .default, handler: { action in
-                                
-                                self.item = (try? Item.find(name: itemName, in: self.persistentContainer.viewContext)) ?? nil
-                                
-                                if self.item != nil {
-                                    self.validationItemState.handle(event: .onExistingItem)
-                                }
-                            })
-                            
-                            alert.addAction(action)
-                            
-                            self.present(alert, animated: true)
-                            
-                            return false
-                            
-                        } else {
-                            
+                        if self.validationItemState == .existingItem {
                             return true
                         }
-                    } catch {
-                        let nserror = error as NSError
-                        print("Error \(nserror) : \(nserror.userInfo)")
+                        
+                        print("Item exist. Fetching to show user.")
+                        
+                        let alert = UIAlertController(title: "Item with name \(name) exist", message: "Fetching \(name) now", preferredStyle: .alert)
+                        
+                        let action = UIAlertAction(title: "OK", style: .default, handler: { action in
+                            
+                            self.item = (try? Item.find(name: itemName, in: self.persistentContainer.viewContext)) ?? nil
+                            
+                            if self.item != nil {
+                                self.validationItemState.handle(event: .onExistingItem)
+                            }
+                        })
+                        
+                        alert.addAction(action)
+                        
+                        self.present(alert, animated: true)
+                        
                         return false
+                        
+                    } else {
+                        
+                        return true
                     }
-                    
-                default:
-                    return true
+                } catch {
+                    let nserror = error as NSError
+                    print("Error \(nserror) : \(nserror.userInfo)")
+                    return false
                 }
                 
-            } else {
-                
-                return false
+            default:
+                return true
             }
+            
+        } else {
+            
+            self.displayErrorValuesFollowup(fieldName: "name")
+            return false
+        }
+    }
+    
+    @IBAction func onDone(_ sender: UIBarButtonItem) {
+        
+        processOnDone()
+    }
+    
+    func processOnDone() {
+        let onSaveEventHandler = ValidationListItemState.OnSaveListItemEventHandler(validate: { currentState in
+            
+            return self.validateItemField(currentState: currentState)
             
         }, actionIfValidateTrue: {currentState in
             
@@ -533,7 +542,7 @@ class ShoppingListItemEditorViewController: UIViewController {
                 self.performSegue(withIdentifier: "back to shopping list", sender: self)
                 
             case .existingListItem:
-                self.saveUpdate()
+                self.saveUpdateListItem()
                 self.presentingViewController?.dismiss(animated: true, completion: nil)
                 
             default:
@@ -577,15 +586,50 @@ class ShoppingListItemEditorViewController: UIViewController {
             persistentContainer.viewContext.refresh(shoppingLineItem, mergeChanges: true)
             
         } catch  {
+            
             let nserror = error as NSError
-            print(">>>>>\(nserror) : \(nserror.userInfo)")
+            
+            if let validationError = nserror.userInfo[AnyHashable("NSValidationErrorKey")] {
+                
+                displayErrorValuesFollowup(fieldName: validationError as! String)
+                
+            }
         }
+    }
+    
+    func displayErrorValuesFollowup(fieldName: String) {
+        
+        let title = "You forgot to give a " + fieldName
+        
+        let nameAlertVc = UIAlertController(title: title, message: "Provide the following", preferredStyle: .alert)
+        nameAlertVc.addTextField(configurationHandler: { nameTextField in
+            nameTextField.placeholder = "Name for item"
+        })
+        
+        let doneAction = UIAlertAction(title: "Save", style: .default, handler: { alertAction in
+            
+            let name = nameAlertVc.textFields?.first?.text
+            self.itemNameTextField.text = name ?? ""
+            
+            self.processOnDone()
+            
+        })
+        
+        nameAlertVc.addAction(doneAction)
+        nameAlertVc.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {alertAction in
+            
+            
+            self.persistentContainer.viewContext.rollback()
+            
+        }))
+        
+        present(nameAlertVc, animated: true, completion: nil)
     }
     
     /**
      Save existing item
      */
-    fileprivate func saveUpdate() {
+    fileprivate func saveUpdateListItem() {
         
         let moc = persistentContainer.viewContext
         
@@ -610,8 +654,14 @@ class ShoppingListItemEditorViewController: UIViewController {
                 persistentContainer.viewContext.refresh(shoppingListItem!, mergeChanges: true)
             }
         } catch  {
+            
             let nserror = error as NSError
-            print(">>>>Error \(nserror) : \(nserror.userInfo)")
+            
+            if let validationError = nserror.userInfo[AnyHashable("NSValidationErrorKey")] {
+                
+                displayErrorValuesFollowup(fieldName: validationError as! String)
+                
+            }
         }
     }
     

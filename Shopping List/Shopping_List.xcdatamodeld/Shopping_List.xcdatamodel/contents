@@ -5,7 +5,7 @@
         <attribute name="countryOfOrigin" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="itemDescription" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lastUpdatedOn" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="name" attributeType="String" syncable="YES"/>
+        <attribute name="name" attributeType="String" minValueString="1" syncable="YES"/>
         <relationship name="listItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ShoppingListItem" inverseName="item" inverseEntity="ShoppingListItem" syncable="YES"/>
         <relationship name="picture" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Picture" inverseName="item" inverseEntity="Picture" syncable="YES"/>
         <relationship name="prices" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Price" inverseName="item" inverseEntity="Price" syncable="YES"/>

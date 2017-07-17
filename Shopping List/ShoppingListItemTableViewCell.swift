@@ -77,15 +77,6 @@ class ShoppingListItemTableViewCell: UITableViewCell {
     
     var changesToItemObserver: NSObjectProtocol?
     
-    deinit {
-        if let observer = changesToItemObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
-}
-
-extension ShoppingListItemTableViewCell {
-    
     func listenForNotificationOfChangesToItem() {
         let notificationCtr = NotificationCenter.default
         changesToItemObserver = notificationCtr.addObserver(forName: NSNotification.Name.NSManagedObjectContextDidSave,
@@ -105,5 +96,9 @@ extension ShoppingListItemTableViewCell {
         
     }
     
-
+    deinit {
+        if let observer = changesToItemObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
 }
