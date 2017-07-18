@@ -574,7 +574,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             item?.brand = brandTextField.text
             item?.countryOfOrigin = countryOriginTextField.text
             item?.itemDescription = descriptionTextField.text
-            handlePictureEventAction(of: item!, in: moc)
+            processPictureOnDone(of: item!, in: moc)
             updateUnitPrice(of: item!)
             updateBundlePrice(of: item!)
             
@@ -635,7 +635,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         let moc = persistentContainer.viewContext
         
-        handlePictureEventAction(of: (shoppingListItem?.item)!, in: moc)
+        processPictureOnDone(of: (shoppingListItem?.item)!, in: moc)
         
         shoppingListItem?.item?.countryOfOrigin = countryOriginTextField.text
         shoppingListItem?.item?.brand = brandTextField.text
@@ -926,7 +926,8 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 self.itemImageView.image = self.itemImageVc?.scaledDownImage
                 
             case .new, .replacement:
-                newItemPicture?.scale(widthToScale: self.itemImageView.bounds.width)
+                self.itemImageVc = newItemPicture
+                self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
                 self.itemImageView.image = newItemPicture?.scaledDownImage
                 
             case .existing:
@@ -943,7 +944,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     /**
      Depending on picture state, the image file will either be written/deleted to/from app document folder
      */
-    func handlePictureEventAction(of item: Item, in moc: NSManagedObjectContext) {
+    func processPictureOnDone(of item: Item, in moc: NSManagedObjectContext) {
         
         pictureState.transition(event: .onSaveImage({ pictureState in
             
@@ -1036,16 +1037,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
         guard let selectedOriginalItemImage = info[UIImagePickerControllerOriginalImage] as? UIImage else { return }
-        
-        if self.itemImageVc == nil {
-            itemImageVc = ItemPicture(fullScaleImage: selectedOriginalItemImage)
-        } else {
-            itemImageVc?.fullScaleImage = selectedOriginalItemImage
-        }
-        
-        if let itemImageVc = itemImageVc {
-            pictureState.transition(event: .onFinishPickingCameraMedia(itemImageVc), handleNextStateUiAttributes: nextPictureStateUiAttributes)
-        }
+        pictureState.transition(event: .onFinishPickingCameraMedia(selectedOriginalItemImage), handleNextStateUiAttributes: nextPictureStateUiAttributes)
         
         changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
         

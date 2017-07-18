@@ -20,7 +20,7 @@ enum PictureState {
     //Events
     enum Event {
         case onSaveImage((PictureState) -> Void)
-        case onFinishPickingCameraMedia(ItemPicture)
+        case onFinishPickingCameraMedia(UIImage)
         case onDelete
         case onExist(ItemPicture?)
     }
@@ -41,9 +41,10 @@ enum PictureState {
                 self = .existing
                 handleNextStateUiAttributes?(self, itemPicture)
                 
-            case .onFinishPickingCameraMedia(let itemPicture):
+            case .onFinishPickingCameraMedia(let originalUiImage):
+                let itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
                 self = .new
-                handleNextStateUiAttributes?(self, itemPicture)
+                handleNextStateUiAttributes?(self, itemImageVc)
                 
             default:
                 break
@@ -52,9 +53,10 @@ enum PictureState {
         case .new:
             switch event {
                 
-            case .onFinishPickingCameraMedia(let itemPicture):
+            case .onFinishPickingCameraMedia(let originalUiImage):
+                let itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
                 self = .new
-                handleNextStateUiAttributes?(self, itemPicture)
+                handleNextStateUiAttributes?(self, itemImageVc)
                 
             case .onSaveImage(let action):
                 action(self)
@@ -73,9 +75,10 @@ enum PictureState {
         case .existing:
             switch event {
                 
-            case .onFinishPickingCameraMedia(let itemPicture):
+            case .onFinishPickingCameraMedia(let originalUiImage):
+                let itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
                 self = .replacement
-                handleNextStateUiAttributes?(self, itemPicture)
+                handleNextStateUiAttributes?(self, itemImageVc)
                 
             case .onDelete:
                 self = .delete
@@ -88,9 +91,10 @@ enum PictureState {
         case .replacement:
             switch event {
                 
-            case .onFinishPickingCameraMedia(let itemPicture):
+            case .onFinishPickingCameraMedia(let originalUiImage):
+                let itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
                 self = .replacement
-                handleNextStateUiAttributes?(self, itemPicture)
+                handleNextStateUiAttributes?(self, itemImageVc)
                 
             case .onSaveImage(let action):
                 action(self)
@@ -114,9 +118,10 @@ enum PictureState {
                 self = .existing
                 handleNextStateUiAttributes?(self, nil)
                 
-            case .onFinishPickingCameraMedia(let itemPicture):
+            case .onFinishPickingCameraMedia(let originalUiImage):
+                let itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
                 self = .replacement
-                handleNextStateUiAttributes?(self, itemPicture)
+                handleNextStateUiAttributes?(self, itemImageVc)
                 
             default:
                 break
