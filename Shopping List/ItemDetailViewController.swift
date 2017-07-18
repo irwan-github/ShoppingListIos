@@ -31,8 +31,6 @@ class ItemDetailViewController: UIViewController {
     
     // MARK: - UIViewController's version of model
     
-    @IBOutlet weak var itemNameLabel: UILabel!
-    
     @IBOutlet weak var itemImageView: UIImageView!
     
     override func viewDidLoad() {
@@ -64,7 +62,7 @@ class ItemDetailViewController: UIViewController {
                 if let changedObjects = info?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
                     for changedObject in changedObjects {
                         print("\(changedObject)")
-                        if let changedItem = changedObject as? Item {
+                        if let changedItem = changedObject as? Item, changedItem == self.item {
                             self.item = changedItem
                         }
                     }
@@ -82,7 +80,7 @@ class ItemDetailViewController: UIViewController {
     
     func updateUi() {
         
-        itemNameLabel?.text = item?.name
+        title = item?.name
         
         if let stringPath = item?.picture?.fileUrl {
             itemImageView?.image = PictureUtil.materializePicture(from: stringPath)

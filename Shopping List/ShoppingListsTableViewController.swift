@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class ShoppingListsTableViewController: FetchedResultsTableViewController {
+class ShoppingListsTableViewController: FetchedResultsTableViewController, UINavigationControllerDelegate {
     
     // MARK: API
     var persistContainer: NSPersistentContainer = AppDelegate.persistentContainer
@@ -42,6 +42,7 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
+        self.navigationController?.delegate = self
         
         // Uncomment the following line to preserve selection between presentations
         self.clearsSelectionOnViewWillAppear = true
@@ -273,5 +274,25 @@ extension ShoppingListsTableViewController {
         addShoppingListButton.isEnabled = !editing
     }
     
+    /**
+    Always show the landing view controller as the detail when master is this view controller
+    */
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        print("\(#function) - \(type(of: self))")
+        
+        guard let detailViewController = splitViewController?.viewControllers[1] else { return }
+        
+        if viewController is ShoppingListsTableViewController, let title = detailViewController.title, title != "Landing view controller" {
+            
+            let landingViewController: UIViewController
+            landingViewController = storyboard?.instantiateViewController(withIdentifier: "LandingViewController") ?? UIViewController()
+            splitViewController?.showDetailViewController(landingViewController, sender: self)
+        }
+    }
+    
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        print("\(#function) - \(type(of: self))")
+    }
 }
+
 

@@ -843,6 +843,18 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    @IBAction func onPickPicture(_ sender: UITapGestureRecognizer) {
+        
+        //Create a action sheet
+        let pictureActionSheetController = pictureActionSheet
+        
+        //The following will cause app to adapt to iPad by presenting action sheet as popover on an iPad.
+        pictureActionSheetController.modalPresentationStyle = .popover
+        let popoverMenuPresentationController = pictureActionSheetController.popoverPresentationController
+        popoverMenuPresentationController?.sourceView = itemImageView
+        popoverMenuPresentationController?.sourceRect = itemImageView.bounds
+        present(pictureActionSheetController, animated: true, completion: nil)
+    }
 }
 
 // MARK: - State: Handle picture actions and states
@@ -1017,15 +1029,12 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        let originalItemImage = info[UIImagePickerControllerOriginalImage] as! UIImage
-        
-        //print(">>>> imageView.width \(itemImageView.bounds.width), height \(itemImageView.bounds.height)")
-        //let scaledDownItemImage = PictureUtil.resizeImage(image: originalItemImage, newWidth: itemImageView.bounds.width, newHeight: itemImageView.bounds.width)
+        guard let selectedOriginalItemImage = info[UIImagePickerControllerOriginalImage] as? UIImage else { return }
         
         if self.itemImageVc == nil {
-            itemImageVc = ItemPicture(fullScaleImage: originalItemImage)
+            itemImageVc = ItemPicture(fullScaleImage: selectedOriginalItemImage)
         } else {
-            itemImageVc?.fullScaleImage = originalItemImage
+            itemImageVc?.fullScaleImage = selectedOriginalItemImage
         }
         
         if let itemImageVc = itemImageVc {
