@@ -452,14 +452,20 @@ class ShoppingListItemEditorViewController: UIViewController {
                 //Display the price type chosen
                 self.priceSwitchController?.selectPriceType(priceType: .bundle)
                 
+                //Enable stepper of bundle price in pricing information
+                self.bundleQtyStepper.isEnabled = true
+                
             case .unitPrice:
                 
-                //Show unit pricing informationß∫
+                //Show unit pricing information
                 self.pricingInformationSc.selectedSegmentIndex = SelectedPriceState.unitPrice.rawValue
                 self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                 
                 //Display the price type chosen
                 self.priceSwitchController?.selectPriceType(priceType: .unit)
+                
+                //Disable stepper of bundle price in pricing information
+                self.bundleQtyStepper.isEnabled = false
             }
         }
         

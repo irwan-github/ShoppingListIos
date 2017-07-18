@@ -228,8 +228,7 @@ extension ShoppingListsTableViewController {
     
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        print("\(#function) - \(type(of: self))")
+
         let cell = tableView.cellForRow(at: indexPath) as? ShoppingListSummaryTableViewCell
         
         if tableView.isEditing {
@@ -278,7 +277,6 @@ extension ShoppingListsTableViewController {
     Always show the landing view controller as the detail when master is this view controller
     */
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
-        print("\(#function) - \(type(of: self))")
         
         if !(viewController is ShoppingListsTableViewController) {
             return
