@@ -39,6 +39,11 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         
         navigationItem.title = shoppingList?.name
         
+        let count = splitViewController?.viewControllers.count
+        if let viewControllerCount = count, viewControllerCount == 1 {
+            return
+        }
+        
         //Load the first item of the shopping list in detail view if there is any
         
         if fetchedResultsController?.fetchedObjects?.count == 0 {
