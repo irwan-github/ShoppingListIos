@@ -19,4 +19,29 @@ struct PictureUtil {
         UIGraphicsEndImageContext()
         return newImage
     }
+    
+    /**
+     Specify locations manually by building a URL or string-based path from known directory names.
+     This creates an absolute path to MY_APP/Documents directory
+     */
+    static var documentDirectory: URL {
+        let fileManager = FileManager.default
+        let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+        return urls[0]
+    }
+    
+    static func pictureinDocumentFolder(filename: String) -> URL {
+        
+        return documentDirectory.appendingPathComponent(filename)
+    }
+    
+    static func materializePicture(from filename: String) -> UIImage? {
+        let url = pictureinDocumentFolder(filename: filename)
+        let data = try? Data(contentsOf: url)
+        if let data = data {
+            return UIImage(data: data)
+        } else {
+            return nil
+        }
+    }
 }

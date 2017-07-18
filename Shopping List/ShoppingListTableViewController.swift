@@ -21,6 +21,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         didSet {
             print("\(#function) - \(type(of: self))")
             updateUi()
+            //listenForNotificationOfChangesToItem()
         }
     }
     
@@ -88,6 +89,9 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         let shoppingListItem = fetchedResultsController?.object(at: indexPath)
         
         shoppingListItemCell.shoppingListItem = shoppingListItem
+        
+        //For debug
+        shoppingListItemCell.indexPath = indexPath
         
         return shoppingListItemCell
     }
@@ -169,6 +173,14 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
             return nil
         }
     }
+    
+    var changesToItemObserver: NSObjectProtocol?
+    
+    deinit {
+        if let observer = changesToItemObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
 }
 
 extension ShoppingListTableViewController {
@@ -183,6 +195,41 @@ extension ShoppingListTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return fetchedResultsController?.fetchedObjects?.count ?? 0
+    }
+    
+
+    
+    func listenForNotificationOfChangesToItem() {
+        print("#### notificationCtr.addObserver")
+        let notificationCtr = NotificationCenter.default
+        changesToItemObserver = notificationCtr.addObserver(
+            forName: NSNotification.Name.NSManagedObjectContextDidSave,
+            object: fetchedResultsController?.managedObjectContext, //Broadcaster
+            queue: OperationQueue.main,
+            using: { notification in
+                
+                print("#### Receive notification")
+                
+                
+                
+                guard let info = notification.userInfo else { return }
+                
+                if let changedObjects = info[NSUpdatedObjectsKey] as? Set<NSManagedObject>, changedObjects.count > 0 {
+
+                    print("#### ChangedItems count is \(changedObjects.count)")
+
+                    for managedObject in changedObjects {
+                        
+                        print("###########")
+                        
+                        if let shoppingListItem = managedObject as? ShoppingListItem {
+                            print("\(shoppingListItem)")
+                        }
+                        
+                    }
+                }
+        })
+        
     }
     
 }

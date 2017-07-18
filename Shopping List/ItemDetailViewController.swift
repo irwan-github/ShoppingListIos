@@ -79,7 +79,7 @@ class ItemDetailViewController: UIViewController {
         itemNameLabel?.text = item?.name
         
         if let stringPath = item?.picture?.fileUrl {
-            itemImageView?.image = UIImage(contentsOfFile: stringPath)
+            itemImageView?.image = PictureUtil.materializePicture(from: stringPath)
             
             //The following is an alternative to reading & displaying image file from web and filesystem.
             //                let url = URL(fileURLWithPath: stringPath)

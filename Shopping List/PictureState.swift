@@ -22,7 +22,7 @@ enum PictureState {
         case onSaveImage((PictureState) -> Void)
         case onFinishPickingCameraMedia(ItemPicture)
         case onDelete
-        case onExist
+        case onExist(ItemPicture?)
     }
     
     init() {
@@ -37,9 +37,9 @@ enum PictureState {
             
             switch event {
                 
-            case .onExist:
+            case .onExist(let itemPicture):
                 self = .existing
-                handleNextStateUiAttributes?(self, nil)
+                handleNextStateUiAttributes?(self, itemPicture)
                 
             case .onFinishPickingCameraMedia(let itemPicture):
                 self = .new

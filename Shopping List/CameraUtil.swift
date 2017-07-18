@@ -30,7 +30,10 @@ struct CameraUtil {
         
     }
     
-    //specify locations manually by building a URL or string-based path from known directory names
+    /**
+    Specify locations manually by building a URL or string-based path from known directory names.
+     This creates an absolute path to MY_APP/Documents directory
+     */
     static var directoryContainingImageFile: URL {
         let fileManager = FileManager.default
         let urls = fileManager.urls(for: directory, in: .userDomainMask)
@@ -61,6 +64,30 @@ struct CameraUtil {
         }
         
         return url
+        
+    }
+    
+    func writeImageToFileSystem(data: UIImage) -> String? {
+        
+        guard let jpegImage = UIImageJPEGRepresentation(data, 1) else {
+            print("Error: JPEG creation")
+            return nil
+        }
+        
+        let urlDirectoryContainingImageFile = CameraUtil.directoryContainingImageFile
+        let filename = CameraUtil.filename
+        let absPathUrl = urlDirectoryContainingImageFile.appendingPathComponent(filename)
+        
+        do {
+            try jpegImage.write(to: absPathUrl, options: .atomic)
+            print("Success saving photo")
+        } catch {
+            let nserror = error as NSError
+            print("\(#function): Unresolved error \(nserror), \(nserror.userInfo)")
+            return nil
+        }
+        
+        return filename
         
     }
 }

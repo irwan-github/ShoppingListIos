@@ -202,7 +202,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     /**
      ViewController's image model
      */
-    fileprivate var itemImageVc: ItemPicture? = ItemPicture()
+    fileprivate var itemImageVc: ItemPicture?
     
     @IBOutlet weak var itemImageView: UIImageView!
     
@@ -522,11 +522,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    @IBAction func onDone(_ sender: UIBarButtonItem) {
-        
-        processOnDone()
-    }
-    
     func processOnDone() {
         let onSaveEventHandler = ValidationListItemState.OnSaveListItemEventHandler(validate: { currentState in
             
@@ -583,7 +578,8 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             try persistentContainer.viewContext.save()
             
-            persistentContainer.viewContext.refresh(shoppingLineItem, mergeChanges: true)
+            //The following is not needed anymore as I now put the item and price information in a "More" view controller configured as popup segue. Thereby forcing a reloading of the "More" view controller every time
+            //persistentContainer.viewContext.refresh(shoppingLineItem, mergeChanges: true)
             
         } catch  {
             
@@ -650,9 +646,10 @@ class ShoppingListItemEditorViewController: UIViewController {
                 try shoppingListItem?.managedObjectContext?.save()
             }
             
-            if shoppingListItem != nil {
-                persistentContainer.viewContext.refresh(shoppingListItem!, mergeChanges: true)
-            }
+            //The following is not needed anymore as I now put the item and price information in a "More" view controller configured as popup segue. Thereby forcing a reloading of the "More" view controller every time
+            //            if shoppingListItem != nil {
+            //                //persistentContainer.viewContext.refresh(shoppingListItem!, mergeChanges: true)
+            //            }
         } catch  {
             
             let nserror = error as NSError
@@ -714,6 +711,14 @@ class ShoppingListItemEditorViewController: UIViewController {
     // MARK: - User events
     
     /**
+     Starts the validation and saving process
+     */
+    @IBAction func onDone(_ sender: UIBarButtonItem) {
+        
+        processOnDone()
+    }
+    
+    /**
      The logic depends on the state of the selected price type. The event of selecting the price type configures the behavior of the stepper to respond differently depending on selected price type.
      */
     @IBAction func onChangeQtyToBuy(_ sender: UIStepper) {
@@ -770,14 +775,14 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
             
-            if self.shoppingListItem?.item?.picture != nil {
+            if let pictureFilename = self.shoppingListItem?.item?.picture?.fileUrl {
                 
-                self.pictureState.transition(event: .onExist, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+                self.itemImageVc = ItemPicture(filename: pictureFilename)
+                self.pictureState.transition(event: .onExist(self.itemImageVc), handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
             }
             
             //Contains a property observer that set the price fields
             self.prices = self.shoppingListItem?.item?.prices
-            
             
             self.itemNameTextField.isEnabled = false
             self.deleteItemButton.isHidden = false
@@ -906,22 +911,12 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 
             case .existing:
                 if let pictureStringPath = self.shoppingListItem?.item?.picture?.fileUrl {
-                    self.itemImageVc?.fullScaleImage = UIImage(contentsOfFile: pictureStringPath)
+                    print("\(#function) : \(pictureStringPath)")
                     self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
                     self.itemImageView.image = self.itemImageVc?.scaledDownImage
                 }
             }
             
-        }
-    }
-    
-    func writePicturePickedFromCameraToFile() -> URL? {
-        
-        if let image = itemImageVc?.fullScaleImage {
-            let cameraUtil = CameraUtil()
-            return cameraUtil.persistImage(data: image)
-        } else {
-            return nil
         }
     }
     
@@ -935,52 +930,30 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
             switch pictureState {
                 
             case .new:
-                let itemImageUrl = self.writePicturePickedFromCameraToFile()
-                if let itemImageUrl = itemImageUrl {
-                    let newPicture = Picture(context: moc)
-                    newPicture.fileUrl = itemImageUrl.path
-                    item.picture = newPicture
-                }
+                self.savePictureInFilesystemAndCoreData(of: item, in: moc)
                 
             case .replacement:
                 
-                let fileMgr = FileManager.default
-                if let imageStringPath = item.picture?.fileUrl {
-                    do {
-                        //Delete existing picture from document folder
-                        try fileMgr.removeItem(atPath: imageStringPath)
-                        
-                        //Delete existing picture from database
-                        moc.delete(item.picture!)
-                        
-                        let itemImageUrl = self.writePicturePickedFromCameraToFile()
-                        
-                        //Create new picture
-                        if let itemNewImageUrl = itemImageUrl{
-                            let newPicture = Picture(context: moc)
-                            newPicture.fileUrl = itemNewImageUrl.path
-                            item.picture = newPicture
-                        }
-                    } catch {
-                        let nserror = error as NSError
-                        print("\(#function) Failed to delete previous picture from document folder -> \(nserror): \(nserror.userInfo)")
-                    }
+                if let filename = item.picture?.fileUrl {
+                    
+                    //Delete existing picture from document folder
+                    self.deletePicture(at: filename)
+                    
+                    //Delete existing picture from database
+                    moc.delete(item.picture!)
+                    
+                    self.savePictureInFilesystemAndCoreData(of: item, in: moc)
                 }
                 
             case .delete:
-                let fileMgr = FileManager.default
-                if let imageStringPath = item.picture?.fileUrl {
-                    do {
-                        //Delete existing picture from document folder
-                        try fileMgr.removeItem(atPath: imageStringPath)
-                        
-                        //Delete picture from database
-                        moc.delete(item.picture!)
-                        
-                    } catch {
-                        let nserror = error as NSError
-                        print("\(#function) Failed to delete existing picture from document folder -> \(nserror): \(nserror.userInfo)")
-                    }
+                
+                if let filename = item.picture?.fileUrl {
+                    
+                    //Delete existing picture from document folder
+                    self.deletePicture(at: filename)
+                    
+                    //Delete picture from database
+                    moc.delete(item.picture!)
                 }
                 
             default:
@@ -989,16 +962,40 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         }))
     }
     
+    func savePictureInFilesystemAndCoreData(of item: Item, in moc: NSManagedObjectContext) {
+        
+        let stringFilename = writeImagePickedFromCameraToFile()
+        
+        if let stringFilename = stringFilename {
+            let newPicture = Picture(context: moc)
+            newPicture.fileUrl = stringFilename
+            item.picture = newPicture
+        }
+    }
+    
+    func writeImagePickedFromCameraToFile() -> String? {
+        
+        if let image = itemImageVc?.fullScaleImage {
+            let cameraUtil = CameraUtil()
+            return cameraUtil.writeImageToFileSystem(data: image)
+        } else {
+            return nil
+        }
+    }
+    
     /**
      Delete picture from app document folder
+     - Parameter filename: Does not contain any directory or folder
      */
-    func deletePicture(at pathString: String) {
+    func deletePicture(at filename: String) {
         let fileMgr = FileManager.default
+        let fileUrl = PictureUtil.pictureinDocumentFolder(filename: filename)
+        
         do {
-            try fileMgr.removeItem(atPath: pathString)
+            try fileMgr.removeItem(at: fileUrl)
         } catch {
             let nserror = error as NSError
-            print("\(#function) Failed to delete existing picture \(pathString) -> \(nserror): \(nserror.userInfo)")
+            print("\(#function) Failed to delete existing picture \(filename) -> \(nserror): \(nserror.userInfo)")
         }
         
     }
@@ -1009,7 +1006,9 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         imagePickerController.delegate = self
         imagePickerController.allowsEditing = false
         imagePickerController.sourceType = sourceType
-        imagePickerController.cameraCaptureMode = .photo
+        if sourceType == .camera {
+            imagePickerController.cameraCaptureMode = .photo
+        }
         imagePickerController.modalPresentationStyle = .fullScreen
         present(imagePickerController, animated: true, completion: nil)
     }
@@ -1021,9 +1020,15 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         //print(">>>> imageView.width \(itemImageView.bounds.width), height \(itemImageView.bounds.height)")
         //let scaledDownItemImage = PictureUtil.resizeImage(image: originalItemImage, newWidth: itemImageView.bounds.width, newHeight: itemImageView.bounds.width)
         
-        itemImageVc?.fullScaleImage = originalItemImage
+        if self.itemImageVc == nil {
+            itemImageVc = ItemPicture(fullScaleImage: originalItemImage)
+        } else {
+            itemImageVc?.fullScaleImage = originalItemImage
+        }
         
-        pictureState.transition(event: .onFinishPickingCameraMedia(itemImageVc!), handleNextStateUiAttributes: nextPictureStateUiAttributes)
+        if let itemImageVc = itemImageVc {
+            pictureState.transition(event: .onFinishPickingCameraMedia(itemImageVc), handleNextStateUiAttributes: nextPictureStateUiAttributes)
+        }
         
         changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
         

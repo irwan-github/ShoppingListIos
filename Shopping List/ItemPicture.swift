@@ -13,10 +13,25 @@ class ItemPicture {
     
     var fullScaleImage: UIImage?
     var scaledDownImage: UIImage?
-
+    var filename: String?
     
-    init(fullScaleImage: UIImage? = nil) {
-        self.fullScaleImage = fullScaleImage
+    /**
+     Item picture can originate from database with string-base filename OR it can originate from image picker with UIImage
+    */
+    init(filename: String? = nil, fullScaleImage: UIImage? = nil) {
+        self.filename = filename
+        
+        if fullScaleImage != nil {
+            self.fullScaleImage = fullScaleImage
+        } else if let filename = self.filename {
+            
+            let absPath = PictureUtil.pictureinDocumentFolder(filename: filename)
+            let imageData = try? Data(contentsOf: absPath)
+            
+            if let imageData = imageData {
+                self.fullScaleImage = UIImage(data: imageData)
+            }
+        }
     }
     
     func scale(widthToScale: CGFloat) {

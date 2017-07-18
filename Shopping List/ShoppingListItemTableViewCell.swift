@@ -17,15 +17,16 @@ class ShoppingListItemTableViewCell: UITableViewCell {
     @IBOutlet weak var quantityToBuy: ToggleCircleButton!
     @IBOutlet weak var selectedPrice: UILabel!
     
+    //Debug purpose
+    var indexPath: IndexPath?
+    
     // MARK: - Model
     var shoppingListItem: ShoppingListItem? {
         didSet {
             
-            listenForNotificationOfChangesToItem()
-            
             //********* Cautionary: Put the following here causes an infinite loop ***************//
             //shoppingListItem?.managedObjectContext?.refresh(shoppingListItem!, mergeChanges: true)
-
+            
             item = shoppingListItem?.item
             
             quantityToBuy.setTitle(String(describing: (shoppingListItem?.quantityToBuyConvert)!), for: .normal)
@@ -36,36 +37,47 @@ class ShoppingListItemTableViewCell: UITableViewCell {
             }
             
             
-//            if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
-//                itemPicture.image = UIImage(contentsOfFile: stringPath)
-//                
-//                //The following is an alternative to reading & displaying image file from web and filesystem.
-//                //                let url = URL(fileURLWithPath: stringPath)
-//                //                if let imageData = try? Data(contentsOf: url) {
-//                //                    itemPicture.image = UIImage(data: imageData)
-//                //                }
-//            } else {
-//                itemPicture.image = UIImage(named: "empty-photo")
-//            }
+            //            if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
+            //                itemPicture.image = UIImage(contentsOfFile: stringPath)
+            //
+            //                //The following is an alternative to reading & displaying image file from web and filesystem.
+            //                //                let url = URL(fileURLWithPath: stringPath)
+            //                //                if let imageData = try? Data(contentsOf: url) {
+            //                //                    itemPicture.image = UIImage(data: imageData)
+            //                //                }
+            //            } else {
+            //                itemPicture.image = UIImage(named: "empty-photo")
+            //            }
         }
     }
     
     var item: Item? {
         didSet {
+            
             itemName.text = item?.name
             brand.text = item?.brand
             
             if let stringPath = item?.picture?.fileUrl {
-                itemPicture.image = UIImage(contentsOfFile: stringPath)
+                
+                let fileMgr = FileManager.default
+                if let documentsFolder = fileMgr.urls(for: .documentDirectory, in: .userDomainMask).first {
+                    let url = documentsFolder.appendingPathComponent(stringPath)
+                    if let imageData = try? Data(contentsOf: url) {
+                        itemPicture.image = UIImage(data: imageData)
+                    }
+                }
                 
                 //The following is an alternative to reading & displaying image file from web and filesystem.
                 //                let url = URL(fileURLWithPath: stringPath)
                 //                if let imageData = try? Data(contentsOf: url) {
                 //                    itemPicture.image = UIImage(data: imageData)
                 //                }
-            } else {
+            }
+            
+            if itemPicture.image == nil {
                 itemPicture.image = UIImage(named: "empty-photo")
             }
+            
         }
     }
     
@@ -73,32 +85,5 @@ class ShoppingListItemTableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         // Configure the view for the selected state
-    }
-    
-    var changesToItemObserver: NSObjectProtocol?
-    
-    func listenForNotificationOfChangesToItem() {
-        let notificationCtr = NotificationCenter.default
-        changesToItemObserver = notificationCtr.addObserver(forName: NSNotification.Name.NSManagedObjectContextDidSave,
-                                                            object: shoppingListItem?.item?.managedObjectContext, //Broadcaster
-            queue: OperationQueue.main,
-            using: { notification in
-                
-                let info = notification.userInfo
-                let changedObjects = info?[NSUpdatedObjectsKey] as! NSSet
-                
-                for changedObject in changedObjects {
-                    if let changedItem = changedObject as? Item {
-                        self.item = changedItem
-                    }
-                }
-        })
-        
-    }
-    
-    deinit {
-        if let observer = changesToItemObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
     }
 }
