@@ -274,9 +274,13 @@ extension ShoppingListsTableViewController {
     }
     
     /**
-    Always show the landing view controller as the detail when master is this view controller
+    Always show the landing view controller as the detail when master is this view controller hwne split view controller has 2 views
     */
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+                
+        if (splitViewController?.viewControllers.count)! == 1 {
+            return
+        }
         
         if !(viewController is ShoppingListsTableViewController) {
             return

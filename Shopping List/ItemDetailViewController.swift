@@ -113,14 +113,36 @@ class ItemDetailViewController: UIViewController {
             shoppingListEditorVc.shoppingListItem = shoppingListItem
         }
         
+        //Prepare for a popover segue
         if segue.identifier == "More information" {
+            
             let moreInformationVc = viewController as! ItemAdditionalDataViewController
+            
+            if let popoverPresentationController = moreInformationVc.popoverPresentationController {
+                popoverPresentationController.delegate = self
+            }
+            
             moreInformationVc.item = item
         }
     }
-    
-    @IBAction func showMoreItemInformation(_ sender: UIButton) {
         
+}
+
+extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {
+    
+    func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
+        print("\(#function) - \(type(of: self))")
+        
+        guard let additionItemViewController = storyboard?.instantiateViewController(withIdentifier: "ItemAdditionalDataViewController") as? ItemAdditionalDataViewController else { return nil }
+        
+        additionItemViewController.item = item
+        
+        let navigationController = UINavigationController(rootViewController: additionItemViewController)
+        
+        additionItemViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: additionItemViewController, action: #selector(ItemAdditionalDataViewController.actionOnDoneAdditionalInfo))
+
+        return navigationController
     }
     
+
 }

@@ -130,6 +130,11 @@ class ItemAdditionalDataViewController: UIViewController {
         }
     }
     
+    func actionOnDoneAdditionalInfo() {
+        print("\(#function) - \(type(of: self))")
+        presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
     /*
      // MARK: - Navigation
      

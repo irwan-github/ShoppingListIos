@@ -182,11 +182,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     //Called by iPhone 7+ Potrait, iPhone 7 (Potrait & Landscape)
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
         
-        guard let secondaryAsNc = secondaryViewController as? UINavigationController else { return false }
-        guard let rootVcOfNc = secondaryAsNc.visibleViewController as? ShoppingListTableViewController else { return false }
+        if let title = secondaryViewController.title, title == "Landing view controller" {
+            return true
+        }
+        
+        guard let secondaryAsNc = secondaryViewController as? UINavigationController else {
+            return false
+        }
+        
+        guard let rootVcOfNc = secondaryAsNc.visibleViewController as? ShoppingListTableViewController else {
+            return false
+        }
+        
         if rootVcOfNc.shoppingList == nil {
             return true
         }
+        
         return false
     }
     

@@ -476,8 +476,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="showMoreItemInformation:" destination="MgN-ZP-gvQ" eventType="touchUpInside" id="7DM-ft-2l0"/>
-                                    <segue destination="y6S-Or-Avz" kind="popoverPresentation" identifier="More information" popoverAnchorView="T58-2P-ona" id="ZSW-Lv-7Nk">
+                                    <segue destination="y6S-Or-Avz" kind="popoverPresentation" identifier="More information" popoverAnchorView="T58-2P-ona" id="nZx-ud-Q5O">
                                         <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                                     </segue>
                                 </connections>
@@ -516,7 +515,7 @@
         <!--Item Additional Data View Controller-->
         <scene sceneID="L6k-yu-QjN">
             <objects>
-                <viewController id="y6S-Or-Avz" customClass="ItemAdditionalDataViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ItemAdditionalDataViewController" id="y6S-Or-Avz" customClass="ItemAdditionalDataViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="eXd-ff-Vkk"/>
                         <viewControllerLayoutGuide type="bottom" id="69y-0j-5u7"/>
@@ -632,6 +631,7 @@
                             <constraint firstItem="tZi-Ul-hNJ" firstAttribute="centerX" secondItem="SD4-MC-Zj7" secondAttribute="centerX" id="ygc-dF-vK9"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="XQ7-bY-vuG"/>
                     <connections>
                         <outlet property="brandLabel" destination="hEK-KF-hQK" id="yJm-al-bJI"/>
                         <outlet property="bundleCurrencyCodeLabel" destination="mAd-hp-JBc" id="2My-1I-PTz"/>
@@ -647,7 +647,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yry-cs-9fS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3980" y="544"/>
+            <point key="canvasLocation" x="4016" y="570"/>
         </scene>
         <!--Shopping List Item Editor View Controller-->
         <scene sceneID="0p2-tx-8nh">
