@@ -461,7 +461,7 @@
         <!--Item Detail View Controller-->
         <scene sceneID="umx-eG-NGz">
             <objects>
-                <viewController id="MgN-ZP-gvQ" customClass="ItemDetailViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ItemDetailViewController" id="MgN-ZP-gvQ" customClass="ItemDetailViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="M8j-Gy-qOf"/>
                         <viewControllerLayoutGuide type="bottom" id="AB2-7W-hwc"/>
@@ -1170,7 +1170,7 @@
         <image name="shopping list" width="918" height="980"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="l83-zl-ohz"/>
         <segue reference="Ac5-FM-fMp"/>
+        <segue reference="GDk-fS-7Cc"/>
     </inferredMetricsTieBreakers>
 </document>

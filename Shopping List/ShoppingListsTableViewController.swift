@@ -280,6 +280,10 @@ extension ShoppingListsTableViewController {
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
         print("\(#function) - \(type(of: self))")
         
+        if !(viewController is ShoppingListsTableViewController) {
+            return
+        }
+        
         guard let detailViewController = splitViewController?.viewControllers[1] else { return }
         
         if viewController is ShoppingListsTableViewController, let title = detailViewController.title, title != "Landing view controller" {

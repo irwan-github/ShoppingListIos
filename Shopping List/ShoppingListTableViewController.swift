@@ -38,6 +38,31 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         //clearsSelectionOnViewWillAppear = true
         
         navigationItem.title = shoppingList?.name
+        
+        //Load the first item of the shopping list in detail view if there is any
+        
+        if fetchedResultsController?.fetchedObjects?.count == 0 {
+            return
+        }
+        
+        guard let shoppingListItem = fetchedResultsController?.object(at: IndexPath(row: 0, section: 0)) else { return }
+        
+        if splitViewController?.viewControllers.count == 2 , let navigationCtlr = splitViewController?.viewControllers[1] as? UINavigationController {
+
+            let itemDetailVc = navigationCtlr.viewControllers[0] as? ItemDetailViewController
+            itemDetailVc?.shoppingListItem = shoppingListItem
+        
+        } else {
+            
+            if let itemDetailVc = storyboard?.instantiateViewController(withIdentifier: "ItemDetailViewController") as? ItemDetailViewController {
+                
+                itemDetailVc.shoppingListItem = shoppingListItem
+                
+                let navigationCtlr = UINavigationController(rootViewController: itemDetailVc)
+                
+                splitViewController?.showDetailViewController(navigationCtlr, sender: self)
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
