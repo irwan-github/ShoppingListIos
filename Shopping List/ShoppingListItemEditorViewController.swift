@@ -903,7 +903,9 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
             switch pictureState {
                 
             case .delete, .none:
-                self.itemImageVc?.scaledDownImage = UIImage(named: "empty-photo")
+                self.itemImageVc?.fullScaleImage = UIImage(named: "empty-photo")
+                self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
+                self.itemImageView.image = self.itemImageVc?.scaledDownImage
                 
             case .new, .replacement:
                 newItemPicture?.scale(widthToScale: self.itemImageView.bounds.width)

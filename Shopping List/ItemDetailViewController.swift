@@ -49,20 +49,26 @@ class ItemDetailViewController: UIViewController {
     
     var changesToItemObserver: NSObjectProtocol?
     
-    func listenForNotificationOfChangesToItem() {
+    /**
+     Listen for changes saved in Shopping list editor view controller. Without this, any changes made in Shopping list editor view controller to pictures will not be known to this view controller
+     */
+    private func listenForNotificationOfChangesToItem() {
         let notificationCtr = NotificationCenter.default
-        changesToItemObserver = notificationCtr.addObserver(forName: NSNotification.Name.NSManagedObjectContextDidSave,
-                                               object: item?.managedObjectContext, //Broadcaster
+        changesToItemObserver = notificationCtr.addObserver(
+            forName: NSNotification.Name.NSManagedObjectContextDidSave,
+            object: item?.managedObjectContext, //Broadcaster
             queue: OperationQueue.main,
             using: { notification in
                 
                 let info = notification.userInfo
-                let changedObjects = info?[NSUpdatedObjectsKey] as! NSSet
-                
-                for changedObject in changedObjects {
-                    if let changedItem = changedObject as? Item {
-                        self.item = changedItem
+                if let changedObjects = info?[NSUpdatedObjectsKey] as? Set<NSManagedObject> {
+                    for changedObject in changedObjects {
+                        print("\(changedObject)")
+                        if let changedItem = changedObject as? Item {
+                            self.item = changedItem
+                        }
                     }
+                    
                 }
         })
         
@@ -86,6 +92,8 @@ class ItemDetailViewController: UIViewController {
             //                if let imageData = try? Data(contentsOf: url) {
             //                    itemPicture.image = UIImage(data: imageData)
             //                }
+        } else {
+            itemImageView?.image = nil
         }
     }
     

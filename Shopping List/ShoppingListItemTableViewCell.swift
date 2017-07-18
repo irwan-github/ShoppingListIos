@@ -35,19 +35,6 @@ class ShoppingListItemTableViewCell: UITableViewCell {
                 let price = selectedPriceRes[0] as! Price
                 selectedPrice.text = "$" + Helper.formatMoney(amount: price.valueConvert)
             }
-            
-            
-            //            if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
-            //                itemPicture.image = UIImage(contentsOfFile: stringPath)
-            //
-            //                //The following is an alternative to reading & displaying image file from web and filesystem.
-            //                //                let url = URL(fileURLWithPath: stringPath)
-            //                //                if let imageData = try? Data(contentsOf: url) {
-            //                //                    itemPicture.image = UIImage(data: imageData)
-            //                //                }
-            //            } else {
-            //                itemPicture.image = UIImage(named: "empty-photo")
-            //            }
         }
     }
     
@@ -59,13 +46,7 @@ class ShoppingListItemTableViewCell: UITableViewCell {
             
             if let stringPath = item?.picture?.fileUrl {
                 
-                let fileMgr = FileManager.default
-                if let documentsFolder = fileMgr.urls(for: .documentDirectory, in: .userDomainMask).first {
-                    let url = documentsFolder.appendingPathComponent(stringPath)
-                    if let imageData = try? Data(contentsOf: url) {
-                        itemPicture.image = UIImage(data: imageData)
-                    }
-                }
+                itemPicture.image = PictureUtil.materializePicture(from: stringPath)
                 
                 //The following is an alternative to reading & displaying image file from web and filesystem.
                 //                let url = URL(fileURLWithPath: stringPath)
