@@ -59,7 +59,7 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController, UINav
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        //clearsSelectionOnViewWillAppear = (splitViewController?.isCollapsed)!
+
     }
     
     
@@ -146,6 +146,8 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController, UINav
     
     // MARK: - Navigation
     
+    private let segueToEditMetadataId = "Edit shopping list metadata"
+    
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
@@ -171,26 +173,37 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController, UINav
                     let aShoppingList = fetchedResultsController?.object(at: indexPath)
                     
                     shoppingListCtlr.shoppingList = aShoppingList
-                    
-                    //                    shoppingListCtlr.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-                    //                    shoppingListCtlr.navigationItem.leftItemsSupplementBackButton = true
                 }
             }
-        } else if identifier == segueToEditMetadataId, let shoppingList = sender as? ShoppingList {
             
-            if let shoopingListMetadataEditorVc = targetCtlr as? ShoppingListMetadataViewController  {
+        } else if identifier == segueToEditMetadataId {
             
-                shoopingListMetadataEditorVc.shoppingList = shoppingList
+            if let shoppingList = sender as? ShoppingList {
+                
+                if let shoopingListMetadataEditorVc = targetCtlr as? ShoppingListMetadataViewController  {
+                    
+                    shoopingListMetadataEditorVc.shoppingList = shoppingList
+                }
             }
         }
+        
     }
     
-    private let segueToEditMetadataId = "Edit shopping list metadata"
-    
+    /**
+     Action Handler for the purpose of updating metadata information of existing shopping list
+     */
     lazy var onChangeShoppingListMetaDataHandler: (ShoppingList) -> Void = { shoppingList in
+
         self.performSegue(withIdentifier: self.segueToEditMetadataId, sender: shoppingList)
+        
     }
 }
+
+extension ShoppingListsTableViewController: UIPopoverPresentationControllerDelegate {
+    func popoverPresentationController(_ popoverPresentationController: UIPopoverPresentationController, willRepositionPopoverTo rect: UnsafeMutablePointer<CGRect>, in view: AutoreleasingUnsafeMutablePointer<UIView>) {
+    }
+}
+
 
 extension ShoppingListsTableViewController {
     
@@ -274,7 +287,7 @@ extension ShoppingListsTableViewController {
     }
     
     /**
-    Always show the landing view controller as the detail when master is this view controller hwne split view controller has 2 views
+    Always show the landing view controller as the detail when master is this view controller and split view controller has 2 views
     */
     func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
                 

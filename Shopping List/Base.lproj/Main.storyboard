@@ -32,7 +32,7 @@
         <!--Shopping List Metadata View Controller-->
         <scene sceneID="8Uy-o2-qsh">
             <objects>
-                <viewController id="3mW-47-NcJ" customClass="ShoppingListMetadataViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShoppingListMetadataViewController" id="3mW-47-NcJ" customClass="ShoppingListMetadataViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Y17-9k-e77"/>
                         <viewControllerLayoutGuide type="bottom" id="xPI-bz-pR2"/>
@@ -108,8 +108,10 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="24" height="49"/>
                                                     <state key="normal" image="ic_mode_edit"/>
                                                     <connections>
-                                                        <action selector="onChangeShoppingListMetaData:" destination="jBR-AZ-Vdw" eventType="touchUpInside" id="24M-t6-Dcy"/>
-                                                        <segue destination="bef-bj-4II" kind="presentation" identifier="Edit shopping list metadata" id="xrE-Bw-vUi"/>
+                                                        <action selector="onChangeShoppingListMetaData:" destination="jBR-AZ-Vdw" eventType="touchUpInside" id="Bdl-fs-A8i"/>
+                                                        <segue destination="bef-bj-4II" kind="popoverPresentation" identifier="Edit shopping list metadata" popoverAnchorView="2nv-UY-jxe" id="Xb6-7H-kgC">
+                                                            <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                                        </segue>
                                                     </connections>
                                                 </button>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="QsW-dD-eBj">
@@ -155,7 +157,9 @@
                     <navigationItem key="navigationItem" title="Shopping Lists" id="PZ3-yz-ODf">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="7D1-ma-Cxw">
                             <connections>
-                                <segue destination="bef-bj-4II" kind="presentation" identifier="Edit shopping list metadata" id="Ac5-FM-fMp"/>
+                                <segue destination="bef-bj-4II" kind="popoverPresentation" identifier="Add shopping list" popoverAnchorBarButtonItem="7D1-ma-Cxw" id="Ac5-FM-fMp">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1175,7 +1179,7 @@
         <image name="shopping list" width="918" height="980"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Ac5-FM-fMp"/>
+        <segue reference="Xb6-7H-kgC"/>
         <segue reference="l83-zl-ohz"/>
     </inferredMetricsTieBreakers>
 </document>

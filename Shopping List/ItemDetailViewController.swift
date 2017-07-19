@@ -130,6 +130,9 @@ class ItemDetailViewController: UIViewController {
 
 extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {
     
+    /**
+     For iPad-sized class, the popover can be dismissed by tapping outside. However for iPhone, the view controller is displayed modally covering the presenting view controller. Thus, a button is needed to dismiss the modal view controller for iPhones.
+    */
     func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
         print("\(#function) - \(type(of: self))")
         

@@ -772,7 +772,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         pictureActionSheetController.modalPresentationStyle = .popover
         let popoverMenuPresentationController = pictureActionSheetController.popoverPresentationController
         popoverMenuPresentationController?.sourceView = sender
-        popoverMenuPresentationController?.sourceRect = sender.bounds
+        popoverMenuPresentationController?.sourceRect = sender.frame
         present(pictureActionSheetController, animated: true, completion: nil)
     }
     
