@@ -238,6 +238,19 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        
+        //Adapt from model to popover
+        
+        //Get the popover presentation controller from navigation controller. It is not the same as this editor's popover presentation controller and it will not work. Also the cancel button is in navigation item which is contained in the navigation controller navigation bar
+        if let myPopoverPresentationController = navigationController?.popoverPresentationController {
+            if myPopoverPresentationController.arrowDirection != .unknown {
+                print("popover. not model")
+                navigationItem.leftBarButtonItem = nil
+            }
+        }
+    }
+    
     @IBAction func onCancel(_ sender: UIBarButtonItem) {
         changeState.transition(event: .onCancel(changeStateOnCancelEventAction), handleNextStateUiAttributes: changeStateAttributeHandler)
     }

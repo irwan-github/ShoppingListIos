@@ -281,7 +281,9 @@
                     <navigationItem key="navigationItem" id="1O1-mY-AGV">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="pmo-J4-tyi">
                             <connections>
-                                <segue destination="RFL-C2-kpI" kind="presentation" identifier="New Shopping List Item" modalPresentationStyle="pageSheet" id="l83-zl-ohz"/>
+                                <segue destination="RFL-C2-kpI" kind="popoverPresentation" identifier="New Shopping List Item" popoverAnchorBarButtonItem="pmo-J4-tyi" id="l83-zl-ohz">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -498,7 +500,9 @@
                     <navigationItem key="navigationItem" id="pqN-id-obJ">
                         <barButtonItem key="rightBarButtonItem" systemItem="edit" id="qby-5v-hBe">
                             <connections>
-                                <segue destination="RFL-C2-kpI" kind="presentation" identifier="Shopping List Item Editor" modalPresentationStyle="pageSheet" id="GDk-fS-7Cc"/>
+                                <segue destination="RFL-C2-kpI" kind="popoverPresentation" identifier="Shopping List Item Editor" popoverAnchorBarButtonItem="qby-5v-hBe" id="GDk-fS-7Cc">
+                                    <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                </segue>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -1171,6 +1175,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Ac5-FM-fMp"/>
-        <segue reference="GDk-fS-7Cc"/>
+        <segue reference="l83-zl-ohz"/>
     </inferredMetricsTieBreakers>
 </document>
