@@ -11,11 +11,11 @@ import CoreData
 
 class ShoppingListItemTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var itemPicture: UIImageView!
-    @IBOutlet weak var itemName: UILabel!
-    @IBOutlet weak var brand: UILabel!
+    @IBOutlet weak var itemPictureImageView: UIImageView!
+    @IBOutlet weak var itemNameLabel: UILabel!
+    @IBOutlet weak var brandLabel: UILabel!
     @IBOutlet weak var quantityToBuy: ToggleCircleButton!
-    @IBOutlet weak var selectedPrice: UILabel!
+    @IBOutlet weak var selectedPriceLabel: UILabel!
     
     //Debug purpose
     var indexPath: IndexPath?
@@ -33,7 +33,7 @@ class ShoppingListItemTableViewCell: UITableViewCell {
             
             if let selectedPriceRes = shoppingListItem?.selectedPrice, selectedPriceRes.count > 0 {
                 let price = selectedPriceRes[0] as! Price
-                selectedPrice.text = "$" + Helper.formatMoney(amount: price.valueConvert)
+                selectedPriceLabel.text = "$" + Helper.formatMoney(amount: price.valueConvert)
             }
         }
     }
@@ -41,22 +41,21 @@ class ShoppingListItemTableViewCell: UITableViewCell {
     var item: Item? {
         didSet {
             
-            itemName.text = item?.name
-            brand.text = item?.brand
+            itemNameLabel.text = item?.name
+            brandLabel.text = item?.brand
             
             if let stringPath = item?.picture?.fileUrl {
                 
-                itemPicture.image = PictureUtil.materializePicture(from: stringPath)
-                
+                itemPictureImageView.image = PictureUtil.materializePicture(from: stringPath)
+
                 //The following is an alternative to reading & displaying image file from web and filesystem.
                 //                let url = URL(fileURLWithPath: stringPath)
                 //                if let imageData = try? Data(contentsOf: url) {
                 //                    itemPicture.image = UIImage(data: imageData)
                 //                }
-            }
-            
-            if itemPicture.image == nil {
-                itemPicture.image = UIImage(named: "empty-photo")
+            } else {
+
+                itemPictureImageView.image = PictureUtil.getPlaceHolderImage(width: itemPictureImageView.bounds.width, height: itemPictureImageView.bounds.width)
             }
             
         }

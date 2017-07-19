@@ -186,7 +186,7 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="n3b-tS-Vut" userLabel="Parent">
                                             <rect key="frame" x="8" y="8" width="304" height="74.5"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-photo" translatesAutoresizingMaskIntoConstraints="NO" id="kT3-cu-AgK" userLabel="Item picture">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="120" placeholderIntrinsicHeight="120" image="ic_photo" translatesAutoresizingMaskIntoConstraints="NO" id="kT3-cu-AgK" userLabel="Item picture">
                                                     <rect key="frame" x="0.0" y="0.0" width="74.5" height="74.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="kT3-cu-AgK" secondAttribute="height" multiplier="1:1" id="ZlM-mj-7NL"/>
@@ -264,11 +264,11 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="brand" destination="GJe-M5-f2A" id="OeH-uq-hCd"/>
-                                    <outlet property="itemName" destination="JyW-r9-aLY" id="vGH-jY-4R1"/>
-                                    <outlet property="itemPicture" destination="kT3-cu-AgK" id="cXO-Qd-APo"/>
+                                    <outlet property="brandLabel" destination="GJe-M5-f2A" id="Leq-ld-SNC"/>
+                                    <outlet property="itemNameLabel" destination="JyW-r9-aLY" id="z0N-ob-vej"/>
+                                    <outlet property="itemPictureImageView" destination="kT3-cu-AgK" id="QpA-QU-RCA"/>
                                     <outlet property="quantityToBuy" destination="e2y-1X-qdt" id="oZy-k4-ZR7"/>
-                                    <outlet property="selectedPrice" destination="MOB-d9-EgY" id="akb-ed-LNG"/>
+                                    <outlet property="selectedPriceLabel" destination="MOB-d9-EgY" id="dvW-FE-v5z"/>
                                     <segue destination="wEi-ZP-jqD" kind="showDetail" identifier="item detail" id="1bm-BA-i1k"/>
                                 </connections>
                             </tableViewCell>
@@ -671,7 +671,7 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="300" translatesAutoresizingMaskIntoConstraints="NO" id="fsJ-O9-spr" userLabel="Picture and item Stack View">
                                         <rect key="frame" x="0.0" y="0.0" width="728" height="120"/>
                                         <subviews>
-                                            <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="300" verticalHuggingPriority="300" horizontalCompressionResistancePriority="48" verticalCompressionResistancePriority="48" placeholderIntrinsicWidth="120" placeholderIntrinsicHeight="120" image="ic_photo" translatesAutoresizingMaskIntoConstraints="NO" id="2lG-B4-4Ex">
+                                            <imageView clipsSubviews="YES" contentMode="scaleAspectFill" horizontalHuggingPriority="300" verticalHuggingPriority="300" horizontalCompressionResistancePriority="48" verticalCompressionResistancePriority="48" placeholderIntrinsicWidth="120" placeholderIntrinsicHeight="120" image="ic_add_a_photo" translatesAutoresizingMaskIntoConstraints="NO" id="2lG-B4-4Ex">
                                                 <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
                                                 <gestureRecognizers/>
                                                 <constraints>
@@ -1169,6 +1169,7 @@
     </scenes>
     <resources>
         <image name="empty-photo" width="640" height="640"/>
+        <image name="ic_add_a_photo" width="24" height="24"/>
         <image name="ic_mode_edit" width="24" height="24"/>
         <image name="ic_photo" width="24" height="24"/>
         <image name="shopping list" width="918" height="980"/>

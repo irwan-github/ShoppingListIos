@@ -44,4 +44,27 @@ struct PictureUtil {
             return nil
         }
     }
+    
+    private static var placeHolderImage: UIImage? = nil
+    
+    /**
+     Provides a cached placeholer image if available. The placeholder image is defined at build time.
+     
+     - Parameter width: Dimension to scale to.
+     - Parameter height: Dimension to scale to.
+     - Returns: A cached placeholder image if available
+    */
+    static func getPlaceHolderImage(width: CGFloat, height: CGFloat) -> UIImage {
+        
+        if PictureUtil.placeHolderImage != nil {
+            return PictureUtil.placeHolderImage!
+        }
+        
+        PictureUtil.placeHolderImage = resizeImage(image: UIImage(named: "ic_photo")!, newWidth: width, newHeight: height)
+        
+        return PictureUtil.placeHolderImage!
+    }
+    
+
+
 }

@@ -23,6 +23,7 @@ class ItemPicture {
         
         if fullScaleImage != nil {
             self.fullScaleImage = fullScaleImage
+            
         } else if let filename = self.filename {
             
             let absPath = PictureUtil.pictureinDocumentFolder(filename: filename)
@@ -34,9 +35,16 @@ class ItemPicture {
         }
     }
     
-    func scale(widthToScale: CGFloat) {
+    func scale(widthToScale: CGFloat) -> UIImage? {
+        
+        if scaledDownImage != nil {
+            return scaledDownImage
+        }
+        
         if fullScaleImage != nil {
             scaledDownImage = PictureUtil.resizeImage(image: fullScaleImage!, newWidth: widthToScale, newHeight: widthToScale)
         }
+        
+        return scaledDownImage
     }
 }

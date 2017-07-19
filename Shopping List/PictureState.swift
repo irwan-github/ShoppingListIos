@@ -11,6 +11,7 @@ import UIKit
 
 enum PictureState {
     
+    case transient
     case none
     case existing
     case new
@@ -22,25 +23,48 @@ enum PictureState {
         case onSaveImage((PictureState) -> Void)
         case onFinishPickingCameraMedia(UIImage)
         case onDelete
-        case onExist(ItemPicture?)
+        //case onExist(String)
+        case onLoad(String?)
     }
     
     init() {
-        self = .none
+        self = .transient
     }
     
     mutating func transition(event: PictureState.Event, handleNextStateUiAttributes: ((PictureState, ItemPicture?) -> Void)? = nil) {
         
         switch self {
             
+        case .transient:
+            switch event {
+                
+            case .onLoad(let pictureFilename):
+                
+                var itemImageVc: ItemPicture? = nil
+                
+                if pictureFilename == nil {
+                    
+                    let placeholderImage = UIImage(named: "ic_add_a_photo")!
+                    itemImageVc = ItemPicture(fullScaleImage: placeholderImage)
+                    self = .none
+                } else {
+                    
+                    let originalUiImage = PictureUtil.materializePicture(from: pictureFilename!)
+                    itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
+                    self = .existing
+                }
+                
+                handleNextStateUiAttributes?(self, itemImageVc)
+                
+            default:
+                break
+            }
+            
+            
         case .none:
             
             switch event {
-                
-            case .onExist(let itemPicture):
-                self = .existing
-                handleNextStateUiAttributes?(self, itemPicture)
-                
+                                
             case .onFinishPickingCameraMedia(let originalUiImage):
                 let itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
                 self = .new

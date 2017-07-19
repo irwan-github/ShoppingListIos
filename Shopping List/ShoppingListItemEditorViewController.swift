@@ -794,16 +794,11 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
             
-            if let pictureFilename = self.shoppingListItem?.item?.picture?.fileUrl {
-                
-                self.itemImageVc = ItemPicture(filename: pictureFilename)
-                self.pictureState.transition(event: .onExist(self.itemImageVc), handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
-            }
+            self.pictureState.transition(event: .onLoad(self.shoppingListItem?.item?.picture?.fileUrl), handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
             
             //Contains a property observer that set the price fields
             self.prices = self.shoppingListItem?.item?.prices
             
-            self.itemNameTextField.isEnabled = false
             self.deleteItemButton.isHidden = false
             
             let priceTypeVal = self.shoppingListItem?.priceTypeSelectedConvert ?? PriceType.unit.rawValue
@@ -929,26 +924,24 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
      */
     var nextPictureStateUiAttributes: (PictureState, ItemPicture?) -> Void {
         
-        return { (pictureState: PictureState, newItemPicture: ItemPicture?) -> Void in
+        return { (pictureState: PictureState, itemPicture: ItemPicture?) -> Void in
             
             switch pictureState {
                 
             case .delete, .none:
-                self.itemImageVc?.fullScaleImage = UIImage(named: "empty-photo")
-                self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
-                self.itemImageView.image = self.itemImageVc?.scaledDownImage
+                let placeholder = UIImage(named: "ic_add_a_photo")!
+                self.itemImageView.image = PictureUtil.resizeImage(image: placeholder, newWidth: self.itemImageView.bounds.width, newHeight: self.itemImageView.bounds.width)
                 
             case .new, .replacement:
-                self.itemImageVc = newItemPicture
-                self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
-                self.itemImageView.image = newItemPicture?.scaledDownImage
+                self.itemImageVc = itemPicture
+                self.itemImageView.image = self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
                 
             case .existing:
-                if let pictureStringPath = self.shoppingListItem?.item?.picture?.fileUrl {
-                    print("\(#function) : \(pictureStringPath)")
-                    self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
-                    self.itemImageView.image = self.itemImageVc?.scaledDownImage
-                }
+                self.itemImageVc = itemPicture
+                self.itemImageView.image = self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
+                
+            default:
+                break
             }
             
         }
@@ -962,6 +955,9 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         pictureState.transition(event: .onSaveImage({ pictureState in
             
             switch pictureState {
+                
+            case .none:
+                break
                 
             case .new:
                 self.savePictureInFilesystemAndCoreData(of: item, in: moc)
