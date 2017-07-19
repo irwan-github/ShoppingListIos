@@ -92,7 +92,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var doneButton: UIBarButtonItem!
     
-    @IBOutlet weak var deleteItemButton: UIButton!
+    @IBOutlet weak var deleteItemButton: UIBarButtonItem!
     
     /**
      Shared by bundle pricing and unit pricing. Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
@@ -782,7 +782,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         switch nextState {
         case .newListItem:
-            self.deleteItemButton.isHidden = true
+            self.deleteItemButton.isEnabled = false
             
             let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(.unit, nil)
             
@@ -799,7 +799,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             //Contains a property observer that set the price fields
             self.prices = self.shoppingListItem?.item?.prices
             
-            self.deleteItemButton.isHidden = false
+            self.deleteItemButton.isEnabled = true
             
             let priceTypeVal = self.shoppingListItem?.priceTypeSelectedConvert ?? PriceType.unit.rawValue
             let savedSelectedPriceType = PriceType(rawValue:priceTypeVal)!

@@ -199,12 +199,6 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController, UINav
     }
 }
 
-extension ShoppingListsTableViewController: UIPopoverPresentationControllerDelegate {
-    func popoverPresentationController(_ popoverPresentationController: UIPopoverPresentationController, willRepositionPopoverTo rect: UnsafeMutablePointer<CGRect>, in view: AutoreleasingUnsafeMutablePointer<UIView>) {
-    }
-}
-
-
 extension ShoppingListsTableViewController {
     
     // MARK: - Table view data source
