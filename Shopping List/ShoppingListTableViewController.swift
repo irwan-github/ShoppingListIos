@@ -21,7 +21,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         didSet {
             print("\(#function) - \(type(of: self))")
             updateUi()
-            //listenForNotificationOfChangesToItem()
+            listenForNotificationOfChangesToItem()
         }
     }
     
@@ -39,6 +39,15 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         
         navigationItem.title = shoppingList?.name
         
+        showFirstItemInDetail()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        print("\(#function) - \(type(of: self))")
+        super.viewWillAppear(animated)
+    }
+    
+    func showFirstItemInDetail() {
         let count = splitViewController?.viewControllers.count
         if let viewControllerCount = count, viewControllerCount == 1 {
             return
@@ -50,13 +59,16 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
             return
         }
         
-        guard let shoppingListItem = fetchedResultsController?.object(at: IndexPath(row: 0, section: 0)) else { return }
+        let firstRow = IndexPath(row: 0, section: 0)
         
+        guard let shoppingListItem = fetchedResultsController?.object(at: firstRow) else { return }
+        
+        //Create view controller to display as detail if not created by IOS yet
         if splitViewController?.viewControllers.count == 2 , let navigationCtlr = splitViewController?.viewControllers[1] as? UINavigationController {
-
+            
             let itemDetailVc = navigationCtlr.viewControllers[0] as? ItemDetailViewController
             itemDetailVc?.shoppingListItem = shoppingListItem
-        
+            
         } else {
             
             if let itemDetailVc = storyboard?.instantiateViewController(withIdentifier: "ItemDetailViewController") as? ItemDetailViewController {
@@ -68,11 +80,10 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
                 splitViewController?.showDetailViewController(navigationCtlr, sender: self)
             }
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        print("\(#function) - \(type(of: self))")
-        super.viewWillAppear(animated)
+        
+        //Highlight first displayed row
+        tableView.selectRow(at: firstRow, animated: true, scrollPosition: .top)
+        
     }
     
     func updateUi() {
@@ -244,9 +255,10 @@ extension ShoppingListTableViewController {
                 
                 guard let info = notification.userInfo else { return }
                 
-                if let changedObjects = info[NSUpdatedObjectsKey] as? Set<NSManagedObject>, changedObjects.count > 0 {
+                if let changedObjects = info[NSDeletedObjectsKey] as? Set<NSManagedObject>, changedObjects.count > 0 {
 
                     print("#### ChangedItems count is \(changedObjects.count)")
+                    self.showFirstItemInDetail()
 
                     for managedObject in changedObjects {
                         
