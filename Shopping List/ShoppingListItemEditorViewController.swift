@@ -112,11 +112,19 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var bundleQtyStackView: UIStackView!
     
-    @IBOutlet weak var unitCurrencyCodeField: UITextField!
+    @IBOutlet weak var unitCurrencyCodeField: UITextField! {
+        didSet {
+            unitCurrencyCodeField.delegate = currencyCodeTextFieldDelegate
+        }
+    }
     
     @IBOutlet weak var unitPriceTextField: UITextField!
     
-    @IBOutlet weak var bundleCurrencyCodeTextField: UITextField!
+    @IBOutlet weak var bundleCurrencyCodeTextField: UITextField! {
+        didSet {
+            bundleCurrencyCodeTextField.delegate = currencyCodeTextFieldDelegate
+        }
+    }
     
     @IBOutlet weak var bundlePriceTextField: UITextField!
     
@@ -173,7 +181,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             if let newValue = newValue {
                 unitPriceTextField?.text = Helper.formatMoney(amount: newValue)
                 unitCurrencyCodeField?.text = unitPrice?.currencyCode ?? userLocale.currencyCode
-            
+                
             } else {
                 unitPriceTextField?.text = nil
                 unitCurrencyCodeField?.text = userLocale.currencyCode
@@ -215,15 +223,29 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var itemImageView: UIImageView!
     
+    // MARK: Delegates
     private let moneyTextFieldDelegate = MoneyUITextFieldDelegate()
     
-    private var priceSwitchController: PriceUiSelectorController?
+    private lazy var currencyCodeTextFieldDelegate = CurrencyCodeTextFieldDelegate()
+    
+    private lazy var displayAlertAction: ((UIAlertController) -> Void) = {
+        
+        alertController in
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
     
     // MARK: - ViewController lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
+        
+        currencyCodeTextFieldDelegate.displayAlertAction = displayAlertAction
+        
+        currencyCodeTextFieldDelegate.changeState = changeState
+        
+        currencyCodeTextFieldDelegate.changeStateUiAttributesHandler = changeStateAttributeHandler
         
         priceSwitchController = PriceUiSelectorController(unitPriceUi: (unitPriceSwitch, unitPriceLabel),
                                                           bundlePriceUi: (bundlePriceSwitch, bundlePriceLabel))
@@ -265,6 +287,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     // MARK: - State: Selected price type, Pricing information, Quantity to buy logic
+    
+    private var priceSwitchController: PriceUiSelectorController?
     
     @IBAction func onSwitchUnitPrice(_ sender: UISwitch) {
         priceSwitchController?.selectPriceType(priceType: sender.isOn ? .unit : .bundle)
@@ -499,60 +523,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     // MARK: - Create, Read, Update, Delete
     
-    func validateItemField(currentState: ValidationListItemState) -> Bool {
-        if let name = self.itemNameTextField.text, !name.isEmpty {
-            
-            switch currentState {
-                
-            case .newListItem:
-                do {
-                    let itemName = self.itemNameTextField.text!
-                    
-                    if try Item.isNameExist(itemName, moc: self.persistentContainer.viewContext) {
-                        
-                        if self.validationItemState == .existingItem {
-                            return true
-                        }
-                        
-                        print("Item exist. Fetching to show user.")
-                        
-                        let alert = UIAlertController(title: "Item with name \(name) exist", message: "Fetching \(name) now", preferredStyle: .alert)
-                        
-                        let action = UIAlertAction(title: "OK", style: .default, handler: { action in
-                            
-                            self.item = (try? Item.find(name: itemName, in: self.persistentContainer.viewContext)) ?? nil
-                            
-                            if self.item != nil {
-                                self.validationItemState.handle(event: .onExistingItem)
-                            }
-                        })
-                        
-                        alert.addAction(action)
-                        
-                        self.present(alert, animated: true)
-                        
-                        return false
-                        
-                    } else {
-                        
-                        return true
-                    }
-                } catch {
-                    let nserror = error as NSError
-                    print("Error \(nserror) : \(nserror.userInfo)")
-                    return false
-                }
-                
-            default:
-                return true
-            }
-            
-        } else {
-            
-            self.displayErrorValuesFollowup(fieldName: "name")
-            return false
-        }
-    }
+    
     
     func processOnDone() {
         let onSaveEventHandler = ValidationListItemState.OnSaveListItemEventHandler(validate: { currentState in
@@ -791,6 +762,61 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     // MARK: - State: Handle validation state transition and state-based ui properties
+    
+    func validateItemField(currentState: ValidationListItemState) -> Bool {
+        if let name = self.itemNameTextField.text, !name.isEmpty {
+            
+            switch currentState {
+                
+            case .newListItem:
+                do {
+                    let itemName = self.itemNameTextField.text!
+                    
+                    if try Item.isNameExist(itemName, moc: self.persistentContainer.viewContext) {
+                        
+                        if self.validationItemState == .existingItem {
+                            return true
+                        }
+                        
+                        print("Item exist. Fetching to show user.")
+                        
+                        let alert = UIAlertController(title: "Item with name \(name) exist", message: "Fetching \(name) now", preferredStyle: .alert)
+                        
+                        let action = UIAlertAction(title: "OK", style: .default, handler: { action in
+                            
+                            self.item = (try? Item.find(name: itemName, in: self.persistentContainer.viewContext)) ?? nil
+                            
+                            if self.item != nil {
+                                self.validationItemState.handle(event: .onExistingItem)
+                            }
+                        })
+                        
+                        alert.addAction(action)
+                        
+                        self.present(alert, animated: true)
+                        
+                        return false
+                        
+                    } else {
+                        
+                        return true
+                    }
+                } catch {
+                    let nserror = error as NSError
+                    print("Error \(nserror) : \(nserror.userInfo)")
+                    return false
+                }
+                
+            default:
+                return true
+            }
+            
+        } else {
+            
+            self.displayErrorValuesFollowup(fieldName: "name")
+            return false
+        }
+    }
     
     lazy var validationStateUiPropertiesHandler: (ValidationListItemState) -> Void = { nextState in
         
