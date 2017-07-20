@@ -22,6 +22,8 @@ class ItemAdditionalDataViewController: UIViewController {
     @IBOutlet weak var brandLabel: UILabel!
     @IBOutlet weak var countryOfOriginLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var unitCurrencyCode: UILabel!
+    @IBOutlet weak var bundleCurrencyCode: UILabel!
     
     // MARK: - Item pricing information
     
@@ -47,11 +49,12 @@ class ItemAdditionalDataViewController: UIViewController {
             if let prices = prices {
                 let unitPrice = Price.filterSet(of: prices, match: .unit)
                 unitPriceVc = unitPrice?.valueConvert
+                unitCurrencyCode?.text = unitPrice?.currencyCode
                 
                 let bundlePrice = Price.filterSet(of: prices, match: .bundle)
                 bundlePriceVc = bundlePrice?.valueConvert
                 bundleQtyVc = bundlePrice?.quantityConvert
-                
+                bundleCurrencyCode?.text = bundlePrice?.currencyCode
             }
         }
     }
@@ -64,6 +67,7 @@ class ItemAdditionalDataViewController: UIViewController {
             
             if let unitPriceVc = unitPriceVc {
                 unitPriceLabel?.text = Helper.formatMoney(amount: unitPriceVc)
+                
             } else {
                 unitPriceLabel?.text = nil
             }

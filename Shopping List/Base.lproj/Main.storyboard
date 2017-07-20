@@ -571,8 +571,8 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="tZi-Ul-hNJ" userLabel="Price Stack View">
                                 <rect key="frame" x="331.5" y="168.5" width="105.5" height="43.5"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YkB-pQ-Dbw" userLabel="Unit group">
-                                        <rect key="frame" x="21" y="0.0" width="63.5" height="14.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="YkB-pQ-Dbw" userLabel="Unit group">
+                                        <rect key="frame" x="19" y="0.0" width="67.5" height="14.5"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YmE-RS-dJA" userLabel="Currency Code">
                                                 <rect key="frame" x="0.0" y="0.0" width="8" height="14.5"/>
@@ -581,7 +581,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unit Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iZ9-S6-3WJ" userLabel="Unit Price">
-                                                <rect key="frame" x="8" y="0.0" width="55.5" height="14.5"/>
+                                                <rect key="frame" x="12" y="0.0" width="55.5" height="14.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -591,8 +591,8 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vq5-gf-l6a" userLabel="Bundle group">
                                         <rect key="frame" x="0.0" y="14.5" width="105.5" height="29"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" translatesAutoresizingMaskIntoConstraints="NO" id="kUQ-fU-YQ0" userLabel="Price Stack View">
-                                                <rect key="frame" x="13" y="0.0" width="79.5" height="14.5"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="kUQ-fU-YQ0" userLabel="Price Stack View">
+                                                <rect key="frame" x="11" y="0.0" width="83.5" height="14.5"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mAd-hp-JBc" userLabel="Bundle currency code">
                                                         <rect key="frame" x="0.0" y="0.0" width="8" height="14.5"/>
@@ -601,7 +601,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bundle Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3PN-V5-0XL" userLabel="Bundle Price">
-                                                        <rect key="frame" x="8" y="0.0" width="71.5" height="14.5"/>
+                                                        <rect key="frame" x="12" y="0.0" width="71.5" height="14.5"/>
                                                         <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                         <nil key="highlightedColor"/>
@@ -650,12 +650,14 @@
                     <navigationItem key="navigationItem" id="XQ7-bY-vuG"/>
                     <connections>
                         <outlet property="brandLabel" destination="hEK-KF-hQK" id="yJm-al-bJI"/>
+                        <outlet property="bundleCurrencyCode" destination="mAd-hp-JBc" id="wB9-gj-5yP"/>
                         <outlet property="bundleCurrencyCodeLabel" destination="mAd-hp-JBc" id="2My-1I-PTz"/>
                         <outlet property="bundlePriceGroup" destination="vq5-gf-l6a" id="ebI-wM-qi3"/>
                         <outlet property="bundlePriceLabel" destination="3PN-V5-0XL" id="dgh-TP-QaB"/>
                         <outlet property="bundleQtyValueLabel" destination="b98-cm-wTO" id="0ff-y0-tpH"/>
                         <outlet property="countryOfOriginLabel" destination="gZU-e2-MIE" id="e6U-bD-gjE"/>
                         <outlet property="descriptionLabel" destination="zbi-Wk-BXj" id="h6O-fa-eAj"/>
+                        <outlet property="unitCurrencyCode" destination="YmE-RS-dJA" id="exb-9e-h1e"/>
                         <outlet property="unitCurrencyCodeLabel" destination="YmE-RS-dJA" id="TZS-6F-OE5"/>
                         <outlet property="unitPriceGroup" destination="YkB-pQ-Dbw" id="p1R-ZL-tL7"/>
                         <outlet property="unitPriceLabel" destination="iZ9-S6-3WJ" id="LGM-qV-mGu"/>
@@ -812,17 +814,17 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Gg-SH-cb3" userLabel="Pricing information label">
+                                <rect key="frame" x="292" y="339" width="184" height="26.5"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <stackView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="100" verticalCompressionResistancePriority="753" axis="vertical" alignment="center" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="CKT-yf-y8F" userLabel="Pricing information Stack View">
-                                <rect key="frame" x="20" y="339" width="728" height="161.5"/>
+                                <rect key="frame" x="20" y="381.5" width="728" height="119"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pricing information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Gg-SH-cb3" userLabel="Pricing information">
-                                        <rect key="frame" x="272" y="0.0" width="184" height="26.5"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
-                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="300" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Maj-2q-Vhq">
-                                        <rect key="frame" x="272.5" y="42.5" width="183" height="29"/>
+                                        <rect key="frame" x="272.5" y="0.0" width="183" height="29"/>
                                         <segments>
                                             <segment title="Unit Price"/>
                                             <segment title="Bundle Price"/>
@@ -832,7 +834,7 @@
                                         </connections>
                                     </segmentedControl>
                                     <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EzY-PC-JXQ" userLabel="Price Stack View">
-                                        <rect key="frame" x="164" y="86.5" width="400" height="30"/>
+                                        <rect key="frame" x="164" y="44" width="400" height="30"/>
                                         <subviews>
                                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="SYi-bK-DxL" userLabel="Unit currency code">
                                                 <rect key="frame" x="0.0" y="0.0" width="83" height="30"/>
@@ -866,7 +868,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Kcn-8f-2Zs" userLabel="Bundle Qty Stack View">
-                                        <rect key="frame" x="233.5" y="132.5" width="261.5" height="29"/>
+                                        <rect key="frame" x="233.5" y="90" width="261.5" height="29"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Bundle Quantity " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1kS-Wt-Vkw" userLabel="Buble Qty Label">
                                                 <rect key="frame" x="0.0" y="0.0" width="127" height="29"/>
@@ -899,11 +901,14 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="ans-Sv-sB2" firstAttribute="top" secondItem="yWl-hw-Gqq" secondAttribute="bottom" constant="8" id="0EB-rN-1cd"/>
+                            <constraint firstItem="1Gg-SH-cb3" firstAttribute="top" secondItem="ans-Sv-sB2" secondAttribute="bottom" constant="24" id="2WK-W9-zkQ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="ans-Sv-sB2" secondAttribute="trailing" id="6Ok-Ld-ufW"/>
                             <constraint firstItem="CKT-yf-y8F" firstAttribute="leading" secondItem="m55-fy-D4h" secondAttribute="leadingMargin" id="Lvw-Ta-5uo"/>
+                            <constraint firstItem="CKT-yf-y8F" firstAttribute="top" secondItem="1Gg-SH-cb3" secondAttribute="bottom" constant="16" id="XCk-eZ-tEs"/>
                             <constraint firstAttribute="trailingMargin" secondItem="CKT-yf-y8F" secondAttribute="trailing" id="YVy-lN-7EH"/>
                             <constraint firstAttribute="leadingMargin" secondItem="ans-Sv-sB2" secondAttribute="leading" id="d6q-0E-wxz"/>
-                            <constraint firstItem="CKT-yf-y8F" firstAttribute="top" secondItem="ans-Sv-sB2" secondAttribute="bottom" constant="24" id="woA-8z-3ws"/>
+                            <constraint firstItem="1Gg-SH-cb3" firstAttribute="centerX" secondItem="m55-fy-D4h" secondAttribute="centerX" id="mVa-3N-Hqx"/>
+                            <constraint firstItem="Geu-bP-fzi" firstAttribute="top" relation="greaterThanOrEqual" secondItem="CKT-yf-y8F" secondAttribute="bottom" constant="16" id="zaF-e0-xH8"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="Hkr-c7-L14">

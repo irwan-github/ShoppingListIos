@@ -581,8 +581,8 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             try persistentContainer.viewContext.save()
             
-            //The following is not needed anymore as I now put the item and price information in a "More" view controller configured as popup segue. Thereby forcing a reloading of the "More" view controller every time
-            //persistentContainer.viewContext.refresh(shoppingLineItem, mergeChanges: true)
+            //The following is needed to update the prices in the shopping list table view controller
+            persistentContainer.viewContext.refresh(shoppingLineItem, mergeChanges: true)
             
         } catch  {
             
@@ -649,10 +649,10 @@ class ShoppingListItemEditorViewController: UIViewController {
                 try shoppingListItem?.managedObjectContext?.save()
             }
             
-            //The following is not needed anymore as I now put the item and price information in a "More" view controller configured as popup segue. Thereby forcing a reloading of the "More" view controller every time
-            //            if shoppingListItem != nil {
-            //                //persistentContainer.viewContext.refresh(shoppingListItem!, mergeChanges: true)
-            //            }
+            //The following is needed to update the prices in the shopping list table view controller
+            if shoppingListItem != nil {
+                persistentContainer.viewContext.refresh(shoppingListItem!, mergeChanges: true)
+            }
         } catch  {
             
             let nserror = error as NSError

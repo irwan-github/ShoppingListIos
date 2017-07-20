@@ -131,9 +131,6 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         
         shoppingListItemCell.shoppingListItem = shoppingListItem
         
-        //For debug
-        shoppingListItemCell.indexPath = indexPath
-        
         return shoppingListItemCell
     }
     

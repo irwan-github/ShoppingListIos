@@ -11,16 +11,7 @@ import CoreData
 
 class ShoppingListItemTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var itemPictureImageView: UIImageView!
-    @IBOutlet weak var itemNameLabel: UILabel!
-    @IBOutlet weak var brandLabel: UILabel!
-    @IBOutlet weak var quantityToBuy: ToggleCircleButton!
-    @IBOutlet weak var selectedPriceLabel: UILabel!
-    
-    //Debug purpose
-    var indexPath: IndexPath?
-    
-    // MARK: - Model
+    // MARK: - API and Model
     var shoppingListItem: ShoppingListItem? {
         didSet {
             
@@ -30,10 +21,10 @@ class ShoppingListItemTableViewCell: UITableViewCell {
             item = shoppingListItem?.item
             
             quantityToBuy.setTitle(String(describing: (shoppingListItem?.quantityToBuyConvert)!), for: .normal)
-            
+
             if let selectedPriceRes = shoppingListItem?.selectedPrice, selectedPriceRes.count > 0 {
                 let price = selectedPriceRes[0] as! Price
-                selectedPriceLabel.text = "$" + Helper.formatMoney(amount: price.valueConvert)
+                selectedPriceLabel.text = (price.currencyCode ?? Locale.current.currencyCode!) + " " + Helper.formatMoney(amount: price.valueConvert)
             }
         }
     }
@@ -60,6 +51,14 @@ class ShoppingListItemTableViewCell: UITableViewCell {
             
         }
     }
+    
+    // MARK: - Outlets
+    
+    @IBOutlet weak var itemPictureImageView: UIImageView!
+    @IBOutlet weak var itemNameLabel: UILabel!
+    @IBOutlet weak var brandLabel: UILabel!
+    @IBOutlet weak var quantityToBuy: ToggleCircleButton!
+    @IBOutlet weak var selectedPriceLabel: UILabel!
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
