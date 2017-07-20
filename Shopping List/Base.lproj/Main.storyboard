@@ -397,7 +397,7 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="rJF-y2-8NZ" userLabel="Parent">
                                             <rect key="frame" x="8" y="8" width="752" height="74"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-photo" translatesAutoresizingMaskIntoConstraints="NO" id="p1E-KB-PjD" userLabel="Item picture">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="120" placeholderIntrinsicHeight="120" image="ic_photo" translatesAutoresizingMaskIntoConstraints="NO" id="p1E-KB-PjD" userLabel="Item picture">
                                                     <rect key="frame" x="0.0" y="0.0" width="74" height="74"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="p1E-KB-PjD" secondAttribute="height" multiplier="1:1" id="c61-wO-FgL"/>
@@ -453,6 +453,7 @@
                                     <outlet property="brandLabel" destination="21q-yA-kIh" id="sT7-yJ-yBr"/>
                                     <outlet property="itemDescriptionLabel" destination="Rvw-w0-lyr" id="D3n-6f-8oe"/>
                                     <outlet property="itemNameLabel" destination="mKK-zL-qVX" id="YIG-Za-6XR"/>
+                                    <outlet property="itemPicture" destination="p1E-KB-PjD" id="JaH-n1-aAk"/>
                                     <segue destination="zuT-A6-vo2" kind="unwind" identifier="unwind to shopping list item editor" unwindAction="onReceiveUnwindFor:sender:" id="674-yC-9uw"/>
                                 </connections>
                             </tableViewCell>
@@ -1008,7 +1009,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="empty-photo" width="640" height="640"/>
         <image name="ic_add_a_photo" width="24" height="24"/>
         <image name="ic_info" width="24" height="24"/>
         <image name="ic_mode_edit" width="24" height="24"/>
