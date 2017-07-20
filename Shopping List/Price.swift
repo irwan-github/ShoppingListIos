@@ -35,6 +35,22 @@ class Price: NSManagedObject {
         }
     }
     
+    var currencySymbol: String! {
+        
+        if let firstIndex = currencyCode?.startIndex, let targetIndex = currencyCode?.index(firstIndex, offsetBy: 1) {
+            guard let countryCode = currencyCode?[firstIndex...targetIndex] else { return currencyCode }
+            let theLocale = Locale(identifier: "en_" + countryCode)
+            let formatter = NumberFormatter()
+            formatter.locale = theLocale
+            formatter.currencyCode = currencyCode
+            return formatter.currencySymbol
+            
+        } else {
+            return currencyCode
+        }
+
+    }
+    
     /**
      By definition, unit price is price of one unit.
      By definition, bundle price is price of more than 1 unit

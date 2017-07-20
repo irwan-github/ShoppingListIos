@@ -49,12 +49,12 @@ class ItemAdditionalDataViewController: UIViewController {
             if let prices = prices {
                 let unitPrice = Price.filterSet(of: prices, match: .unit)
                 unitPriceVc = unitPrice?.valueConvert
-                unitCurrencyCode?.text = unitPrice?.currencyCode
+                unitCurrencyCode?.text = unitPrice?.currencySymbol
                 
                 let bundlePrice = Price.filterSet(of: prices, match: .bundle)
                 bundlePriceVc = bundlePrice?.valueConvert
                 bundleQtyVc = bundlePrice?.quantityConvert
-                bundleCurrencyCode?.text = bundlePrice?.currencyCode
+                bundleCurrencyCode?.text = bundlePrice?.currencySymbol
             }
         }
     }

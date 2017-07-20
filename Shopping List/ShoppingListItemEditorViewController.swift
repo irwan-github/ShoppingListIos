@@ -528,7 +528,10 @@ class ShoppingListItemEditorViewController: UIViewController {
     func processOnDone() {
         let onSaveEventHandler = ValidationListItemState.OnSaveListItemEventHandler(validate: { currentState in
             
-            return self.validateItemField(currentState: currentState)
+            let isNameValid = self.validateItemField(currentState: currentState)
+            let isCurrencyCodeValid = self.validateCurrencyCode()
+            
+            return isNameValid && isCurrencyCodeValid
             
         }, actionIfValidateTrue: {currentState in
             
@@ -633,7 +636,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         let moc = persistentContainer.viewContext
         
         processPictureOnDone(of: (shoppingListItem?.item)!, in: moc)
-        
+        shoppingListItem?.item?.name = itemNameTextField.text
         shoppingListItem?.item?.countryOfOrigin = countryOriginTextField.text
         shoppingListItem?.item?.brand = brandTextField.text
         shoppingListItem?.item?.itemDescription = descriptionTextField.text
@@ -763,7 +766,39 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     // MARK: - State: Handle validation state transition and state-based ui properties
     
+    func validateCurrencyCode() -> Bool {
+        
+        guard let unitCurrencyCode = unitCurrencyCodeField.text, CurrencyHelper().isValid(currencyCode: unitCurrencyCode) else {
+            let alert = UIAlertController(title: "Unit price currency code is invalid", message: nil, preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(action)
+            present(alert, animated: true, completion: nil)
+            
+            //Reinstate back the original currency code
+            unitCurrencyCodeField.text = unitPrice?.currencyCode
+            
+            return false
+        }
+        
+        guard let bundleCurrencyCode = bundleCurrencyCodeTextField.text, CurrencyHelper().isValid(currencyCode: bundleCurrencyCode) else {
+            let alert = UIAlertController(title: "Bundle price currency code is invalid", message: nil, preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(action)
+            present(alert, animated: true, completion: nil)
+            
+            //Reinstate back the original currency code
+            bundleCurrencyCodeTextField.text = bundlePrice?.currencyCode
+            
+            return false
+        }
+        
+        return true
+    }
+    
     func validateItemField(currentState: ValidationListItemState) -> Bool {
+        
+        //Validate currency code for both existing and new
+        
         if let name = self.itemNameTextField.text, !name.isEmpty {
             
             switch currentState {
@@ -816,6 +851,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             self.displayErrorValuesFollowup(fieldName: "name")
             return false
         }
+        
     }
     
     lazy var validationStateUiPropertiesHandler: (ValidationListItemState) -> Void = { nextState in
