@@ -21,6 +21,8 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    let userLocale: Locale = CurrencyHelper(languangeCode: "en", countryCode: "SG").userLocale
+    
     private var item: Item? {
         didSet {
             
@@ -110,9 +112,11 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var bundleQtyStackView: UIStackView!
     
-    @IBOutlet weak var currencyCodeField: UITextField!
+    @IBOutlet weak var unitCurrencyCodeField: UITextField!
     
     @IBOutlet weak var unitPriceTextField: UITextField!
+    
+    @IBOutlet weak var bundleCurrencyCodeTextField: UITextField!
     
     @IBOutlet weak var bundlePriceTextField: UITextField!
     
@@ -168,8 +172,11 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             if let newValue = newValue {
                 unitPriceTextField?.text = Helper.formatMoney(amount: newValue)
+                unitCurrencyCodeField?.text = unitPrice?.currencyCode ?? userLocale.currencyCode
+            
             } else {
                 unitPriceTextField?.text = nil
+                unitCurrencyCodeField?.text = userLocale.currencyCode
             }
         }
     }
@@ -193,8 +200,10 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             if let newValue = newValue {
                 bundlePriceTextField?.text = Helper.formatMoney(amount: newValue)
+                bundleCurrencyCodeTextField?.text = bundlePrice?.currencyCode ?? userLocale.currencyCode
             } else {
                 bundlePriceTextField?.text = nil
+                bundleCurrencyCodeTextField?.text = userLocale.currencyCode
             }
         }
     }
@@ -322,12 +331,16 @@ class ShoppingListItemEditorViewController: UIViewController {
             unitPriceTextField.placeholder = "Unit price"
             unitPriceTextField.isHidden = false
             bundlePriceTextField.isHidden = true
+            unitCurrencyCodeField.isHidden = false
+            bundleCurrencyCodeTextField.isHidden = true
             
         case .bundle:
             bundleQtyStackView.isHidden = false
             bundlePriceTextField.placeholder = "Bundle Price"
             unitPriceTextField.isHidden = true
             bundlePriceTextField.isHidden = false
+            unitCurrencyCodeField.isHidden = true
+            bundleCurrencyCodeTextField.isHidden = false
         }
     }
     
@@ -689,7 +702,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             item.addToPrices(unitPrice!)
         }
         
-        unitPrice?.currencyCode = "SGD"
+        unitPrice?.currencyCode = unitCurrencyCodeField.text ?? userLocale.currencyCode
         unitPrice?.quantityConvert = 1
         unitPrice?.valueConvert = unitPriceVc ?? 0
         unitPrice?.type = 0
@@ -702,8 +715,9 @@ class ShoppingListItemEditorViewController: UIViewController {
             bundlePrice = Price(context: persistentContainer.viewContext)
             item.addToPrices(bundlePrice!)
         }
-        
-        bundlePrice?.currencyCode = "SGD"
+        let t = bundleCurrencyCodeTextField.text
+        print("\(t!)")
+        bundlePrice?.currencyCode = bundleCurrencyCodeTextField.text ?? userLocale.currencyCode
         bundlePrice?.valueConvert = bundlePriceVc ?? 0
         bundlePrice?.quantityConvert = bundleQtyPricingInfoVc ?? 2
         bundlePrice?.type = 1
