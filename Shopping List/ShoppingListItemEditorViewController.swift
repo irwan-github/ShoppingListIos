@@ -344,6 +344,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    @IBOutlet weak var unitPriceStackView: UIStackView!
+    
+    @IBOutlet weak var bundlePriceStackView: UIStackView!
+    
     /**
      Display and hide price control depending on the price type
      */
@@ -351,16 +355,18 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         switch priceType {
         case .unit:
+            bundlePriceStackView.isHidden = true
+            unitPriceStackView.isHidden = false
             bundleQtyStackView.isHidden = true
-            unitPriceTextField.placeholder = "Unit price"
             unitPriceTextField.isHidden = false
             bundlePriceTextField.isHidden = true
             unitCurrencyCodeField.isHidden = false
             bundleCurrencyCodeTextField.isHidden = true
             
         case .bundle:
+            bundlePriceStackView.isHidden = false
+            unitPriceStackView.isHidden = true
             bundleQtyStackView.isHidden = false
-            bundlePriceTextField.placeholder = "Bundle Price"
             unitPriceTextField.isHidden = true
             bundlePriceTextField.isHidden = false
             unitCurrencyCodeField.isHidden = true
