@@ -1,5 +1,5 @@
 //
-//  ItemBaseViewController.swift
+//  ItemDetailViewController.swift
 //  Shopping List
 //
 //  Created by Mirza Irwan on 14/7/17.
@@ -91,7 +91,14 @@ class ItemDetailViewController: UIViewController {
             //                    itemPicture.image = UIImage(data: imageData)
             //                }
         } else {
-            itemImageView?.image = nil
+            
+            if itemImageView != nil {
+                
+                let placeHolderEmptyItem = UIImage(named: "item_placeholder")
+                let image = PictureUtil.retrievePlaceHolderImage(placeHolderKey: PictureUtil.EMPTY_IMAGE_ITEM_DETAIL, placeHolderImage: placeHolderEmptyItem!, width: itemImageView.frame.width, height: itemImageView.frame.height)
+                
+                itemImageView?.image = image
+            }
         }
     }
     
@@ -125,14 +132,14 @@ class ItemDetailViewController: UIViewController {
             moreInformationVc.item = item
         }
     }
-        
+    
 }
 
 extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {
     
     /**
      For iPad-sized class, the popover can be dismissed by tapping outside. However for iPhone, the view controller is displayed modally covering the presenting view controller. Thus, a button is needed to dismiss the modal view controller for iPhones.
-    */
+     */
     func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
         print("\(#function) - \(type(of: self))")
         
@@ -143,9 +150,9 @@ extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {
         let navigationController = UINavigationController(rootViewController: additionItemViewController)
         
         additionItemViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: additionItemViewController, action: #selector(ItemAdditionalDataViewController.actionOnDoneAdditionalInfo))
-
+        
         return navigationController
     }
     
-
+    
 }

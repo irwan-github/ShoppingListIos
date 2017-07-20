@@ -47,24 +47,29 @@ struct PictureUtil {
     
     private static var placeHolderImage: UIImage? = nil
     
+    private static var placeHolderImages: [String: UIImage] = [String: UIImage]()
+    
     /**
      Provides a cached placeholer image if available. The placeholder image is defined at build time.
      
+     - Parameter placeHolderKey: Key.
+     - Parameter placeHolderImage: Value.
      - Parameter width: Dimension to scale to.
      - Parameter height: Dimension to scale to.
      - Returns: A cached placeholder image if available
     */
-    static func getPlaceHolderImage(width: CGFloat, height: CGFloat) -> UIImage {
+    static func retrievePlaceHolderImage(placeHolderKey: String, placeHolderImage: UIImage, width: CGFloat, height: CGFloat) -> UIImage? {
         
-        if PictureUtil.placeHolderImage != nil {
-            return PictureUtil.placeHolderImage!
+        if PictureUtil.placeHolderImages[placeHolderKey] != nil {
+            return PictureUtil.placeHolderImages[placeHolderKey]
         }
         
-        PictureUtil.placeHolderImage = resizeImage(image: UIImage(named: "ic_photo")!, newWidth: width, newHeight: height)
+        PictureUtil.placeHolderImages[placeHolderKey] = resizeImage(image: placeHolderImage, newWidth: width, newHeight: height)
         
-        return PictureUtil.placeHolderImage!
+        return PictureUtil.placeHolderImages[placeHolderKey]
     }
     
-
+    static let EMPTY_IMAGE_ITEM_DETAIL: String = "EMPTY_IMAGE_ITEM_DETAIL"
+    static let EMPTY_IMAGE_ITEM_MASTER_TABLE_CELL: String = " EMPTY_IMAGE_ITEM_MASTER_TABLE_CELL"
 
 }

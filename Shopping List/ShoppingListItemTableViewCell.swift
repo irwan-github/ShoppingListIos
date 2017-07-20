@@ -54,8 +54,8 @@ class ShoppingListItemTableViewCell: UITableViewCell {
                 //                    itemPicture.image = UIImage(data: imageData)
                 //                }
             } else {
-
-                itemPictureImageView.image = PictureUtil.getPlaceHolderImage(width: itemPictureImageView.bounds.width, height: itemPictureImageView.bounds.width)
+                
+                itemPictureImageView.image = PictureUtil.retrievePlaceHolderImage(placeHolderKey: PictureUtil.EMPTY_IMAGE_ITEM_MASTER_TABLE_CELL, placeHolderImage: UIImage(named: "ic_photo")!, width: itemPictureImageView.bounds.width, height: itemPictureImageView.bounds.width)
             }
             
         }

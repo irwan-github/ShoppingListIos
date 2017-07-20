@@ -97,7 +97,7 @@
                                 <rect key="frame" x="0.0" y="28" width="320" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jBR-AZ-Vdw" id="sV6-kS-MqP">
-                                    <rect key="frame" x="0.0" y="0.0" width="287" height="65.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="66"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="KLq-yZ-n5V">
@@ -183,7 +183,7 @@
                                 <rect key="frame" x="0.0" y="28" width="320" height="91"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WSJ-Dv-71D" id="Gl5-3v-eNb">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="90.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="n3b-tS-Vut" userLabel="Parent">
@@ -391,7 +391,7 @@
                                 <rect key="frame" x="0.0" y="58" width="768" height="91"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mIW-c7-dPp" id="B7q-Of-6sB">
-                                    <rect key="frame" x="0.0" y="0.0" width="768" height="90.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="91"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="rJF-y2-8NZ" userLabel="Parent">
@@ -486,29 +486,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="T58-2P-ona">
-                                <rect key="frame" x="373" y="72" width="22" height="22"/>
-                                <state key="normal">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" image="item_placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="3QW-Uw-2Yh">
+                                <rect key="frame" x="20" y="120" width="728" height="896"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uy2-jQ-ejI">
+                                <rect key="frame" x="348.5" y="80" width="71" height="24"/>
+                                <state key="normal" title="Details" image="ic_info"/>
                                 <connections>
-                                    <segue destination="y6S-Or-Avz" kind="popoverPresentation" identifier="More information" popoverAnchorView="T58-2P-ona" id="nZx-ud-Q5O">
+                                    <segue destination="y6S-Or-Avz" kind="popoverPresentation" identifier="More information" popoverAnchorView="uy2-jQ-ejI" id="b7H-Ru-6sF">
                                         <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                                     </segue>
                                 </connections>
                             </button>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3QW-Uw-2Yh">
-                                <rect key="frame" x="20" y="110" width="728" height="914"/>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="3QW-Uw-2Yh" secondAttribute="trailing" id="854-No-rpm"/>
-                            <constraint firstAttribute="leadingMargin" secondItem="3QW-Uw-2Yh" secondAttribute="leading" id="Bey-Yo-fOq"/>
-                            <constraint firstItem="3QW-Uw-2Yh" firstAttribute="top" secondItem="T58-2P-ona" secondAttribute="bottom" constant="16" id="JFS-nA-yYo"/>
-                            <constraint firstItem="T58-2P-ona" firstAttribute="top" secondItem="M8j-Gy-qOf" secondAttribute="bottom" constant="8" symbolic="YES" id="m83-wO-pP6"/>
-                            <constraint firstItem="AB2-7W-hwc" firstAttribute="top" secondItem="3QW-Uw-2Yh" secondAttribute="bottom" id="rUA-sb-zab"/>
-                            <constraint firstItem="T58-2P-ona" firstAttribute="centerX" secondItem="Hzy-qG-k4E" secondAttribute="centerX" id="ruP-d6-pfL"/>
+                            <constraint firstItem="AB2-7W-hwc" firstAttribute="top" secondItem="3QW-Uw-2Yh" secondAttribute="bottom" constant="8" id="3is-Ij-WiD"/>
+                            <constraint firstItem="3QW-Uw-2Yh" firstAttribute="leading" secondItem="Hzy-qG-k4E" secondAttribute="leadingMargin" id="OBA-QU-84z"/>
+                            <constraint firstItem="3QW-Uw-2Yh" firstAttribute="top" secondItem="uy2-jQ-ejI" secondAttribute="bottom" constant="16" id="WSh-A0-ndy"/>
+                            <constraint firstItem="uy2-jQ-ejI" firstAttribute="top" secondItem="M8j-Gy-qOf" secondAttribute="bottom" constant="16" id="Ypc-iQ-dsa"/>
+                            <constraint firstItem="3QW-Uw-2Yh" firstAttribute="trailing" secondItem="Hzy-qG-k4E" secondAttribute="trailingMargin" id="ogh-8H-g2h"/>
+                            <constraint firstItem="uy2-jQ-ejI" firstAttribute="centerX" secondItem="Hzy-qG-k4E" secondAttribute="centerX" id="ymO-oU-Mj0"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="pqN-id-obJ">
@@ -1003,12 +1001,14 @@
     <resources>
         <image name="empty-photo" width="640" height="640"/>
         <image name="ic_add_a_photo" width="24" height="24"/>
+        <image name="ic_info" width="24" height="24"/>
         <image name="ic_mode_edit" width="24" height="24"/>
         <image name="ic_photo" width="24" height="24"/>
+        <image name="item_placeholder" width="400" height="290"/>
         <image name="shopping list" width="918" height="980"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Xb6-7H-kgC"/>
-        <segue reference="l83-zl-ohz"/>
+        <segue reference="GDk-fS-7Cc"/>
     </inferredMetricsTieBreakers>
 </document>

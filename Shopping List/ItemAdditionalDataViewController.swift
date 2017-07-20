@@ -18,6 +18,7 @@ class ItemAdditionalDataViewController: UIViewController {
         }
     }
     
+    // MARK: - Item information
     @IBOutlet weak var brandLabel: UILabel!
     @IBOutlet weak var countryOfOriginLabel: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
