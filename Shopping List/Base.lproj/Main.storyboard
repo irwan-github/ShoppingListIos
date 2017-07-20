@@ -454,7 +454,6 @@
                                     <outlet property="itemDescriptionLabel" destination="Rvw-w0-lyr" id="D3n-6f-8oe"/>
                                     <outlet property="itemNameLabel" destination="mKK-zL-qVX" id="YIG-Za-6XR"/>
                                     <outlet property="itemPicture" destination="p1E-KB-PjD" id="JaH-n1-aAk"/>
-                                    <segue destination="zuT-A6-vo2" kind="unwind" identifier="unwind to shopping list item editor" unwindAction="onReceiveUnwindFor:sender:" id="674-yC-9uw"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -468,6 +467,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="searchTextField" destination="Se4-DV-1aE" id="A8o-8k-Fbf"/>
+                        <segue destination="zuT-A6-vo2" kind="unwind" identifier="unwind to shopping list item editor" unwindAction="onReceiveUnwindFor:sender:" id="oI0-4L-Z1c"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UuS-Sx-UbV" userLabel="First Responder" sceneMemberID="firstResponder"/>

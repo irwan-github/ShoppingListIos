@@ -936,6 +936,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             item = searchVc.selectedItem
             changeState.transition(event: .onSearchResult, handleNextStateUiAttributes: changeStateAttributeHandler)
             validationItemState.handle(event: .onExistingItem)
+            pictureState.transition(event: .onLoad(item?.picture?.fileUrl), handleNextStateUiAttributes: nextPictureStateUiAttributes)
         }
     }
     

@@ -128,25 +128,8 @@ class SearchItemsTableViewController: FetchedResultsTableViewController, UITextF
     
     // MARK: - Navigation
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
-        guard let identifier = segue.identifier else { return }
-        
-        let destinationVc = segue.destination
-        
-        if identifier == "show item detail" {
-            
-            let indexPathItemSelected = tableView.indexPathForSelectedRow
-            
-            _ = fetchedResultsController?.object(at: indexPathItemSelected!)
-            
-            _ = destinationVc as! ItemDetailViewController
-            
-            //itemViewController.item = item
-        }
-    }
-    
-
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//    }
 }
 
 extension SearchItemsTableViewController {
@@ -154,13 +137,13 @@ extension SearchItemsTableViewController {
     // MARK: - Table view data source I
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        
-        return fetchedResultsController?.sections?.count ?? 0
+        let count = fetchedResultsController?.sections?.count
+        return count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        
-        return fetchedResultsController?.fetchedObjects?.count ?? 0
+        let count = fetchedResultsController?.fetchedObjects?.count
+        return count ?? 0
     }
     
 }
@@ -168,6 +151,7 @@ extension SearchItemsTableViewController {
 extension SearchItemsTableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(">>>> End Search \(#function) - \(type(of: self))")
         selectedItem = fetchedResultsController?.object(at: indexPath)
         performSegue(withIdentifier: "unwind to shopping list item editor", sender: self)
     }

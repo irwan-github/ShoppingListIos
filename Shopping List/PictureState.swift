@@ -56,6 +56,11 @@ enum PictureState {
                 
                 handleNextStateUiAttributes?(self, itemImageVc)
                 
+            case .onFinishPickingCameraMedia(let originalUiImage):
+                let itemImageVc = ItemPicture(fullScaleImage: originalUiImage)
+                self = .new
+                handleNextStateUiAttributes?(self, itemImageVc)
+                
             default:
                 break
             }
