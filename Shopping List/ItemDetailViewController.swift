@@ -15,7 +15,10 @@ class ItemDetailViewController: UIViewController {
     
     var shoppingListItem: ShoppingListItem? {
         didSet {
+            
             item = shoppingListItem?.item
+            editBarButtonItem?.isEnabled = !(shoppingListItem == nil)
+            
         }
     }
     
@@ -31,6 +34,8 @@ class ItemDetailViewController: UIViewController {
     
     // MARK: - UIViewController's version of model
     
+    @IBOutlet weak var editBarButtonItem: UIBarButtonItem!
+    
     @IBOutlet weak var itemImageView: UIImageView!
     
     override func viewDidLoad() {
@@ -38,6 +43,8 @@ class ItemDetailViewController: UIViewController {
         print("\(#function) - \(type(of: self))")
         listenForNotificationOfChangesToItem()
         updateUi()
+        editBarButtonItem.isEnabled = !(shoppingListItem == nil)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -153,6 +160,20 @@ extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {
         
         return navigationController
     }
+    
+    //The following is an alternative method to the above:
+    
+    //    extension ListTableViewController: UIPopoverPresentationControllerDelegate {
+    //        func presentationController(_ presentationController: UIPresentationController, willPresentWithAdaptiveStyle style: UIModalPresentationStyle, transitionCoordinator: UIViewControllerTransitionCoordinator?) {
+    //            guard let presentedNavigationController = presentationController.presentedViewController as? UINavigationController else { return }
+    //
+    //            // We want to show the navigation bar if we're presenting in full screen.
+    //
+    //            let hidesNavigationBar = style != .fullScreen
+    //
+    //            presentedNavigationController.setNavigationBarHidden(hidesNavigationBar, animated: false)
+    //        }
+    //    }
     
     
 }

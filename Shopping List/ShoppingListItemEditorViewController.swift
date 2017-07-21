@@ -705,9 +705,10 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     private func deleteItemFromShoppingList() {
         
-        if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
-            deletePicture(at: stringPath)
-        }
+        //THe following is wrong. We do not want to delete the picture from filesystem because other shopping list is affected.
+//        if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
+//            deletePicture(at: stringPath)
+//        }
         
         let moc = persistentContainer.viewContext
         

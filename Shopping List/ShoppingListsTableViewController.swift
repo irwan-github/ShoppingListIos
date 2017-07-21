@@ -54,33 +54,11 @@ class ShoppingListsTableViewController: FetchedResultsTableViewController, UINav
         //Fetch all shopping list
         fetchShoppingLists()
         
-        initializeShoppingList()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-    }
-    
-    
-    // MARK: - Business
-    private func initializeShoppingList() {
-        
-        let horizontalWidth = traitCollection.horizontalSizeClass
-        
-        if UIDevice.current.userInterfaceIdiom == .pad  || horizontalWidth == .regular {
-            
-            var shoppingListsVc = splitViewController?.viewControllers[1]
-            
-            if let shoppingListsNc = shoppingListsVc as? UINavigationController {
-                shoppingListsVc = shoppingListsNc.visibleViewController
-            }
-            
-            if let shoppingListsVc = shoppingListsVc as? ShoppingListTableViewController {
-                shoppingListsVc.shoppingList = defaultShoppingList
-                tableView.selectRow(at: indexPathOfDefaultShoppingList, animated: true, scrollPosition: .none)
-            }
-        }
     }
     
     private func fetchShoppingLists() {

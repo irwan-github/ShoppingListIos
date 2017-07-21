@@ -520,6 +520,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="editBarButtonItem" destination="qby-5v-hBe" id="AHK-JM-uqi"/>
                         <outlet property="itemImageView" destination="3QW-Uw-2Yh" id="Kax-TC-KOr"/>
                         <segue destination="esa-fY-dY2" kind="unwind" identifier="return to shopping list" unwindAction="unwindToShoppingListFor:" id="ujS-4L-aez"/>
                     </connections>

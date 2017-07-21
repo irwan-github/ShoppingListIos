@@ -38,13 +38,12 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         //clearsSelectionOnViewWillAppear = true
         
         navigationItem.title = shoppingList?.name
-        
-        showFirstItemInDetail()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         print("\(#function) - \(type(of: self))")
         super.viewWillAppear(animated)
+        showFirstItemInDetail()
     }
     
     func showFirstItemInDetail() {
@@ -55,29 +54,40 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         
         //Load the first item of the shopping list in detail view if there is any
         
-        if fetchedResultsController?.fetchedObjects?.count == 0 {
-            return
-        }
-        
         let firstRow = IndexPath(row: 0, section: 0)
-        
-        guard let shoppingListItem = fetchedResultsController?.object(at: firstRow) else { return }
         
         //Create view controller to display as detail if not created by IOS yet
         if splitViewController?.viewControllers.count == 2 , let navigationCtlr = splitViewController?.viewControllers[1] as? UINavigationController {
             
             let itemDetailVc = navigationCtlr.viewControllers[0] as? ItemDetailViewController
-            itemDetailVc?.shoppingListItem = shoppingListItem
+            if fetchedResultsController?.fetchedObjects?.count == 0 {
+                
+                itemDetailVc?.shoppingListItem = nil
+                return
+            } else {
+                
+                guard let shoppingListItem = fetchedResultsController?.object(at: firstRow) else { return }
+                itemDetailVc?.shoppingListItem = shoppingListItem
+            }
             
         } else {
             
             if let itemDetailVc = storyboard?.instantiateViewController(withIdentifier: "ItemDetailViewController") as? ItemDetailViewController {
                 
-                itemDetailVc.shoppingListItem = shoppingListItem
-                
-                let navigationCtlr = UINavigationController(rootViewController: itemDetailVc)
-                
-                splitViewController?.showDetailViewController(navigationCtlr, sender: self)
+                if fetchedResultsController?.fetchedObjects?.count == 0 {
+                    
+                    itemDetailVc.shoppingListItem = nil
+                    return
+                } else {
+                    
+                    
+                    guard let shoppingListItem = fetchedResultsController?.object(at: firstRow) else { return }
+                    itemDetailVc.shoppingListItem = shoppingListItem
+                    
+                    let navigationCtlr = UINavigationController(rootViewController: itemDetailVc)
+                    
+                    splitViewController?.showDetailViewController(navigationCtlr, sender: self)
+                }
             }
         }
         
@@ -171,23 +181,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
             
             destinationVc = navigationController.visibleViewController!
         }
-        
-        if let id = segue.identifier, id == "Update Shopping List Item" {
-            
-            let shoppingEditorVc = destinationVc as! ShoppingListItemEditorViewController
-            
-            shoppingEditorVc.shoppingList = shoppingList
-            
-            let cell = sender as! ShoppingListItemTableViewCell
-            
-            let indexPath = tableView.indexPath(for: cell)!
-            
-            let shoppingListItem = fetchedResultsController?.object(at: indexPath)
-            
-            shoppingEditorVc.shoppingListItem = shoppingListItem
-            
-        }
-        
+                
         if let id = segue.identifier, id == "New Shopping List Item" {
             
             let shoppingEditorVc = destinationVc as! ShoppingListItemEditorViewController
@@ -235,7 +229,7 @@ extension ShoppingListTableViewController {
         return fetchedResultsController?.fetchedObjects?.count ?? 0
     }
     
-
+    
     
     func listenForNotificationOfChangesToItem() {
         print("#### notificationCtr.addObserver")
@@ -253,10 +247,10 @@ extension ShoppingListTableViewController {
                 guard let info = notification.userInfo else { return }
                 
                 if let changedObjects = info[NSDeletedObjectsKey] as? Set<NSManagedObject>, changedObjects.count > 0 {
-
+                    
                     print("#### ChangedItems count is \(changedObjects.count)")
                     self.showFirstItemInDetail()
-
+                    
                     for managedObject in changedObjects {
                         
                         print("###########")
