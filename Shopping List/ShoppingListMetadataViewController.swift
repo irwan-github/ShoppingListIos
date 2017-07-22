@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 
+/// Creates, update and delete shopping list. Deleting a shopping list object here will delete cascade all its list items.
 class ShoppingListMetadataViewController: UIViewController {
     
     // MARK: - Model
@@ -16,12 +17,36 @@ class ShoppingListMetadataViewController: UIViewController {
     
     @IBOutlet weak var shoppingListNameTextView: UITextField!
     @IBOutlet weak var commentsTextField: UITextField!
+    @IBOutlet weak var shoppingListNameTopConstraint: NSLayoutConstraint!
+    @IBOutlet weak var commentsTopConstraint: NSLayoutConstraint!
     
     var persistentContainer: NSPersistentContainer? = AppDelegate.persistentContainer
     
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUi()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        //This view controller is presented as a popover in iPad while in iPhone it is modal. For popover, it is recommended to resize such that there is no big unaccounted space at the bottom. So the preferred size is to remove the bottom space. This adjustment is done for asthetic reason
+        
+        let minimumSuggestedHeight = (navigationController?.navigationBar.frame.height ?? 0 ) +
+        shoppingListNameTopConstraint.constant +
+        shoppingListNameTextView.frame.height +
+        commentsTopConstraint.constant +
+        commentsTextField.frame.height
+        
+        self.preferredContentSize = CGSize(width: 0, height: minimumSuggestedHeight)
+        
+        //Also in popover, the cancel button in the navigation bar is redundant and it is recommended not to show it.
+        //Get the popover presenting controller
+        guard let ppc = navigationController?.popoverPresentationController else { return }
+        if ppc.arrowDirection != .unknown {
+            navigationItem.leftBarButtonItem = nil
+        }
+        
     }
     
     func updateUi() {

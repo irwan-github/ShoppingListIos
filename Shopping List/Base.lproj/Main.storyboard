@@ -77,7 +77,9 @@
                     </navigationItem>
                     <connections>
                         <outlet property="commentsTextField" destination="WvH-FC-vrY" id="ur8-bw-EYU"/>
+                        <outlet property="commentsTopConstraint" destination="uJ4-4d-xeT" id="kYs-q5-PXN"/>
                         <outlet property="shoppingListNameTextView" destination="dF0-oT-Dii" id="Tk1-lD-TrI"/>
+                        <outlet property="shoppingListNameTopConstraint" destination="1hU-RE-WcO" id="4TL-LH-10p"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EBx-0u-p3S" userLabel="First Responder" sceneMemberID="firstResponder"/>
