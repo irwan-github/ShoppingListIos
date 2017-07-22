@@ -1234,7 +1234,7 @@ extension ShoppingListItemEditorViewController {
     
     /**
      Receive keyboard notification and begin process to modify layout of views to accomodate keyboard.
-    */
+     */
     func keyboardWillShow(notification: NSNotification) {
         
         if let info = notification.userInfo {
@@ -1247,22 +1247,30 @@ extension ShoppingListItemEditorViewController {
     
     func shiftAffectedPriceFieldFromBeingBlocked(by keyboard: CGRect) {
         
-        if !isPriceFieldBlocked(by: keyboard) {
+        if traitCollection.userInterfaceIdiom == .phone {
+            processAdjustmentForIphone(keyboard: keyboard)
+        } else if traitCollection.userInterfaceIdiom == .pad {
+            processAdjustmentsForIpad(keyboard: keyboard)
+        }
+    }
+    
+    func processAdjustmentForIphone(keyboard: CGRect) {
+        
+        if !isPriceFieldBlockedInIphone(by: keyboard) {
             return
         }
         
-        //Find the required target Y
+        //Find the required target location for price text field
         let superViewHeight = view.frame.height
-        //let heightTextField = priceInfoStackView.frame.size.height
-        let heightTextField = unitPriceTextField.frame.size.height * 2
-        let targetY = superViewHeight - keyboard.height - 40 - heightTextField
+        let heightTextField = unitPriceTextField.frame.size.height
+        let targetHeight = superViewHeight -
+            keyboard.height -
+            heightTextField -
+        16 //Clearance from top of keyboard
         
-        //Find out where the stackview is relative to the frame
-        //            let priceInfoStackViewY = itemDetailsStackView.frame.size.height + pricingInfoTopCons.constant + pricingInfoSegmentedControl.frame.size.height + pricingInfoBottomConst.constant
-        print("priceGroupYpos= \(priceGroupYpos)")
-        let difference = priceGroupYpos - targetY
+        let difference = priceGroupYposInIPhone - targetHeight
         
-        let targetOffsetForTopConstraints = 0 - difference
+        let targetOffsetForTopConstraints = -difference
         
         itemDetailsTopCons.constant = targetOffsetForTopConstraints
         
@@ -1270,10 +1278,60 @@ extension ShoppingListItemEditorViewController {
         
     }
     
+    func processAdjustmentsForIpad(keyboard: CGRect) {
+        
+        var aRect : CGRect = self.view.frame
+        
+        var navigationBarHeight: CGFloat
+        
+        //Get the split view controller. It is the presenting controller of this view controller
+        guard let presentingController = navigationController?.presentingViewController else { return }
+        
+        guard let splitVc = presentingController as? UISplitViewController else { return}
+        
+        //Get the height of navigation bar in master view controller of the split view
+        if let r = splitVc.viewControllers[0] as? UINavigationController {
+            
+            navigationBarHeight = r.navigationBar.frame.height
+            
+        } else { return }
+        
+        // calculate "splitview height not covered by keyboard"
+        aRect = presentingController.view.frame
+        
+        aRect.size.height -= keyboard.height
+        
+        //Determine if this popover is blocked by keyboard
+        let isBlocked = aRect.height < (navigationBarHeight + view.frame.size.height)
+        
+        //Shift all the views in this popover in such a way that all the views blocked by keyboard will be unhidden
+        if isBlocked {
+            
+            //Add the height of popover and the split view's master vc's navigation controller's navigation bar
+            let aggregatePopoverHeight = navigationBarHeight + view.frame.size.height
+            
+            //Get the offset by subtracting "splitview height not covered by keyboard" from aggregatePopoverHeight
+            let offset = aggregatePopoverHeight - aRect.size.height
+            
+            //Calculate the new top contraint to app to the top most child view.
+            let targetOffsetForTopConstraints = 0 - offset
+            
+            //Set the new contraints
+            itemDetailsTopCons.constant = targetOffsetForTopConstraints
+            
+            //Re-lay the view
+            self.view.layoutIfNeeded()
+            
+        }
+        
+    }
+    
     /**
-     Find out where the price info stackview is relative to the superview frame
+     Find out where the price info stackview is relative to the superview frame in iPhones
      */
-    fileprivate var priceGroupYpos: CGFloat {
+    fileprivate var priceGroupYposInIPhone: CGFloat {
+        
+        let navigationBarHeight = self.navigationController?.navigationBar.frame.height ?? 0
         
         let itemDetailsTopConsHeight = itemDetailsTopCons.constant
         
@@ -1285,13 +1343,14 @@ extension ShoppingListItemEditorViewController {
         
         let pricingInfoBottomConstHeight = pricingInfoBottomConst.constant
         
-        let yPos = itemDetailsTopConsHeight + itemDetailsStackViewHeight + pricingInfoTopConsHeight + pricingInfoSegmentedControlHeight + pricingInfoBottomConstHeight
+        let yPos = navigationBarHeight + itemDetailsTopConsHeight + itemDetailsStackViewHeight + pricingInfoTopConsHeight + pricingInfoSegmentedControlHeight + pricingInfoBottomConstHeight
+        
         return yPos
     }
     
     /**
-     Currently use to get the preferred content size. may be used for other purpose 
-    */
+     Currently use to get the preferred content size for popover presentation. may be used for other purpose
+     */
     fileprivate func getAggregatSizeOfAllViews() -> CGSize {
         
         let itemDetailsStackViewSize = itemDetailsStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
@@ -1312,24 +1371,21 @@ extension ShoppingListItemEditorViewController {
         return CGSize(width: view.frame.width, height: heightAggregate)
     }
     
-    private func isPriceFieldBlocked(by keyBoard: CGRect) -> Bool {
-        
-        if traitCollection.userInterfaceIdiom == .pad {
-         
-            return false
-        }
+    private func isPriceFieldBlockedInIphone(by keyboard: CGRect) -> Bool {
         
         var aRect : CGRect = self.view.frame
-        aRect.size.height -= keyBoard.height
         
-        let res = aRect.contains(priceStackView.frame.origin)
+        aRect = self.view.frame
         
-        if (!res){
+        aRect.size.height -= keyboard.height
+        
+        let unblocked = aRect.contains(priceStackView.frame.origin)
+        
+        if (unblocked){
+            return false
+        } else {
             return true
         }
-        
-        return itemDetailsTopCons.constant == originalItemDetailsTopCons
-        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
