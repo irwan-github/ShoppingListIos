@@ -97,12 +97,12 @@ class ShoppingListItemEditorViewController: UIViewController {
     @IBOutlet weak var deleteItemButton: UIBarButtonItem!
     
     /**
-     Shared by bundle pricing and unit pricing. Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
+     Shared by bundle pricing and unit pricing. Event handler for shopping list item will set the proper quantity value and selected price type. Do not set it directly. I am using a state object to set the value and attributes.
      */
     @IBOutlet weak var quantityToBuyLabel: UILabel!
     
     /**
-     Shared by bundle pricing and unit pricing. Event handler for shopping list item will set the proper quantity value and selected price type. Do not set anywhere else.
+     Shared by bundle pricing and unit pricing. Event handler for shopping list item will set the proper quantity value and selected price type. Do not set it directly. I am using a state object to set the value and attributes.
      */
     @IBOutlet weak var quantityToBuyStepper: UIStepper!
     
@@ -241,6 +241,9 @@ class ShoppingListItemEditorViewController: UIViewController {
         super.viewDidLoad()
         print("\(#function) - \(type(of: self))")
         
+        //Listen for the keyboard
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
         currencyCodeTextFieldDelegate.displayAlertAction = displayAlertAction
         
         currencyCodeTextFieldDelegate.changeState = changeState
@@ -275,10 +278,17 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         //Get the popover presentation controller from navigation controller. It is not the same as this editor's popover presentation controller and it will not work. Also the cancel button is in navigation item which is contained in the navigation controller navigation bar
         if let myPopoverPresentationController = navigationController?.popoverPresentationController {
+            
+            //If this view controller is presented as a popover then it have a known arrow direction. Use this to determine popover presentation.
             if myPopoverPresentationController.arrowDirection != .unknown {
                 print("popover. not model")
                 navigationItem.leftBarButtonItem = nil
             }
+            
+            //Resize the popover for asthetic reason
+            let aggregateSize = getAggregatSizeOfAllViews()
+            print("width: \(view.frame.width) height: \(view.frame.height)")
+            preferredContentSize = aggregateSize
         }
     }
     
@@ -706,9 +716,9 @@ class ShoppingListItemEditorViewController: UIViewController {
     private func deleteItemFromShoppingList() {
         
         //THe following is wrong. We do not want to delete the picture from filesystem because other shopping list is affected.
-//        if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
-//            deletePicture(at: stringPath)
-//        }
+        //        if let stringPath = shoppingListItem?.item?.picture?.fileUrl {
+        //            deletePicture(at: stringPath)
+        //        }
         
         let moc = persistentContainer.viewContext
         
@@ -953,6 +963,20 @@ class ShoppingListItemEditorViewController: UIViewController {
         popoverMenuPresentationController?.sourceRect = itemImageView.bounds
         present(pictureActionSheetController, animated: true, completion: nil)
     }
+    
+    
+    @IBOutlet weak var itemDetailsStackView: UIStackView!
+    
+    
+    @IBOutlet weak var itemDetailsTopCons: NSLayoutConstraint! {
+        didSet {
+            originalItemDetailsTopCons = itemDetailsTopCons.constant
+        }
+    }
+    fileprivate var originalItemDetailsTopCons: CGFloat = 8
+    @IBOutlet weak var pricingInfoTopCons: NSLayoutConstraint!
+    @IBOutlet weak var pricingInfoBottomConst: NSLayoutConstraint!
+    @IBOutlet weak var pricingQuantityTopConstraint: NSLayoutConstraint!
 }
 
 // MARK: - State: Handle picture actions and states
@@ -1203,4 +1227,118 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         
         return true
     }
+}
+
+//Keyboard hiding textfield prevention
+extension ShoppingListItemEditorViewController {
+    
+    /**
+     Receive keyboard notification and begin process to modify layout of views to accomodate keyboard.
+    */
+    func keyboardWillShow(notification: NSNotification) {
+        
+        if let info = notification.userInfo {
+            
+            let keyboard: CGRect = info[UIKeyboardFrameEndUserInfoKey] as! CGRect
+            
+            shiftAffectedPriceFieldFromBeingBlocked(by: keyboard)
+        }
+    }
+    
+    func shiftAffectedPriceFieldFromBeingBlocked(by keyboard: CGRect) {
+        
+        if !isPriceFieldBlocked(by: keyboard) {
+            return
+        }
+        
+        //Find the required target Y
+        let superViewHeight = view.frame.height
+        //let heightTextField = priceInfoStackView.frame.size.height
+        let heightTextField = unitPriceTextField.frame.size.height * 2
+        let targetY = superViewHeight - keyboard.height - 40 - heightTextField
+        
+        //Find out where the stackview is relative to the frame
+        //            let priceInfoStackViewY = itemDetailsStackView.frame.size.height + pricingInfoTopCons.constant + pricingInfoSegmentedControl.frame.size.height + pricingInfoBottomConst.constant
+        print("priceGroupYpos= \(priceGroupYpos)")
+        let difference = priceGroupYpos - targetY
+        
+        let targetOffsetForTopConstraints = 0 - difference
+        
+        itemDetailsTopCons.constant = targetOffsetForTopConstraints
+        
+        self.view.layoutIfNeeded()
+        
+    }
+    
+    /**
+     Find out where the price info stackview is relative to the superview frame
+     */
+    fileprivate var priceGroupYpos: CGFloat {
+        
+        let itemDetailsTopConsHeight = itemDetailsTopCons.constant
+        
+        let itemDetailsStackViewHeight = itemDetailsStackView.frame.size.height
+        
+        let pricingInfoTopConsHeight = pricingInfoTopCons.constant
+        
+        let pricingInfoSegmentedControlHeight = pricingInformationSc.frame.size.height
+        
+        let pricingInfoBottomConstHeight = pricingInfoBottomConst.constant
+        
+        let yPos = itemDetailsTopConsHeight + itemDetailsStackViewHeight + pricingInfoTopConsHeight + pricingInfoSegmentedControlHeight + pricingInfoBottomConstHeight
+        return yPos
+    }
+    
+    /**
+     Currently use to get the preferred content size. may be used for other purpose 
+    */
+    fileprivate func getAggregatSizeOfAllViews() -> CGSize {
+        
+        let itemDetailsStackViewSize = itemDetailsStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+        let pricingInformationScSize = pricingInformationSc.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+        let priceStackViewSize = priceStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+        let bundleQtyStackViewSize = bundleQtyStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+        
+        let heightAggregate = itemDetailsTopCons.constant +
+            itemDetailsStackViewSize.height +
+            pricingInfoTopCons.constant +
+            pricingInformationScSize.height +
+            pricingInfoBottomConst.constant +
+            priceStackViewSize.height +
+            bundleQtyStackViewSize.height +
+            pricingQuantityTopConstraint.constant +
+            CGFloat(8.0) //Allowance for bottom constraints
+        
+        return CGSize(width: view.frame.width, height: heightAggregate)
+    }
+    
+    private func isPriceFieldBlocked(by keyBoard: CGRect) -> Bool {
+        
+        if traitCollection.userInterfaceIdiom == .pad {
+         
+            return false
+        }
+        
+        var aRect : CGRect = self.view.frame
+        aRect.size.height -= keyBoard.height
+        
+        let res = aRect.contains(priceStackView.frame.origin)
+        
+        if (!res){
+            return true
+        }
+        
+        return itemDetailsTopCons.constant == originalItemDetailsTopCons
+        
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        unitPriceTextField.resignFirstResponder()
+        bundlePriceTextField.resignFirstResponder()
+        itemDetailsTopCons.constant = originalItemDetailsTopCons
+        self.view.layoutIfNeeded()
+        super.touchesBegan(touches, with: event)
+    }
+    
+    
 }
