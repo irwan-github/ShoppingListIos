@@ -108,13 +108,11 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var pricingInformationSc: UISegmentedControl!
     
-    @IBOutlet weak var priceStackView: UIStackView!
-    
     @IBOutlet weak var bundleQtyStackView: UIStackView!
     
-    @IBOutlet weak var unitCurrencyCodeField: UITextField! {
+    @IBOutlet weak var unitCurrencyCodeTextField: UITextField! {
         didSet {
-            unitCurrencyCodeField.delegate = currencyCodeTextFieldDelegate
+            unitCurrencyCodeTextField.delegate = currencyCodeTextFieldDelegate
         }
     }
     
@@ -180,11 +178,11 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             if let newValue = newValue {
                 unitPriceTextField?.text = Helper.formatMoney(amount: newValue)
-                unitCurrencyCodeField?.text = unitPrice?.currencyCode ?? userLocale.currencyCode
+                unitCurrencyCodeTextField?.text = unitPrice?.currencyCode ?? userLocale.currencyCode
                 
             } else {
                 unitPriceTextField?.text = nil
-                unitCurrencyCodeField?.text = userLocale.currencyCode
+                unitCurrencyCodeTextField?.text = userLocale.currencyCode
             }
         }
     }
@@ -235,14 +233,19 @@ class ShoppingListItemEditorViewController: UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     // MARK: - ViewController lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("\(#function) - \(type(of: self))")
         
         //Listen for the keyboard
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         
         currencyCodeTextFieldDelegate.displayAlertAction = displayAlertAction
         
@@ -273,8 +276,10 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
-        //Adapt from model to popover
+
+        super.viewWillAppear(animated)
+
+        //Adapt from show model segue to show popover segue
         
         //Get the popover presentation controller from navigation controller. It is not the same as this editor's popover presentation controller and it will not work. Also the cancel button is in navigation item which is contained in the navigation controller navigation bar
         if let myPopoverPresentationController = navigationController?.popoverPresentationController {
@@ -286,9 +291,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             }
             
             //Resize the popover for asthetic reason
-            let aggregateSize = getAggregatSizeOfAllViews()
-            print("width: \(view.frame.width) height: \(view.frame.height)")
-            preferredContentSize = aggregateSize
+            preferredContentSize = calculatePreferredContentSize()
         }
     }
     
@@ -367,19 +370,17 @@ class ShoppingListItemEditorViewController: UIViewController {
         case .unit:
             bundlePriceStackView.isHidden = true
             unitPriceStackView.isHidden = false
-            bundleQtyStackView.isHidden = true
             unitPriceTextField.isHidden = false
             bundlePriceTextField.isHidden = true
-            unitCurrencyCodeField.isHidden = false
+            unitCurrencyCodeTextField.isHidden = false
             bundleCurrencyCodeTextField.isHidden = true
             
         case .bundle:
             bundlePriceStackView.isHidden = false
             unitPriceStackView.isHidden = true
-            bundleQtyStackView.isHidden = false
             unitPriceTextField.isHidden = true
             bundlePriceTextField.isHidden = false
-            unitCurrencyCodeField.isHidden = true
+            unitCurrencyCodeTextField.isHidden = true
             bundleCurrencyCodeTextField.isHidden = false
         }
     }
@@ -692,7 +693,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             item.addToPrices(unitPrice!)
         }
         
-        unitPrice?.currencyCode = unitCurrencyCodeField.text ?? userLocale.currencyCode
+        unitPrice?.currencyCode = unitCurrencyCodeTextField.text ?? userLocale.currencyCode
         unitPrice?.quantityConvert = 1
         unitPrice?.valueConvert = unitPriceVc ?? 0
         unitPrice?.type = 0
@@ -785,14 +786,14 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     func validateCurrencyCode() -> Bool {
         
-        guard let unitCurrencyCode = unitCurrencyCodeField.text, CurrencyHelper().isValid(currencyCode: unitCurrencyCode) else {
+        guard let unitCurrencyCode = unitCurrencyCodeTextField.text, CurrencyHelper().isValid(currencyCode: unitCurrencyCode) else {
             let alert = UIAlertController(title: "Unit price currency code is invalid", message: nil, preferredStyle: .alert)
             let action = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(action)
             present(alert, animated: true, completion: nil)
             
             //Reinstate back the original currency code
-            unitCurrencyCodeField.text = unitPrice?.currencyCode
+            unitCurrencyCodeTextField.text = unitPrice?.currencyCode
             
             return false
         }
@@ -967,16 +968,19 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var itemDetailsStackView: UIStackView!
     
+    @IBOutlet weak var purchaseInfoStackView: UIStackView!
     
-    @IBOutlet weak var itemDetailsTopCons: NSLayoutConstraint! {
+    @IBOutlet weak var priceInformationStackView: UIStackView!
+    
+    @IBOutlet weak var priceTextFieldStackView: UIStackView!
+    
+    @IBOutlet weak var itemDetailsTopConstraint: NSLayoutConstraint! {
         didSet {
-            originalItemDetailsTopCons = itemDetailsTopCons.constant
+            originalItemDetailsTopCons = itemDetailsTopConstraint.constant
         }
     }
+    
     fileprivate var originalItemDetailsTopCons: CGFloat = 8
-    @IBOutlet weak var pricingInfoTopCons: NSLayoutConstraint!
-    @IBOutlet weak var pricingInfoBottomConst: NSLayoutConstraint!
-    @IBOutlet weak var pricingQuantityTopConstraint: NSLayoutConstraint!
 }
 
 // MARK: - State: Handle picture actions and states
@@ -1245,6 +1249,11 @@ extension ShoppingListItemEditorViewController {
         }
     }
     
+    func keyboardWillHide(notification: NSNotification) {
+        itemDetailsTopConstraint.constant = originalItemDetailsTopCons
+        self.view.layoutIfNeeded()
+    }
+    
     func shiftAffectedPriceFieldFromBeingBlocked(by keyboard: CGRect) {
         
         if traitCollection.userInterfaceIdiom == .phone {
@@ -1256,9 +1265,25 @@ extension ShoppingListItemEditorViewController {
     
     func processAdjustmentForIphone(keyboard: CGRect) {
         
-        if !isPriceFieldBlockedInIphone(by: keyboard) {
-            return
+        if isPriceFieldBlockedInHeightIphone(by: keyboard) {
+            adjustPriceFieldHeightForIphone(keyboard: keyboard)
         }
+    }
+    
+    private func isPriceFieldBlockedInHeightIphone(by keyboard: CGRect) -> Bool {
+        
+        let heightOfAreaUncoveredByKeyboard = view.frame.height - keyboard.height
+        
+        let blocked = priceGroupYpositionInHeightForIphone >= heightOfAreaUncoveredByKeyboard
+        
+        if blocked {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func adjustPriceFieldHeightForIphone(keyboard: CGRect) {
         
         //Find the required target location for price text field
         let superViewHeight = view.frame.height
@@ -1267,15 +1292,25 @@ extension ShoppingListItemEditorViewController {
             keyboard.height -
             heightTextField -
         16 //Clearance from top of keyboard
-        
-        let difference = priceGroupYposInIPhone - targetHeight
+        print("priceGroupYpositionInHeightForIphone: \(priceGroupYpositionInHeightForIphone)")
+        let difference = priceGroupYpositionInHeightForIphone - targetHeight
         
         let targetOffsetForTopConstraints = -difference
         
-        itemDetailsTopCons.constant = targetOffsetForTopConstraints
+        itemDetailsTopConstraint.constant = targetOffsetForTopConstraints
         
         self.view.layoutIfNeeded()
         
+        
+    }
+    
+    fileprivate var priceGroupYpositionInHeightForIphone: CGFloat {
+        
+        let priceTextFieldRelativeHeight = priceTextFieldStackView.frame.origin.y
+        
+        let positionOfPriceTextField = priceInformationStackView.frame.origin.y + priceTextFieldRelativeHeight
+        
+        return positionOfPriceTextField
     }
     
     func processAdjustmentsForIpad(keyboard: CGRect) {
@@ -1317,7 +1352,7 @@ extension ShoppingListItemEditorViewController {
             let targetOffsetForTopConstraints = 0 - offset
             
             //Set the new contraints
-            itemDetailsTopCons.constant = targetOffsetForTopConstraints
+            itemDetailsTopConstraint.constant = targetOffsetForTopConstraints
             
             //Re-lay the view
             self.view.layoutIfNeeded()
@@ -1327,74 +1362,22 @@ extension ShoppingListItemEditorViewController {
     }
     
     /**
-     Find out where the price info stackview is relative to the superview frame in iPhones
-     */
-    fileprivate var priceGroupYposInIPhone: CGFloat {
-        
-        let navigationBarHeight = self.navigationController?.navigationBar.frame.height ?? 0
-        
-        let itemDetailsTopConsHeight = itemDetailsTopCons.constant
-        
-        let itemDetailsStackViewHeight = itemDetailsStackView.frame.size.height
-        
-        let pricingInfoTopConsHeight = pricingInfoTopCons.constant
-        
-        let pricingInfoSegmentedControlHeight = pricingInformationSc.frame.size.height
-        
-        let pricingInfoBottomConstHeight = pricingInfoBottomConst.constant
-        
-        let yPos = navigationBarHeight + itemDetailsTopConsHeight + itemDetailsStackViewHeight + pricingInfoTopConsHeight + pricingInfoSegmentedControlHeight + pricingInfoBottomConstHeight
-        
-        return yPos
-    }
-    
-    /**
      Currently use to get the preferred content size for popover presentation. may be used for other purpose
      */
-    fileprivate func getAggregatSizeOfAllViews() -> CGSize {
+    fileprivate func calculatePreferredContentSize() -> CGSize {
         
-        let itemDetailsStackViewSize = itemDetailsStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
-        let pricingInformationScSize = pricingInformationSc.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
-        let priceStackViewSize = priceStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
-        let bundleQtyStackViewSize = bundleQtyStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize)
+        let heightAggregate = priceGroupYpositionInHeightForIphone
+        let widthAggregate = purchaseInfoStackView.frame.width
         
-        let heightAggregate = itemDetailsTopCons.constant +
-            itemDetailsStackViewSize.height +
-            pricingInfoTopCons.constant +
-            pricingInformationScSize.height +
-            pricingInfoBottomConst.constant +
-            priceStackViewSize.height +
-            bundleQtyStackViewSize.height +
-            pricingQuantityTopConstraint.constant +
-            CGFloat(8.0) //Allowance for bottom constraints
-        
-        return CGSize(width: view.frame.width, height: heightAggregate)
-    }
-    
-    private func isPriceFieldBlockedInIphone(by keyboard: CGRect) -> Bool {
-        
-        var aRect : CGRect = self.view.frame
-        
-        aRect = self.view.frame
-        
-        aRect.size.height -= keyboard.height
-        
-        let unblocked = aRect.contains(priceStackView.frame.origin)
-        
-        if (unblocked){
-            return false
-        } else {
-            return true
-        }
+        return CGSize(width: widthAggregate, height: heightAggregate)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         unitPriceTextField.resignFirstResponder()
         bundlePriceTextField.resignFirstResponder()
-        itemDetailsTopCons.constant = originalItemDetailsTopCons
+        itemDetailsTopConstraint.constant = originalItemDetailsTopCons
         self.view.layoutIfNeeded()
         super.touchesBegan(touches, with: event)
     }
-    
-    
 }
