@@ -103,7 +103,13 @@ class ItemAdditionalDataViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUi()
-        // Do any additional setup after loading the view.
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        //Set preferred content size if this is a popover presentation
+        preferredContentSize = calculatePreferredContentSize()
     }
     
     func updateUi() {
@@ -138,6 +144,13 @@ class ItemAdditionalDataViewController: UIViewController {
     func actionOnDoneAdditionalInfo() {
         print("\(#function) - \(type(of: self))")
         presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBOutlet weak var priceInfoStackView: UIStackView!
+    @IBOutlet weak var bundleQtyStackView: UIStackView!
+    
+    func calculatePreferredContentSize() -> CGSize {
+        return CGSize(width: 0, height: priceInfoStackView.frame.origin.y + bundleQtyStackView.frame.origin.y + 8)
     }
     
     /*

@@ -643,9 +643,11 @@
                         <outlet property="bundleCurrencyCodeLabel" destination="mAd-hp-JBc" id="2My-1I-PTz"/>
                         <outlet property="bundlePriceGroup" destination="vq5-gf-l6a" id="ebI-wM-qi3"/>
                         <outlet property="bundlePriceLabel" destination="3PN-V5-0XL" id="dgh-TP-QaB"/>
+                        <outlet property="bundleQtyStackView" destination="GwL-Xk-UJo" id="Gsz-Uw-XPd"/>
                         <outlet property="bundleQtyValueLabel" destination="b98-cm-wTO" id="0ff-y0-tpH"/>
                         <outlet property="countryOfOriginLabel" destination="gZU-e2-MIE" id="e6U-bD-gjE"/>
                         <outlet property="descriptionLabel" destination="zbi-Wk-BXj" id="h6O-fa-eAj"/>
+                        <outlet property="priceInfoStackView" destination="tZi-Ul-hNJ" id="tno-yi-iEm"/>
                         <outlet property="unitCurrencyCode" destination="YmE-RS-dJA" id="exb-9e-h1e"/>
                         <outlet property="unitCurrencyCodeLabel" destination="YmE-RS-dJA" id="TZS-6F-OE5"/>
                         <outlet property="unitPriceGroup" destination="YkB-pQ-Dbw" id="p1R-ZL-tL7"/>
