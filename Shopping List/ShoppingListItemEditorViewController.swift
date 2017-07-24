@@ -1367,8 +1367,7 @@ extension ShoppingListItemEditorViewController {
     fileprivate func calculatePreferredContentSize() -> CGSize {
         
         let heightAggregate = priceGroupYpositionInHeightForIphone
-        let widthAggregate = purchaseInfoStackView.frame.width
-        
+        let widthAggregate = purchaseInfoStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).width
         return CGSize(width: widthAggregate, height: heightAggregate)
     }
     
