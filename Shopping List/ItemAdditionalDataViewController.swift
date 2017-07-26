@@ -24,6 +24,7 @@ class ItemAdditionalDataViewController: UIViewController {
     @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var unitCurrencyCode: UILabel!
     @IBOutlet weak var bundleCurrencyCode: UILabel!
+    @IBOutlet weak var unitPriceTranslate: UILabel!
     
     // MARK: - Item pricing information
     
@@ -41,17 +42,21 @@ class ItemAdditionalDataViewController: UIViewController {
     
     @IBOutlet weak var bundlePriceGroup: UIStackView!
     
+    var unitPrice: Price?
+    
+    var bundlePrice: Price?
+    
     /**
      Consist of unit price and bundle price. Set property observer to populate price fields.
      */
     private var prices: NSSet? {
         didSet {
             if let prices = prices {
-                let unitPrice = Price.filterSet(of: prices, match: .unit)
+                unitPrice = Price.filterSet(of: prices, match: .unit)
                 unitPriceVc = unitPrice?.valueConvert
                 unitCurrencyCode?.text = unitPrice?.currencySymbol
                 
-                let bundlePrice = Price.filterSet(of: prices, match: .bundle)
+                bundlePrice = Price.filterSet(of: prices, match: .bundle)
                 bundlePriceVc = bundlePrice?.valueConvert
                 bundleQtyVc = bundlePrice?.quantityConvert
                 bundleCurrencyCode?.text = bundlePrice?.currencySymbol
@@ -66,7 +71,7 @@ class ItemAdditionalDataViewController: UIViewController {
         didSet {
             
             if let unitPriceVc = unitPriceVc {
-                unitPriceLabel?.text = Helper.formatMoney(amount: unitPriceVc)
+                unitPriceLabel?.text = Helper.string(from: unitPriceVc, fractionDigits: 2)
                 
             } else {
                 unitPriceLabel?.text = nil
@@ -81,7 +86,7 @@ class ItemAdditionalDataViewController: UIViewController {
         didSet {
             
             if let bundlePriceVc = bundlePriceVc {
-                bundlePriceLabel?.text = Helper.formatMoney(amount: bundlePriceVc)
+                bundlePriceLabel?.text = Helper.string(from: bundlePriceVc, fractionDigits: 2)
             } else {
                 bundlePriceLabel?.text = nil
             }
@@ -102,7 +107,40 @@ class ItemAdditionalDataViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         updateUi()
+        
+        guard let unitPriceFc = unitPrice?.currencyCode, unitPriceFc != "SGD" else {
+            unitPriceTranslate.text = nil
+            return
+        }
+        
+        let exchangeRateWebApi = ExchangeRateWebApi(scheme: "http", host: "api.fixer.io", path: "/latest")
+        
+        exchangeRateWebApi.getExchangeRates(paramName: "base", baseCurrencyCode: "SGD", completionHandlerForMain: { exchangeRates in
+            
+            if let exchangeRates = exchangeRates {
+                
+                guard let rate = exchangeRates[(self.unitPrice?.currencyCode)!] else { return }
+                
+                let exchangeRate = ExchangeRate(foreignCurrencyCode: self.unitPrice?.currencyCode, costInForeignCurrencyToGetOneUnitOfBaseCurrency: rate)
+                
+                let unitPriceFc = (self.unitPrice?.valueConvert)!
+                
+                let unitPriceFcDouble = Double(unitPriceFc) / 100
+                
+                let unitPriceFcDoubleConverted = exchangeRate.convert(foreignAmount: unitPriceFcDouble)
+                
+                if let unitPriceFcDoubleConverted = unitPriceFcDoubleConverted {
+                    self.unitPriceTranslate.text = "(" + unitPriceFcDoubleConverted + ")"
+                } else {
+                    self.unitPriceTranslate.text = nil
+                }
+                
+            }
+        
+        
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -119,6 +157,7 @@ class ItemAdditionalDataViewController: UIViewController {
         
         prices = item?.prices
         onDisplayPriceTypeInformation(priceType: .unit)
+        
     }
     
     @IBAction func onSelectPriceInformation(_ sender: UISegmentedControl) {
@@ -150,7 +189,9 @@ class ItemAdditionalDataViewController: UIViewController {
     @IBOutlet weak var bundleQtyStackView: UIStackView!
     
     func calculatePreferredContentSize() -> CGSize {
-        return CGSize(width: 0, height: priceInfoStackView.frame.origin.y + bundleQtyStackView.frame.origin.y + 8)
+        
+        let offsetForLastViewInBundleQtyStackView = bundleQtyStackView.frame.origin.y + (bundleQtyStackView.subviews.last?.frame.origin.y ?? 0) + (bundleQtyStackView.subviews.last?.frame.height ?? 0)
+        return CGSize(width: 0, height: priceInfoStackView.frame.origin.y + offsetForLastViewInBundleQtyStackView)
     }
     
     /*

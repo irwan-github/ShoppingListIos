@@ -177,7 +177,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         set {
             
             if let newValue = newValue {
-                unitPriceTextField?.text = Helper.formatMoney(amount: newValue)
+                unitPriceTextField?.text = Helper.string(from: newValue, fractionDigits: 2)
                 unitCurrencyCodeTextField?.text = unitPrice?.currencyCode ?? userLocale.currencyCode
                 
             } else {
@@ -205,7 +205,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         set {
             
             if let newValue = newValue {
-                bundlePriceTextField?.text = Helper.formatMoney(amount: newValue)
+                bundlePriceTextField?.text = Helper.string(from: newValue, fractionDigits: 2)
                 bundleCurrencyCodeTextField?.text = bundlePrice?.currencyCode ?? userLocale.currencyCode
             } else {
                 bundlePriceTextField?.text = nil

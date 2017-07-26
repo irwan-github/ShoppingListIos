@@ -10,10 +10,15 @@ import Foundation
 
 struct Helper {
     
-    static func formatMoney(amount: Int) -> String {
-        let dollars = amount / 100
-        let cents = amount % 100
-        let centsString = String(cents)
-        return String(dollars) + "." + (centsString.characters.count == 1 ? "0" + centsString : centsString)
+    static func string(from number: Int, fractionDigits: Int) -> String? {
+        
+        let helper = CurrencyHelper()
+        let formatter = NumberFormatter()
+        formatter.locale = helper.userLocale
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = fractionDigits
+        formatter.maximumFractionDigits = fractionDigits
+        let amount: Double = Double(number)/100
+        return formatter.string(from: NSNumber(value: amount))
     }
 }

@@ -37,18 +37,7 @@ class Price: NSManagedObject {
     
     var currencySymbol: String! {
         
-        if let firstIndex = currencyCode?.startIndex, let targetIndex = currencyCode?.index(firstIndex, offsetBy: 1) {
-            guard let countryCode = currencyCode?[firstIndex...targetIndex] else { return currencyCode }
-            let theLocale = Locale(identifier: "en_" + countryCode)
-            let formatter = NumberFormatter()
-            formatter.locale = theLocale
-            formatter.currencyCode = currencyCode
-            return formatter.currencySymbol
-            
-        } else {
-            return currencyCode
-        }
-
+        return CurrencyHelper.getCurrencySymbol(from: currencyCode!) ?? currencyCode
     }
     
     /**

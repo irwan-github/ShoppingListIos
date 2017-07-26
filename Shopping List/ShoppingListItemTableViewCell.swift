@@ -24,7 +24,7 @@ class ShoppingListItemTableViewCell: UITableViewCell {
 
             if let selectedPriceRes = shoppingListItem?.selectedPrice, selectedPriceRes.count > 0 {
                 let price = selectedPriceRes[0] as! Price
-                selectedPriceLabel.text = price.currencySymbol! + " " + Helper.formatMoney(amount: price.valueConvert)
+                selectedPriceLabel.text = CurrencyHelper.formatCurrency(for: price.currencyCode!, amount: price.valueConvert)
             }
         }
     }

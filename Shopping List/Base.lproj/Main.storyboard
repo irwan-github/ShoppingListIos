@@ -319,7 +319,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="RFL-C2-kpI" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="jX5-Ok-FFj">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="jX5-Ok-FFj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -558,19 +558,30 @@
                                 </connections>
                             </segmentedControl>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="tZi-Ul-hNJ" userLabel="Price Stack View">
-                                <rect key="frame" x="154.5" y="168.5" width="105.5" height="43.5"/>
+                                <rect key="frame" x="144" y="168.5" width="128" height="43.5"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="YkB-pQ-Dbw" userLabel="Unit group">
-                                        <rect key="frame" x="19" y="0.0" width="67.5" height="14.5"/>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="xjn-3L-j3z" userLabel="Unir group">
+                                        <rect key="frame" x="0.0" y="0.0" width="128" height="14.5"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YmE-RS-dJA" userLabel="Currency Code">
-                                                <rect key="frame" x="0.0" y="0.0" width="8" height="14.5"/>
-                                                <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unit Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iZ9-S6-3WJ" userLabel="Unit Price">
-                                                <rect key="frame" x="12" y="0.0" width="55.5" height="14.5"/>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="YkB-pQ-Dbw" userLabel="Unit price">
+                                                <rect key="frame" x="0.0" y="0.0" width="67.5" height="14.5"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="253" verticalHuggingPriority="251" text="$" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YmE-RS-dJA" userLabel="Currency Code">
+                                                        <rect key="frame" x="0.0" y="0.0" width="8" height="14.5"/>
+                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unit Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iZ9-S6-3WJ" userLabel="Unit Price">
+                                                        <rect key="frame" x="12" y="0.0" width="55.5" height="14.5"/>
+                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Translate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iCP-UJ-MfS">
+                                                <rect key="frame" x="75.5" y="0.0" width="52.5" height="14.5"/>
                                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -578,7 +589,7 @@
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vq5-gf-l6a" userLabel="Bundle group">
-                                        <rect key="frame" x="0.0" y="14.5" width="105.5" height="29"/>
+                                        <rect key="frame" x="11" y="14.5" width="105.5" height="29"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="kUQ-fU-YQ0" userLabel="Price Stack View">
                                                 <rect key="frame" x="11" y="0.0" width="83.5" height="14.5"/>
@@ -652,6 +663,7 @@
                         <outlet property="unitCurrencyCodeLabel" destination="YmE-RS-dJA" id="TZS-6F-OE5"/>
                         <outlet property="unitPriceGroup" destination="YkB-pQ-Dbw" id="p1R-ZL-tL7"/>
                         <outlet property="unitPriceLabel" destination="iZ9-S6-3WJ" id="LGM-qV-mGu"/>
+                        <outlet property="unitPriceTranslate" destination="iCP-UJ-MfS" id="qaP-Gd-Eqp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yry-cs-9fS" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -996,7 +1008,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="wEi-ZP-jqD" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="OKq-JJ-o3Y">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="OKq-JJ-o3Y">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -1014,7 +1026,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bef-bj-4II" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="e05-NZ-xdq">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="e05-NZ-xdq">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
