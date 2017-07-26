@@ -25,6 +25,7 @@ class ItemAdditionalDataViewController: UIViewController {
     @IBOutlet weak var unitCurrencyCode: UILabel!
     @IBOutlet weak var bundleCurrencyCode: UILabel!
     @IBOutlet weak var unitPriceTranslate: UILabel!
+    @IBOutlet weak var bundlePriceTranslate: UILabel!
     
     // MARK: - Item pricing information
     
@@ -110,37 +111,66 @@ class ItemAdditionalDataViewController: UIViewController {
         
         updateUi()
         
-        guard let unitPriceFc = unitPrice?.currencyCode, unitPriceFc != "SGD" else {
-            unitPriceTranslate.text = nil
-            return
-        }
-        
         let exchangeRateWebApi = ExchangeRateWebApi(scheme: "http", host: "api.fixer.io", path: "/latest")
         
         exchangeRateWebApi.getExchangeRates(paramName: "base", baseCurrencyCode: "SGD", completionHandlerForMain: { exchangeRates in
             
             if let exchangeRates = exchangeRates {
                 
-                guard let rate = exchangeRates[(self.unitPrice?.currencyCode)!] else { return }
-                
-                let exchangeRate = ExchangeRate(foreignCurrencyCode: self.unitPrice?.currencyCode, costInForeignCurrencyToGetOneUnitOfBaseCurrency: rate)
-                
-                let unitPriceFc = (self.unitPrice?.valueConvert)!
-                
-                let unitPriceFcDouble = Double(unitPriceFc) / 100
-                
-                let unitPriceFcDoubleConverted = exchangeRate.convert(foreignAmount: unitPriceFcDouble)
-                
-                if let unitPriceFcDoubleConverted = unitPriceFcDoubleConverted {
-                    self.unitPriceTranslate.text = "(" + unitPriceFcDoubleConverted + ")"
+                if let unitPrice = self.unitPrice, unitPrice.currencyCode! != "SGD" {
+                    guard let rate = exchangeRates[(unitPrice.currencyCode)!] else { return }
+                    self.setTranslatedPrice(type: .unit, price: unitPrice, rate: rate)
                 } else {
-                    self.unitPriceTranslate.text = nil
+                    self.unitPriceTranslated = nil
                 }
                 
+                if let bundlePrice = self.bundlePrice, bundlePrice.currencyCode! != "SGD" {
+                    guard let rate = exchangeRates[(bundlePrice.currencyCode)!] else { return }
+                    self.setTranslatedPrice(type: .bundle, price: bundlePrice, rate: rate)
+                } else {
+                    self.bundlePriceTranslated = nil
+                }
             }
-        
-        
         })
+    }
+    
+    var unitPriceTranslated: String? {
+        didSet {
+            unitPriceTranslate.text = unitPriceTranslated
+        }
+    }
+    
+    var bundlePriceTranslated: String? {
+        didSet {
+            bundlePriceTranslate.text = bundlePriceTranslated
+        }
+    }
+    
+    private func setTranslatedPrice(type: PriceType, price: Price, rate: Double) {
+        
+        let priceTranslateText: String?
+        
+        let exchangeRate = ExchangeRate(foreignCurrencyCode: self.unitPrice?.currencyCode, costInForeignCurrencyToGetOneUnitOfBaseCurrency: rate)
+        
+        let priceFcDouble = Double(price.valueConvert) / 100
+        
+        let priceFcDoubleConverted = exchangeRate.convert(foreignAmount: priceFcDouble)
+        
+        if let priceFcDoubleConverted = priceFcDoubleConverted {
+            priceTranslateText = "(" + priceFcDoubleConverted + ")"
+        } else {
+            priceTranslateText = nil
+        }
+        
+        if type == .unit {
+            unitPriceTranslated = priceTranslateText
+        }
+        
+        if type == .bundle {
+            bundlePriceTranslated = priceTranslateText
+        }
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
