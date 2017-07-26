@@ -111,6 +111,12 @@ class ItemAdditionalDataViewController: UIViewController {
         
         updateUi()
         
+        if !isExchangeRateRequired {
+            self.unitPriceTranslated = nil
+            self.bundlePriceTranslated = nil
+            return
+        }
+        
         let exchangeRateWebApi = ExchangeRateWebApi(scheme: "http", host: "api.fixer.io", path: "/latest")
         
         exchangeRateWebApi.getExchangeRates(paramName: "base", baseCurrencyCode: "SGD", completionHandlerForMain: { exchangeRates in
@@ -120,18 +126,27 @@ class ItemAdditionalDataViewController: UIViewController {
                 if let unitPrice = self.unitPrice, unitPrice.currencyCode! != "SGD" {
                     guard let rate = exchangeRates[(unitPrice.currencyCode)!] else { return }
                     self.setTranslatedPrice(type: .unit, price: unitPrice, rate: rate)
-                } else {
-                    self.unitPriceTranslated = nil
                 }
                 
                 if let bundlePrice = self.bundlePrice, bundlePrice.currencyCode! != "SGD" {
                     guard let rate = exchangeRates[(bundlePrice.currencyCode)!] else { return }
                     self.setTranslatedPrice(type: .bundle, price: bundlePrice, rate: rate)
-                } else {
-                    self.bundlePriceTranslated = nil
                 }
             }
         })
+    }
+    
+    private var isExchangeRateRequired: Bool {
+    
+        if let unitCurrencyCode = unitPrice?.currencyCode, unitCurrencyCode != "SGD" {
+            return true
+        }
+        
+        if let bundleCurrencyCode = bundlePrice?.currencyCode, bundleCurrencyCode != "SGD" {
+            return true
+        }
+        
+        return false
     }
     
     var unitPriceTranslated: String? {
