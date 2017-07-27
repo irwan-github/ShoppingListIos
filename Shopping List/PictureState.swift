@@ -23,7 +23,6 @@ enum PictureState {
         case onSaveImage((PictureState) -> Void)
         case onFinishPickingCameraMedia(UIImage)
         case onDelete
-        //case onExist(String)
         case onLoad(String?)
     }
     

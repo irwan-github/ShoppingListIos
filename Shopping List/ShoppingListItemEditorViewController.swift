@@ -888,6 +888,8 @@ class ShoppingListItemEditorViewController: UIViewController {
         case .newListItem:
             self.deleteItemButton.isEnabled = false
             
+            self.pictureState.transition(event: .onLoad(nil), handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+            
             let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(.unit, nil)
             
             self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.pricingControlsAttributeHandler)
