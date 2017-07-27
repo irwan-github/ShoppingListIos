@@ -972,6 +972,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBAction func onPickPicture(_ sender: UITapGestureRecognizer) {
         
+        endEditing()
+        
         //Create a action sheet
         let pictureActionSheetController = pictureActionSheet
         
