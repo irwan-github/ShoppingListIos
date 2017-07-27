@@ -245,7 +245,11 @@ class ShoppingListItemEditorViewController: UIViewController {
         //Listen for the keyboard
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         
+        subscribeToNotification(.UIKeyboardDidShow, selector: #selector(keyboardDidShow(notification:)))
+        
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        
+        subscribeToNotification(.UIKeyboardDidHide, selector: #selector(keyboardDidHide(notification:)))
         
         currencyCodeTextFieldDelegate.displayAlertAction = displayAlertAction
         
@@ -276,9 +280,9 @@ class ShoppingListItemEditorViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-
+        
         super.viewWillAppear(animated)
-
+        
         //Adapt from show model segue to show popover segue
         
         //Get the popover presentation controller from navigation controller. It is not the same as this editor's popover presentation controller and it will not work. Also the cancel button is in navigation item which is contained in the navigation controller navigation bar
@@ -965,6 +969,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         present(pictureActionSheetController, animated: true, completion: nil)
     }
     
+    fileprivate var isKeyboardOnScreen = false
     
     @IBOutlet weak var itemDetailsStackView: UIStackView!
     
@@ -1241,7 +1246,7 @@ extension ShoppingListItemEditorViewController {
      */
     func keyboardWillShow(notification: NSNotification) {
         
-        if let info = notification.userInfo {
+        if let info = notification.userInfo, !isKeyboardOnScreen {
             
             let keyboard: CGRect = info[UIKeyboardFrameEndUserInfoKey] as! CGRect
             
@@ -1249,9 +1254,21 @@ extension ShoppingListItemEditorViewController {
         }
     }
     
+    func keyboardDidShow(notification: NSNotification) {
+        
+        isKeyboardOnScreen = true
+    }
+    
     func keyboardWillHide(notification: NSNotification) {
-        itemDetailsTopConstraint.constant = originalItemDetailsTopCons
-        self.view.layoutIfNeeded()
+        if isKeyboardOnScreen {
+            itemDetailsTopConstraint.constant = originalItemDetailsTopCons
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func keyboardDidHide(notification: NSNotification) {
+        
+        isKeyboardOnScreen = false
     }
     
     func shiftAffectedPriceFieldFromBeingBlocked(by keyboard: CGRect) {
@@ -1378,9 +1395,13 @@ extension ShoppingListItemEditorViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         unitPriceTextField.resignFirstResponder()
+        unitCurrencyCodeTextField.resignFirstResponder()
         bundlePriceTextField.resignFirstResponder()
-        itemDetailsTopConstraint.constant = originalItemDetailsTopCons
-        self.view.layoutIfNeeded()
+        bundleCurrencyCodeTextField.resignFirstResponder()
         super.touchesBegan(touches, with: event)
+    }
+    
+    func subscribeToNotification(_ notification: NSNotification.Name, selector: Selector) {
+        NotificationCenter.default.addObserver(self, selector: selector, name: notification, object: nil)
     }
 }
