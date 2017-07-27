@@ -51,6 +51,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     fileprivate var validationItemState = ValidationItemState()
     
+    fileprivate var itemDetailsTextFieldsState = ItemDetailsTextFieldState()
+    
     // MARK: - Properties
     
     /**
@@ -241,6 +243,10 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let tapper = UITapGestureRecognizer(target: self, action: #selector(endEditing))
+        tapper.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapper)
         
         //Listen for the keyboard
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
@@ -886,6 +892,12 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.pricingControlsAttributeHandler)
             
+            self.itemDetailsTextFieldsState.next(event: .onLoad(self.itemNameTextField.tag), completionHandler: { nextState in
+                
+                self.shouldBeginEditing(nextState: nextState)
+                
+            })
+            
         case .existingListItem:
             
             self.item = self.shoppingListItem?.item
@@ -1236,6 +1248,56 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         
         return true
     }
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        
+        //Keep track of the current state but let iOS handle the keyboard and responder actions
+        itemDetailsTextFieldsState.next(event: .shouldBeginEditing(textField.tag), completionHandler: nil)
+        
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        itemDetailsTextFieldsState.next(event: .shouldReturn  ,completionHandler: { nextState in
+            
+            if nextState == .transient {
+                textField.resignFirstResponder()
+            }
+            
+            self.shouldBeginEditing(nextState: nextState)
+            
+        })
+        
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        
+        itemDetailsTextFieldsState.next(event: .didEndEditing  ,completionHandler: nil)
+    }
+    
+    func shouldBeginEditing(nextState: ItemDetailsTextFieldState) {
+        
+        switch nextState {
+            
+        case .nameTag:
+            self.itemNameTextField.becomeFirstResponder()
+            
+        case .brandTag:
+            self.brandTextField.becomeFirstResponder()
+            
+        case .countryTag:
+            self.countryOriginTextField.becomeFirstResponder()
+            
+        case .descriptionTag:
+            self.descriptionTextField.becomeFirstResponder()
+            
+        default:
+            break
+        }
+        
+    }
 }
 
 //Keyboard hiding textfield prevention
@@ -1250,7 +1312,9 @@ extension ShoppingListItemEditorViewController {
             
             let keyboard: CGRect = info[UIKeyboardFrameEndUserInfoKey] as! CGRect
             
-            shiftAffectedPriceFieldFromBeingBlocked(by: keyboard)
+            if unitPriceTextField.isFirstResponder || bundlePriceTextField.isFirstResponder || unitCurrencyCodeTextField.isFirstResponder || bundleCurrencyCodeTextField.isFirstResponder {
+                shiftAffectedPriceFieldFromBeingBlocked(by: keyboard)
+            }
         }
     }
     
@@ -1332,10 +1396,6 @@ extension ShoppingListItemEditorViewController {
     
     func processAdjustmentsForIpad(keyboard: CGRect) {
         
-        if !unitPriceTextField.isFirstResponder && !bundlePriceTextField.isFirstResponder && !unitCurrencyCodeTextField.isFirstResponder && !bundleCurrencyCodeTextField.isFirstResponder {
-            return
-        }
-        
         var aRect : CGRect = self.view.frame
         
         var navigationBarHeight: CGFloat
@@ -1392,13 +1452,19 @@ extension ShoppingListItemEditorViewController {
         return CGSize(width: widthAggregate, height: heightAggregate)
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+    /**
+     Dismiss keyboard when a new tap gesture is detected.
+    */
+    func endEditing() {
+        itemDetailsTextFieldsState.next(event: .endEditing, completionHandler: nil)
         unitPriceTextField.resignFirstResponder()
         unitCurrencyCodeTextField.resignFirstResponder()
         bundlePriceTextField.resignFirstResponder()
         bundleCurrencyCodeTextField.resignFirstResponder()
-        super.touchesBegan(touches, with: event)
+        itemNameTextField.resignFirstResponder()
+        brandTextField.resignFirstResponder()
+        countryOriginTextField.resignFirstResponder()
+        descriptionTextField.resignFirstResponder()
     }
     
     func subscribeToNotification(_ notification: NSNotification.Name, selector: Selector) {
