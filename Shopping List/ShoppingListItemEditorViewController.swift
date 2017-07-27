@@ -1315,6 +1315,10 @@ extension ShoppingListItemEditorViewController {
     
     func processAdjustmentsForIpad(keyboard: CGRect) {
         
+        if !unitPriceTextField.isFirstResponder && !bundlePriceTextField.isFirstResponder && !unitCurrencyCodeTextField.isFirstResponder && !bundleCurrencyCodeTextField.isFirstResponder {
+            return
+        }
+        
         var aRect : CGRect = self.view.frame
         
         var navigationBarHeight: CGFloat
@@ -1322,7 +1326,7 @@ extension ShoppingListItemEditorViewController {
         //Get the split view controller. It is the presenting controller of this view controller
         guard let presentingController = navigationController?.presentingViewController else { return }
         
-        guard let splitVc = presentingController as? UISplitViewController else { return}
+        guard let splitVc = presentingController as? UISplitViewController else { return }
         
         //Get the height of navigation bar in master view controller of the split view
         if let r = splitVc.viewControllers[0] as? UINavigationController {
@@ -1367,7 +1371,7 @@ extension ShoppingListItemEditorViewController {
     fileprivate func calculatePreferredContentSize() -> CGSize {
         
         let heightAggregate = priceGroupYpositionInHeightForIphone
-        let widthAggregate = purchaseInfoStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).width
+        let widthAggregate = purchaseInfoStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).width + 32
         return CGSize(width: widthAggregate, height: heightAggregate)
     }
     
