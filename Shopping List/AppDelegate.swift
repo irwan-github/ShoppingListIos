@@ -19,8 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         let splitViewController = window!.rootViewController as! UISplitViewController
         
         //The following will enable ONLY iPhone 7+ Landscape to have the "expand button" on its detail vc when it is NOT displayed via a segue from master
-//        let navigationController = splitViewController.viewControllers[1] as! UINavigationController
-//        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
+        //        let navigationController = splitViewController.viewControllers[1] as! UINavigationController
+        //        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
         
         //Assign app delegate as split view delegate
         splitViewController.delegate = self
@@ -28,33 +28,80 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         splitViewController.preferredDisplayMode = .allVisible
         
         //TODO: Assign a special button on view controller in the master view that will segue to a shopping list showing items at summary level
-//        let navigationControllerInMaster = splitViewController.viewControllers[0] as! UINavigationController
-//        navigationControllerInMaster.topViewController!.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Focus", style: .plain, target: nil, action: #selector(showSelectedShoppingListInMasterView))
-//        
+        //        let navigationControllerInMaster = splitViewController.viewControllers[0] as! UINavigationController
+        //        navigationControllerInMaster.topViewController!.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Focus", style: .plain, target: nil, action: #selector(showSelectedShoppingListInMasterView))
+        //
+        registerDefaultsFromSettingsBundle()
         loadDummyShoppingList()
         return true
     }
     
-//    func showSelectedShoppingListInMasterView() {
-//        print("\(#function)")
-//        let splitViewController = window!.rootViewController as! UISplitViewController
-//        
-//        //Get the current currentMasterVc which is of type ShoppingListsTableViewController
-//        let currentMasterVcAsNc = splitViewController.viewControllers[0] as! UINavigationController
-//        let shoppingListsVc = currentMasterVcAsNc.visibleViewController as! ShoppingListsTableViewController
-//        
-//        //Get the currently selected shopping list
-//        let shoppingList = shoppingListsVc.selectedShoppingList
-//        
-//        let shoppingListTableVc = ShoppingListTableViewController(style: .plain)
-//        shoppingListTableVc.shoppingList = shoppingList
-//        shoppingListTableVc.tableView.register(ShoppingListItemTableViewCell.classForCoder(), forCellReuseIdentifier: "Shopping List Item")
-//        
-//        currentMasterVcAsNc.pushViewController(shoppingListTableVc, animated: true)
-//        
-//        //Whenever possible, use this method (instead of modifying the contents of the viewControllersproperty directly) to replace the primary view controller of your split view interface. This method displays the specified view controller in the best way possible given the current size class in effect. This method calls the split view controller delegate’s splitViewController(_:show:sender:) method to give the delegate an opportunity to show the view controller.
-//        //splitViewController.show(shoppingListTableVc, sender: self)
-//    }
+    private func registerDefaultsFromSettingsBundle() {
+        
+        //Get the user defaults object
+        let appDefaults = UserDefaults.standard
+        
+        //Dictionary to hold the settings bundle default
+        var settingsBundleDefaults = [String: Any]()
+        
+        //Get the url of the root plist
+        guard let settingsUrl = Bundle.main.url(forResource: "Root", withExtension: "plist",
+                                                subdirectory: "Settings.bundle") else { return }
+        
+        let settingsPath = settingsUrl.path
+        
+        //Read the plist into memory
+        guard let data = FileManager.default.contents(atPath: settingsPath) else { return }
+        
+        do {
+            //Convert the plist to a Dictionary
+            guard let settingsDict = (try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String: AnyObject]) else { return }
+            
+            //Get the preference items as an Array
+            guard let prefs = settingsDict["PreferenceSpecifiers"] as? [[String: AnyObject]] else { return }
+            
+            //Iterate over the array
+            for aPref in prefs {
+                
+                if let key = aPref["Key"] as? String, let value = aPref["DefaultValue"] {
+                    print("Key is \(key) , Value is \(value)")
+                    settingsBundleDefaults[key] = value
+                }
+            }
+            
+            //Register the default values
+            appDefaults.register(defaults: settingsBundleDefaults)
+            appDefaults.synchronize()
+            
+        } catch {
+            let nserror = error as NSError
+            print("Error occured \(nserror)", nserror.userInfo)
+            
+        }
+        
+        
+    }
+    
+    //    func showSelectedShoppingListInMasterView() {
+    //        print("\(#function)")
+    //        let splitViewController = window!.rootViewController as! UISplitViewController
+    //
+    //        //Get the current currentMasterVc which is of type ShoppingListsTableViewController
+    //        let currentMasterVcAsNc = splitViewController.viewControllers[0] as! UINavigationController
+    //        let shoppingListsVc = currentMasterVcAsNc.visibleViewController as! ShoppingListsTableViewController
+    //
+    //        //Get the currently selected shopping list
+    //        let shoppingList = shoppingListsVc.selectedShoppingList
+    //
+    //        let shoppingListTableVc = ShoppingListTableViewController(style: .plain)
+    //        shoppingListTableVc.shoppingList = shoppingList
+    //        shoppingListTableVc.tableView.register(ShoppingListItemTableViewCell.classForCoder(), forCellReuseIdentifier: "Shopping List Item")
+    //
+    //        currentMasterVcAsNc.pushViewController(shoppingListTableVc, animated: true)
+    //
+    //        //Whenever possible, use this method (instead of modifying the contents of the viewControllersproperty directly) to replace the primary view controller of your split view interface. This method displays the specified view controller in the best way possible given the current size class in effect. This method calls the split view controller delegate’s splitViewController(_:show:sender:) method to give the delegate an opportunity to show the view controller.
+    //        //splitViewController.show(shoppingListTableVc, sender: self)
+    //    }
     
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -140,29 +187,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             groceryShoppingList?.comments = "Everyday stuffs"
             groceryShoppingList?.lastUpdatedOn = NSDate()
             
-//            do {
-//                let banana = try Item.findOrCreateNewItem(name: "Banana", context: persistentContainer.viewContext)
-//                banana.name = "Banana"
-//                banana.brand = "Del Monte"
-//                
-//                let milk = try Item.findOrCreateNewItem(name: "Milk", context: persistentContainer.viewContext)
-//                milk.name = "Milk"
-//                milk.brand = "Magnolia"
-//                
-//                let fruit = try Item.findOrCreateNewItem(name: "Australian Watermelon", context: persistentContainer.viewContext)
-//                
-//                fruit.name = "Australian Watermelon"
-//                fruit.brand = "Australian Farm for Watermelon"
-//                
-//                _ = groceryShoppingList?.add(item: banana, quantity: 5)
-//                _ = groceryShoppingList?.add(item: milk, quantity: 4)
-//                _ = groceryShoppingList?.add(item: fruit, quantity: 9)
-//                
-//                
-//            } catch {
-//                let nserror = error as NSError
-//                print("Error occured \(nserror): \(nserror.userInfo)")
-//            }
+            //            do {
+            //                let banana = try Item.findOrCreateNewItem(name: "Banana", context: persistentContainer.viewContext)
+            //                banana.name = "Banana"
+            //                banana.brand = "Del Monte"
+            //
+            //                let milk = try Item.findOrCreateNewItem(name: "Milk", context: persistentContainer.viewContext)
+            //                milk.name = "Milk"
+            //                milk.brand = "Magnolia"
+            //
+            //                let fruit = try Item.findOrCreateNewItem(name: "Australian Watermelon", context: persistentContainer.viewContext)
+            //
+            //                fruit.name = "Australian Watermelon"
+            //                fruit.brand = "Australian Farm for Watermelon"
+            //
+            //                _ = groceryShoppingList?.add(item: banana, quantity: 5)
+            //                _ = groceryShoppingList?.add(item: milk, quantity: 4)
+            //                _ = groceryShoppingList?.add(item: fruit, quantity: 9)
+            //
+            //
+            //            } catch {
+            //                let nserror = error as NSError
+            //                print("Error occured \(nserror): \(nserror.userInfo)")
+            //            }
         }
         
         let artShoppingList = ShoppingList.findOrCreateNew(name: "Art project", context: persistentContainer.viewContext)
@@ -211,7 +258,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
      iPad starting the app
      iPhone 7+ starting in landscape
      On tapping the splitViewController.displayModeButtonItem
-    */
+     */
     func targetDisplayModeForAction(in svc: UISplitViewController) -> UISplitViewControllerDisplayMode {
         print(">>> \(#function) - Display mode = \(svc.displayMode.rawValue)")
         return .automatic

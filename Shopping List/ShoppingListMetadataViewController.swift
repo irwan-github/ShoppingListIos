@@ -56,20 +56,20 @@ class ShoppingListMetadataViewController: UIViewController {
     
     @IBAction func onSave(_ sender: UIBarButtonItem) {
         
+        if shoppingList == nil {
+            let moc = (persistentContainer?.viewContext)!
+            shoppingList = ShoppingList(context: moc)
+        }
+        
+        shoppingList?.name = shoppingListNameTextView.text ?? ""
+        shoppingList?.comments = commentsTextField.text ?? nil
         saveShoppingList()
     }
     
     func saveShoppingList() {
         
         let moc = (persistentContainer?.viewContext)!
-        
-        if shoppingList == nil {
-            shoppingList = ShoppingList(context: moc)
-        }
 
-        shoppingList?.name = shoppingListNameTextView.text ?? ""
-        shoppingList?.comments = commentsTextField.text ?? nil
-        
         if moc.hasChanges {
             do {
                 

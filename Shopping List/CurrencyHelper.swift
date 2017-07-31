@@ -14,7 +14,8 @@ struct CurrencyHelper {
     var availableCurrencyCodes = NSLocale.isoCurrencyCodes as NSArray
         
     init() {
-        self.init(languangeCode: "en", countryCode: "SG")
+        let countryCode = UserDefaults.standard.value(forKey: "country_code") as! String
+        self.init(languangeCode: "en", countryCode: countryCode)
     }
     
     init(languangeCode: String, countryCode: String) {

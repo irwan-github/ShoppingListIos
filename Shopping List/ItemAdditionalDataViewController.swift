@@ -106,6 +106,9 @@ class ItemAdditionalDataViewController: UIViewController {
         }
     }
     
+    //Get the user's home currency code
+    private let homeCurrencyCode = CurrencyHelper().getHomeCurrencyCode() ?? Locale.current.currencyCode!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -117,20 +120,20 @@ class ItemAdditionalDataViewController: UIViewController {
             return
         }
         
-        let exchangeRateWebApi = ExchangeRateWebApi(scheme: "http", host: "api.fixer.io", path: "/latest")
+        let exchangeRateWebApi = ExchangeRateWebApi()
         
-        exchangeRateWebApi.getExchangeRates(paramName: "base", baseCurrencyCode: "SGD", completionHandlerForMain: { exchangeRates in
+        exchangeRateWebApi.getExchangeRates(completionHandlerForMain: { exchangeRates in
             
             if let exchangeRates = exchangeRates {
                 
-                if let unitPrice = self.unitPrice, unitPrice.currencyCode! != "SGD"{
+                if let unitPrice = self.unitPrice, unitPrice.currencyCode! != self.homeCurrencyCode {
                     guard let rate = exchangeRates[(unitPrice.currencyCode)!] else { return }
                     self.setTranslatedPrice(type: .unit, price: unitPrice, rate: rate)
                 } else {
                     self.unitPriceTranslated = nil
                 }
                 
-                if let bundlePrice = self.bundlePrice, bundlePrice.currencyCode! != "SGD" {
+                if let bundlePrice = self.bundlePrice, bundlePrice.currencyCode! != self.homeCurrencyCode {
                     guard let rate = exchangeRates[(bundlePrice.currencyCode)!] else { return }
                     self.setTranslatedPrice(type: .bundle, price: bundlePrice, rate: rate)
                 } else {
@@ -142,11 +145,11 @@ class ItemAdditionalDataViewController: UIViewController {
     
     private var isExchangeRateRequired: Bool {
     
-        if let unitCurrencyCode = unitPrice?.currencyCode, unitCurrencyCode != "SGD" {
+        if let unitCurrencyCode = unitPrice?.currencyCode, unitCurrencyCode != homeCurrencyCode {
             return true
         }
         
-        if let bundleCurrencyCode = bundlePrice?.currencyCode, bundleCurrencyCode != "SGD" {
+        if let bundleCurrencyCode = bundlePrice?.currencyCode, bundleCurrencyCode != homeCurrencyCode {
             return true
         }
         
