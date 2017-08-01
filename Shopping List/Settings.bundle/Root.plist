@@ -8,6 +8,12 @@
 	<array>
 		<dict>
 			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Details</string>
+		</dict>
+		<dict>
+			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 			<key>Title</key>
 			<string>Country Code</string>
@@ -20,7 +26,7 @@
 			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 			<key>Title</key>
-			<string>Exchange rate web api</string>
+			<string>Exchange rate url</string>
 			<key>Key</key>
 			<string>exchange_rate_web_api</string>
 			<key>DefaultValue</key>
