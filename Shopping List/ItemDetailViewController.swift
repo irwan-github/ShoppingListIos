@@ -150,7 +150,7 @@ class ItemDetailViewController: UIViewController {
         share.send(shoppingListItem: shoppingListItem!, to: "cat@abc.com", completionOnSuccess: {
             
             print("Success")
-        }, authenticationFail: {
+        }, doAuthentication: {
             
             self.performSegue(withIdentifier: "authenticate", sender: self)
             

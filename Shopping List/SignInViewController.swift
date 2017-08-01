@@ -21,16 +21,9 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Do any additional setup after loading the view.
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if Auth.auth().currentUser != nil {
-            let user = Auth.auth().currentUser
-            print("\(user?.email)")
-            self.performSegue(withIdentifier: "signIn", sender: nil)
-        }
         ref = Database.database().reference()
     }
     
@@ -69,9 +62,23 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
             if error != nil {
                 self.showAlertWith(title: "Sign in error", message: error!.localizedDescription)
             } else {
+                
+                let userDefaults = UserDefaults.standard
+                userDefaults.set(user?.email, forKey: "username")
+                
+                let password = self.passwordTextField.text
+                userDefaults.set(password, forKey: "password")
+                
+                userDefaults.synchronize()
+                
                 self.performSegue(withIdentifier: "Share shopping list item", sender: self)
             }
         })
+    }
+    
+    @IBAction func didTapCancel(_ sender: UIButton) {
+        
+        presentingViewController?.dismiss(animated: true, completion: nil)
     }
     
     func showAlertWith(title: String, message: String?) {
@@ -79,35 +86,6 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-    
-    
-    // Saves user profile information to user database
-    //    func saveUserInfo(_ user: Firebase.User, withUsername username: String) {
-    //
-    //        // Create a change request
-    //        //self.showSpinner {}
-    //        let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-    //        changeRequest?.displayName = username
-    //
-    //        // Commit profile changes to server
-    //        changeRequest?.commitChanges() { (error) in
-    //
-    //            //self.hideSpinner {}
-    //
-    //            if let error = error {
-    //                self.showMessagePrompt(error.localizedDescription)
-    //                return
-    //            }
-    //
-    //            // [START basic_write]
-    //            let branchUsers = self.ref.child("users")
-    //            branchUsers.child(user.uid)
-    //            // [END basic_write]
-    //            self.performSegue(withIdentifier: "signIn", sender: nil)
-    //        }
-    //
-    //    }
-    
     
     /*
      // MARK: - Navigation

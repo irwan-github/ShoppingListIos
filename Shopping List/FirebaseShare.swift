@@ -15,12 +15,12 @@ class FirebaseShare {
     var database = Database.database()
     var databaseRef = Database.database().reference()
     
-    func send(shoppingListItem: ShoppingListItem, to userEmail: String, completionOnSuccess: (() -> Void)?, authenticationFail: () -> Void) {
+    func send(shoppingListItem: ShoppingListItem, to userEmail: String, completionOnSuccess: (() -> Void)?, doAuthentication: () -> Void) {
         
         let sender = Auth.auth().currentUser
         
         if sender == nil {
-            authenticationFail()
+            doAuthentication()
             return
         }
         
@@ -48,10 +48,7 @@ class FirebaseShare {
             receiverDbRef.child("shopping_list_share_with/\(uidOfReceiver)").childByAutoId().setValue(shoppingListDict)
             
         }, withCancel: nil)
-        
 
-        
-        
     }
     
 }
