@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDelegate {
@@ -15,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        FirebaseApp.configure()
         // Override point for customization after application launch.
         let splitViewController = window!.rootViewController as! UISplitViewController
         
@@ -69,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                 }
             }
             
-            //Register the default values
+            //Register the default values into UserDefaults
             appDefaults.register(defaults: settingsBundleDefaults)
             appDefaults.synchronize()
             
@@ -111,6 +114,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        saveContext()
+        signOutOfFirebase()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -124,6 +129,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
+        signOutOfFirebase()
         self.saveContext()
     }
     
@@ -173,6 +179,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            }
+        }
+    }
+    
+    private func signOutOfFirebase() {
+
+        let isSignOutRequired = UserDefaults.standard.value(forKey: "firebase_sign_out") as! Bool
+        print("\(#function) - \(type(of: self))")
+        print("\(#function) - \(type(of: self)) - \(isSignOutRequired)")
+        if isSignOutRequired {
+            do {
+                try Auth.auth().signOut()
+                print("\(#function) - \(type(of: self)) - Sign out completed")
+            } catch let error as NSError {
+                print("Error: signing out: @ ", error)
             }
         }
     }

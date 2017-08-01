@@ -31,4 +31,22 @@ class ShoppingListItem: NSManagedObject {
             priceTypeSelected = Int16(newValue)
         }
     }
+    
+    /**
+     Currently used by Firebase module
+    */
+    var asDictionaryValues: [String: AnyObject] {
+        get {
+            var shoppingListItemDict = [String: AnyObject]()
+            let brand = item?.brand ?? ""
+            shoppingListItemDict["brand"] = brand as AnyObject
+            shoppingListItemDict["name"] = (item?.name ?? "") as AnyObject
+            shoppingListItemDict["quantity"] = quantityToBuyConvert as AnyObject
+            let selectedPrice = self.selectedPrice[0] as! Price
+            let valPrice = selectedPrice.valueConvert
+            shoppingListItemDict["price"] = valPrice as AnyObject
+            shoppingListItemDict["currencyCode"] = selectedPrice.currencyCode as AnyObject
+            return shoppingListItemDict
+        }
+    }
 }

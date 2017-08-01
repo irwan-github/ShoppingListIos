@@ -140,6 +140,27 @@ class ItemDetailViewController: UIViewController {
         }
     }
     
+    @IBAction func didTapShare(_ sender: UIBarButtonItem) {
+        
+        share()        
+    }
+    
+    func share() {
+        let share = FirebaseShare()
+        share.send(shoppingListItem: shoppingListItem!, to: "cat@abc.com", completionOnSuccess: {
+            
+            print("Success")
+        }, authenticationFail: {
+            
+            self.performSegue(withIdentifier: "authenticate", sender: self)
+            
+        })
+    }
+    
+    @IBAction func unwindFromFirebaseAuthentication(_ source: UIStoryboardSegue) {
+    
+        share()
+    }
 }
 
 extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {
