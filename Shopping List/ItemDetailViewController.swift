@@ -139,43 +139,15 @@ class ItemDetailViewController: UIViewController {
             
             moreInformationVc.item = item
         }
+        
+        if segue.identifier == "Send Shopping List Item" {
+            let firebaseViewController = viewController as! FirebaseViewController
+            firebaseViewController.shoppingListItem = shoppingListItem
+        }
     }
     
     @IBAction func didTapShare(_ sender: UIBarButtonItem) {
-        
-        share()        
-    }
-    
-    func share() {
-        let share = FirebaseShare()
-        share.send(shoppingListItem: shoppingListItem!, to: "cat@abc.com", completionOnSuccess: {
-            
-            print("Success")
-        }, doAuthentication: {
-            
-            //Get user email from settings preference
-            let userDefaults = UserDefaults.standard
-            let username = userDefaults.value(forKey: "username") as? String
-            let password = userDefaults.value(forKey: "password") as? String
-            
-            if let username = username, let password = password, !username.isEmpty, !password.isEmpty {
-
-                Auth.auth().signIn(withEmail: username, password: password, completion: { (user, error ) in
-                    
-                    if error != nil {
-                        self.performSegue(withIdentifier: "authenticate", sender: self)
-                    }
-                })
-                
-            } else {
-                self.performSegue(withIdentifier: "authenticate", sender: self)
-            }
-        })
-    }
-    
-    @IBAction func unwindFromFirebaseAuthentication(_ source: UIStoryboardSegue) {
-    
-        share()
+        performSegue(withIdentifier: "Send Shopping List Item", sender: self)
     }
 }
 

@@ -47,6 +47,8 @@ class FirebaseShare {
             let receiverDbRef = Database.database().reference()
             receiverDbRef.child("shopping_list_share_with/\(uidOfReceiver)").childByAutoId().setValue(shoppingListDict)
             
+            completionOnSuccess?()
+            
         }, withCancel: nil)
 
     }
