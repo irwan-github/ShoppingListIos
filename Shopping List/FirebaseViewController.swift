@@ -21,11 +21,15 @@ class FirebaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.sendButton.isEnabled = true
+    }
 
     @IBAction func didTapSend(_ sender: UIButton) {
         sendButton.isEnabled = false
         share()
-        
     }
     
     func share() {
