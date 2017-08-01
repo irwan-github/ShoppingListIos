@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Firebase
 
 class ItemDetailViewController: UIViewController {
     
@@ -152,8 +153,23 @@ class ItemDetailViewController: UIViewController {
             print("Success")
         }, doAuthentication: {
             
-            self.performSegue(withIdentifier: "authenticate", sender: self)
+            //Get user email from settings preference
+            let userDefaults = UserDefaults.standard
+            let username = userDefaults.value(forKey: "username") as? String
+            let password = userDefaults.value(forKey: "password") as? String
             
+            if let username = username, let password = password, !username.isEmpty, !password.isEmpty {
+
+                Auth.auth().signIn(withEmail: username, password: password, completion: { (user, error ) in
+                    
+                    if error != nil {
+                        self.performSegue(withIdentifier: "authenticate", sender: self)
+                    }
+                })
+                
+            } else {
+                self.performSegue(withIdentifier: "authenticate", sender: self)
+            }
         })
     }
     
