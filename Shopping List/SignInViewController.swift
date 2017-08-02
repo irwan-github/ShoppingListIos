@@ -15,6 +15,8 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     
     var shoppingListItem: ShoppingListItem?
     
+    var isPendingRegistration: Bool = false
+    
     @IBOutlet var emailTextField: UITextField!
     
     @IBOutlet weak var passwordTextField: UITextField!
@@ -34,13 +36,21 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
     @IBAction func didTapSignUp(_ sender: UIButton) {
         print("\(#function) - \(type(of: self))")
         
-        guard let email = emailTextField.text else {
+        guard let email = emailTextField.text, !email.isEmpty else {
+            showAlertWith(title: "Missing email", message: "Please provide email")
             return
         }
         
-        guard let password = passwordTextField.text else {
+        guard let password = passwordTextField.text, !password.isEmpty else {
+            showAlertWith(title: "Missing Password", message: "Please provide password")
             return
         }
+        
+        //onSimpleSignUp(email: email, password: password)
+        onRegisterNewAccount(email: email, password: password)
+    }
+    
+    private func onSimpleSignUp(email: String, password: String) {
         
         // Create the user with the provided credentials
         Auth.auth().createUser(withEmail: email, password: password, completion: { (user, error) in
@@ -50,41 +60,107 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
                 return
             }
             
-            self.ref.child("users").child(user.uid).setValue(["email": user.email])
-            
+            self.initializeUser(user: user, password: password)
+            self.performSegue(withIdentifier: "Post Authentication", sender: self)
         })
+    }
+    
+    private func initializeUser(user: User, password: String) {
         
+        self.ref.child("users").child(user.uid).setValue(["email": user.email])
+        
+        self.setUserDefaults(userEmail: (user.email)!, password: password)
+    }
+    
+    private func onRegisterNewAccount(email: String, password: String) {
+        
+        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!, completion: {
+            
+            (user, error) in
+            
+            if error != nil {
+                self.showAlertWith(title: "Error", message: error!.localizedDescription)
+            } else {
+                user?.sendEmailVerification(completion: { error in
+                    
+                    if error != nil {
+                        
+                        self.showAlertWith(title: "Registration error", message: error!.localizedDescription)
+                    } else {
+                        self.isPendingRegistration = true
+                        self.initializeUser(user: user!, password: password)
+                        self.showAlertWith(title: "Registration success", message: "Please check email to confirm registration and resend the item", okHandler: {
+                        
+                            UIAlertAction in
+                            
+                            self.performSegue(withIdentifier: "Post Authentication", sender: self)
+                        })
+                        
+                    }
+                })
+            }
+        })
     }
     
     @IBAction func didTapSignIn(_ sender: UIButton) {
-        Auth.auth().signIn(withEmail: emailTextField.text!, password: passwordTextField.text!, completion: { (user, error ) in
+        
+        validateEmail()
+        
+        validatePassword()
+        
+        guard let password = passwordTextField.text else { return }
+        
+        Auth.auth().signIn(withEmail: emailTextField.text!, password: password, completion: { (user, error ) in
             
             if error != nil {
                 self.showAlertWith(title: "Sign in error", message: error!.localizedDescription)
             } else {
                 
-                let userDefaults = UserDefaults.standard
-                userDefaults.set(user?.email, forKey: "username")
+                self.setUserDefaults(userEmail: (user?.email)!, password: password)
                 
-                let password = self.passwordTextField.text
-                userDefaults.set(password, forKey: "password")
-                
-                userDefaults.synchronize()
-                
-                self.performSegue(withIdentifier: "Share shopping list item", sender: self)
+                self.performSegue(withIdentifier: "Post Authentication", sender: self)
             }
         })
     }
     
-    @IBAction func didTapCancel(_ sender: UIButton) {
-        
+    @IBAction func didTapCancel(_ sender: UIBarButtonItem) {
         presentingViewController?.dismiss(animated: true, completion: nil)
     }
     
-    func showAlertWith(title: String, message: String?) {
+    func showAlertWith(title: String, message: String?, okHandler: ((UIAlertAction) -> Void)? = nil) {
+        
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: okHandler))
+        
         present(alert, animated: true, completion: nil)
+    }
+    
+    /**
+     Persist user settings and make it available to iOS Settings
+    */
+    private func setUserDefaults(userEmail: String, password: String) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(userEmail, forKey: "username")
+        
+        let password = self.passwordTextField.text
+        userDefaults.set(password, forKey: "password")
+        
+        userDefaults.synchronize()
+    }
+    
+    private func validateEmail() {
+        if let email = emailTextField.text, email.isEmpty {
+            showAlertWith(title: "Missing email", message: "Please provide email")
+            return
+        }
+    }
+    
+    private func validatePassword() {
+        if let password = passwordTextField.text, password.isEmpty {
+            showAlertWith(title: "Missing password", message: "Please provide password")
+            return
+        }
     }
     
     /*

@@ -149,6 +149,10 @@ class ItemDetailViewController: UIViewController {
     @IBAction func didTapShare(_ sender: UIBarButtonItem) {
         performSegue(withIdentifier: "Send Shopping List Item", sender: self)
     }
+    
+    @IBAction func unwindToItemDetailViewController(for segue: UIStoryboardSegue, _sender: Any?) {
+        
+    }
 }
 
 extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {

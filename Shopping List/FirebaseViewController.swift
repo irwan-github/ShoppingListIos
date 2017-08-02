@@ -29,6 +29,7 @@ class FirebaseViewController: UIViewController {
 
     @IBAction func didTapSend(_ sender: UIButton) {
         sendButton.isEnabled = false
+        self.firebaseMessage.text = nil
         share()
     }
     
@@ -37,11 +38,7 @@ class FirebaseViewController: UIViewController {
         guard let recipientEmail = recipientEmailTextField.text else { return }
         
         let share = FirebaseShare()
-        share.send(shoppingListItem: shoppingListItem!, to: recipientEmail, completionOnSuccess: {
-            self.firebaseMessage.text = "Success"
-            self.sendButton.isEnabled = true
-            
-        }, doAuthentication: {
+        share.send(shoppingListItem: shoppingListItem!, to: recipientEmail, doAuthentication: {
             
             //Get user email from settings preference
             let userDefaults = UserDefaults.standard
@@ -60,10 +57,35 @@ class FirebaseViewController: UIViewController {
             } else {
                 self.performSegue(withIdentifier: "authenticate", sender: self)
             }
+        }, completionOnSuccess: {
+            self.firebaseMessage.text = "Successfully sent to \(recipientEmail)!"
+            self.firebaseMessage.textColor = UIColor.green
+            self.firebaseMessage.textAlignment = .center
+            self.sendButton.isEnabled = true
+            
+        }, completionOnFail: { errorMessage in
+           
+            self.firebaseMessage.text = errorMessage
+            self.firebaseMessage.textColor = UIColor.red
+            self.firebaseMessage.textAlignment = .natural
+            self.sendButton.isEnabled = true
         })
     }
     
-    @IBAction func unwindFromFirebaseAuthentication(_ source: UIStoryboardSegue) {
+    @IBAction func unwindToFirebaseViewController(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        let source = segue.source
+        
+        if segue.identifier == "Post Authentication" {
+            
+            let signInViewController = source as! SignInViewController
+            
+            //check pending account confirmation
+            if signInViewController.isPendingRegistration {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+        }
+        
         share()
     }
 
