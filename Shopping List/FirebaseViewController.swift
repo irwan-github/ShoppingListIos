@@ -58,7 +58,7 @@ class FirebaseViewController: UIViewController {
                 self.performSegue(withIdentifier: "authenticate", sender: self)
             }
         }, completionOnSuccess: {
-            self.firebaseMessage.text = "Successfully sent to \(recipientEmail)!"
+            self.firebaseMessage.text = "Sent to \(recipientEmail)"
             self.firebaseMessage.textColor = UIColor.green
             self.firebaseMessage.textAlignment = .center
             self.sendButton.isEnabled = true

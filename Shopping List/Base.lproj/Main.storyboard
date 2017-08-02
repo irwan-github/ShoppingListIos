@@ -575,6 +575,9 @@
                                     <constraint firstAttribute="width" constant="80" id="FYy-Y4-fuQ"/>
                                 </constraints>
                                 <state key="normal" title="Reset"/>
+                                <connections>
+                                    <action selector="didTapReset:" destination="jNi-fM-g70" eventType="touchUpInside" id="LHK-Mn-pZV"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

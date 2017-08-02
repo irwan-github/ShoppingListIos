@@ -127,6 +127,25 @@ class SignInViewController: UIViewController, UITextFieldDelegate {
         presentingViewController?.dismiss(animated: true, completion: nil)
     }
     
+    @IBAction func didTapReset(_ sender: Any) {
+        resetPassword()
+    }
+    
+    private func resetPassword() {
+        
+        validateEmail()
+        
+        Auth.auth().sendPasswordReset(withEmail: emailTextField.text!, completion: { error in
+            
+            if error != nil {
+                self.showAlertWith(title: "Error resetting password", message: error?.localizedDescription)
+            } else{
+                self.showAlertWith(title: "Password reset", message: "Check email to reset")
+            }
+            
+        })
+    }
+
     func showAlertWith(title: String, message: String?, okHandler: ((UIAlertAction) -> Void)? = nil) {
         
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
