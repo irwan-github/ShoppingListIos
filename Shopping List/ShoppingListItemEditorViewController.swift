@@ -762,7 +762,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
     }
     
-    @IBAction func onDeleteItem(_ sender: UIButton) {
+    @IBAction func onDeleteItem(_ sender: UIBarButtonItem) {
         
         validationListItemState.handle(event: .onDeleteListItem({ state in
             
