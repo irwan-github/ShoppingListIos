@@ -779,19 +779,6 @@ class ShoppingListItemEditorViewController: UIViewController {
         }), handleNextStateUiAttributes: nil)
     }
     
-    @IBAction func onPictureAction(_ sender: UIButton) {
-        
-        //Create a action sheet
-        let pictureActionSheetController = pictureActionSheet
-        
-        //The following will cause app to adapt to iPad by presenting action sheet as popover on an iPad.
-        pictureActionSheetController.modalPresentationStyle = .popover
-        let popoverMenuPresentationController = pictureActionSheetController.popoverPresentationController
-        popoverMenuPresentationController?.sourceView = sender
-        popoverMenuPresentationController?.sourceRect = sender.frame
-        present(pictureActionSheetController, animated: true, completion: nil)
-    }
-    
     // MARK: - State: Handle validation state transition and state-based ui properties
     
     func validateCurrencyCode() -> Bool {

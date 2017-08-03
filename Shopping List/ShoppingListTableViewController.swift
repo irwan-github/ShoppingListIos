@@ -112,7 +112,7 @@ class ShoppingListTableViewController: FetchedResultsTableViewController {
         requestForShoppingListItem.predicate = criteria
         
         //Sort by
-        let sortBy = [NSSortDescriptor(key: "item.name", ascending: true)]
+        let sortBy = [NSSortDescriptor(key: "item.name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
         requestForShoppingListItem.sortDescriptors = sortBy
         
         //Go fetch
