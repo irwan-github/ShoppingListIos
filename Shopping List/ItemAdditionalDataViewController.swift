@@ -143,8 +143,25 @@ class ItemAdditionalDataViewController: UIViewController {
         })
     }
     
-    private var isExchangeRateRequired: Bool {
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let ppc = self.navigationController?.popoverPresentationController {
+            
+            if ppc.arrowDirection == .unknown {
+                
+                title = item?.name
+            } else {
+                
+                //Set preferred content size if this is a popover presentation
+                preferredContentSize = calculatePreferredContentSize()
+            }
+            
+        }
+    }
     
+    private var isExchangeRateRequired: Bool {
+        
         if let unitCurrencyCode = unitPrice?.currencyCode, unitCurrencyCode != homeCurrencyCode {
             return true
         }
@@ -195,13 +212,6 @@ class ItemAdditionalDataViewController: UIViewController {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        //Set preferred content size if this is a popover presentation
-        preferredContentSize = calculatePreferredContentSize()
-    }
-    
     func updateUi() {
         brandLabel?.text = item?.brand
         countryOfOriginLabel?.text = item?.countryOfOrigin
@@ -232,6 +242,10 @@ class ItemAdditionalDataViewController: UIViewController {
         }
     }
     
+    @IBAction func didTapDone(_ sender: UIBarButtonItem) {
+        actionOnDoneAdditionalInfo()
+    }
+    
     func actionOnDoneAdditionalInfo() {
         print("\(#function) - \(type(of: self))")
         presentingViewController?.dismiss(animated: true, completion: nil)
@@ -256,4 +270,16 @@ class ItemAdditionalDataViewController: UIViewController {
      }
      */
     
+}
+
+extension ItemAdditionalDataViewController: UIPopoverPresentationControllerDelegate {
+    
+    func presentationController(_ presentationController: UIPresentationController, willPresentWithAdaptiveStyle style: UIModalPresentationStyle, transitionCoordinator: UIViewControllerTransitionCoordinator?) {
+        
+        guard let presentationNavigationController = presentationController.presentedViewController as? UINavigationController else { return }
+        
+        let hidesNavigationBar = style != .fullScreen
+        
+        presentationNavigationController.setNavigationBarHidden(hidesNavigationBar, animated: true)
+    }
 }
