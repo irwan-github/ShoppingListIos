@@ -16,7 +16,8 @@ class FirebaseViewController: UIViewController {
     @IBOutlet weak var recipientEmailTextField: UITextField!
     
     @IBOutlet weak var firebaseMessage: UILabel!
-    @IBOutlet weak var sendButton: UIButton!
+    
+    @IBOutlet weak var sendButton: UIBarButtonItem!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,13 +25,28 @@ class FirebaseViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.sendButton.isEnabled = true
+        preferredContentSize = calculatePreferredSize()
+        
+        if navigationController?.popoverPresentationController?.arrowDirection != UIPopoverArrowDirection.unknown {
+            navigationItem.leftBarButtonItem = nil
+        }
+        
+    }
+    
+    private func calculatePreferredSize() -> CGSize{
+        let y = firebaseMessage.frame.origin.y
+        let height = firebaseMessage.frame.size.height
+        return CGSize(width: 0, height: y + height)
     }
 
-    @IBAction func didTapSend(_ sender: UIButton) {
-        sendButton.isEnabled = false
+    @IBAction func didTapDone(_ sender: UIBarButtonItem) {
+        sender.isEnabled = false
         self.firebaseMessage.text = nil
         share()
+    }
+    
+    @IBAction func didTapCancel(_ sender: UIBarButtonItem) {
+        presentingViewController?.dismiss(animated: true, completion: nil)
     }
     
     func share() {
@@ -83,10 +99,12 @@ class FirebaseViewController: UIViewController {
             //check pending account confirmation
             if signInViewController.isPendingRegistration {
                 self.navigationController?.popToRootViewController(animated: true)
+            } else {
+                share()
             }
         }
         
-        share()
+        
     }
 
     /*

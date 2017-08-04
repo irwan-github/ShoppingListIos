@@ -63,4 +63,12 @@ struct CurrencyHelper {
         formatter.internationalCurrencySymbol = currencyCode
         return formatter.string(from: valueAsNumber)
     }
+    
+    static func isValidCountry(code: String) -> Bool {
+
+        let availableRegionCodes  = Locale.isoRegionCodes as NSArray
+        let filterRegionCode = NSPredicate(format: "SELF == %@", code)
+        return availableRegionCodes.filtered(using: filterRegionCode).count > 0
+        
+    }
 }

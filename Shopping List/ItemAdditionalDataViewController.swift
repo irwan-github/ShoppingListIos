@@ -139,6 +139,9 @@ class ItemAdditionalDataViewController: UIViewController {
                 } else {
                     self.bundlePriceTranslated = nil
                 }
+            } else {
+                self.bundlePriceTranslated = nil
+                self.unitPriceTranslated = nil
             }
         })
     }
