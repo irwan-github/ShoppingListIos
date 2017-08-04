@@ -617,7 +617,6 @@
         <!--Share item-->
         <scene sceneID="qJ0-LR-2bT">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="t4Z-jk-53b" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController id="rnE-Qk-wWb" customClass="FirebaseViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dfk-ud-71I"/>
@@ -672,6 +671,7 @@
                         <segue destination="3yB-qW-DPt" kind="presentation" identifier="authenticate" id="xzb-Gb-hQf"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="t4Z-jk-53b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3846.09375" y="1379.8828125"/>
         </scene>
@@ -767,7 +767,7 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GwL-Xk-UJo" userLabel="Quantity Stack View">
-                                                <rect key="frame" x="17" y="14.5" width="105.5" height="14.5"/>
+                                                <rect key="frame" x="17.5" y="14.5" width="105.5" height="14.5"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="300" verticalHuggingPriority="251" text="Bundle Quantity: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ySp-Ff-QNe" userLabel="Buble Qty Label">
                                                         <rect key="frame" x="0.0" y="0.0" width="98" height="14.5"/>

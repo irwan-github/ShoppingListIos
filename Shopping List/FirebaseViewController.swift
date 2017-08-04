@@ -99,6 +99,7 @@ class FirebaseViewController: UIViewController {
             //check pending account confirmation
             if signInViewController.isPendingRegistration {
                 self.navigationController?.popToRootViewController(animated: true)
+                sendButton.isEnabled = true
             } else {
                 share()
             }
