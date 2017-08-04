@@ -278,6 +278,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         bundlePriceTextField.delegate = moneyTextFieldDelegate
         
         if shoppingListItem == nil {
+            title = "New Item"
             validationListItemState.handle(event: .onListItemNew, handleNextStateUiAttributes: validationStateUiPropertiesHandler)
         } else {
             validationListItemState.handle(event: .onListItemExist, handleNextStateUiAttributes: validationStateUiPropertiesHandler)

@@ -841,7 +841,7 @@
             </objects>
             <point key="canvasLocation" x="5207" y="589"/>
         </scene>
-        <!--Edit-->
+        <!--Edit Item-->
         <scene sceneID="0p2-tx-8nh">
             <objects>
                 <viewController id="m5J-7J-iQ3" customClass="ShoppingListItemEditorViewController" customModule="Shopping_List" customModuleProvider="target" sceneMemberID="viewController">
@@ -1106,7 +1106,7 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Edit" id="Hkr-c7-L14">
+                    <navigationItem key="navigationItem" title="Edit Item" id="Hkr-c7-L14">
                         <leftBarButtonItems>
                             <barButtonItem systemItem="cancel" id="3Ss-ve-7xg">
                                 <connections>
