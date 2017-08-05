@@ -18,28 +18,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         // Override point for customization after application launch.
         let splitViewController = window!.rootViewController as! UISplitViewController
         
-        //The following will enable ONLY iPhone 7+ Landscape to have the "expand button" on its detail vc when it is NOT displayed via a segue from master
-        //        let navigationController = splitViewController.viewControllers[1] as! UINavigationController
-        //        navigationController.topViewController!.navigationItem.leftBarButtonItem = splitViewController.displayModeButtonItem
-        
         //Assign app delegate as split view delegate
         splitViewController.delegate = self
         
         splitViewController.preferredDisplayMode = .allVisible
         
-        //TODO: Assign a special button on view controller in the master view that will segue to a shopping list showing items at summary level
-        //        let navigationControllerInMaster = splitViewController.viewControllers[0] as! UINavigationController
-        //        navigationControllerInMaster.topViewController!.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Focus", style: .plain, target: nil, action: #selector(showSelectedShoppingListInMasterView))
-        //
         registerDefaultsFromSettingsBundle()
-        loadDummyShoppingList()
+        
         return true
+    }
+    
+    private func setDefaultCountryCode() {
+        let appDefaults = UserDefaults.standard
+        let currentLocale = Locale.current
+        let defaultCountryCode = currentLocale.regionCode ?? "US"
+        appDefaults.set(defaultCountryCode, forKey: "country_code")
     }
     
     private func registerDefaultsFromSettingsBundle() {
         
         //Get the user defaults object
         let appDefaults = UserDefaults.standard
+        
+        //Check if country code is valid in app defaults
+        if let countryCodeDef = appDefaults.value(forKey: "country_code") as? String {
+            
+            if countryCodeDef.isEmpty ||  !CurrencyHelper.isValidCountry(code: countryCodeDef) {
+                setDefaultCountryCode()
+            }
+        } else {
+
+            setDefaultCountryCode()
+        }
         
         //Dictionary to hold the settings bundle default
         var settingsBundleDefaults = [String: Any]()
@@ -65,11 +75,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
                 
                 if let key = aPref["Key"] as? String, let value = aPref["DefaultValue"] {
                     print("Key is \(key) , Value is \(value)")
+                    
                     settingsBundleDefaults[key] = value
                 }
             }
             
-            //Register the default values
+            //Register the default values into UserDefaults
             appDefaults.register(defaults: settingsBundleDefaults)
             appDefaults.synchronize()
             
@@ -82,27 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
         
     }
     
-    //    func showSelectedShoppingListInMasterView() {
-    //        print("\(#function)")
-    //        let splitViewController = window!.rootViewController as! UISplitViewController
-    //
-    //        //Get the current currentMasterVc which is of type ShoppingListsTableViewController
-    //        let currentMasterVcAsNc = splitViewController.viewControllers[0] as! UINavigationController
-    //        let shoppingListsVc = currentMasterVcAsNc.visibleViewController as! ShoppingListsTableViewController
-    //
-    //        //Get the currently selected shopping list
-    //        let shoppingList = shoppingListsVc.selectedShoppingList
-    //
-    //        let shoppingListTableVc = ShoppingListTableViewController(style: .plain)
-    //        shoppingListTableVc.shoppingList = shoppingList
-    //        shoppingListTableVc.tableView.register(ShoppingListItemTableViewCell.classForCoder(), forCellReuseIdentifier: "Shopping List Item")
-    //
-    //        currentMasterVcAsNc.pushViewController(shoppingListTableVc, animated: true)
-    //
-    //        //Whenever possible, use this method (instead of modifying the contents of the viewControllersproperty directly) to replace the primary view controller of your split view interface. This method displays the specified view controller in the best way possible given the current size class in effect. This method calls the split view controller delegate’s splitViewController(_:show:sender:) method to give the delegate an opportunity to show the view controller.
-    //        //splitViewController.show(shoppingListTableVc, sender: self)
-    //    }
-    
+
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -111,6 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        saveContext()
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -186,30 +178,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
             groceryShoppingList?.name = "Grocery"
             groceryShoppingList?.comments = "Everyday stuffs"
             groceryShoppingList?.lastUpdatedOn = NSDate()
-            
-            //            do {
-            //                let banana = try Item.findOrCreateNewItem(name: "Banana", context: persistentContainer.viewContext)
-            //                banana.name = "Banana"
-            //                banana.brand = "Del Monte"
-            //
-            //                let milk = try Item.findOrCreateNewItem(name: "Milk", context: persistentContainer.viewContext)
-            //                milk.name = "Milk"
-            //                milk.brand = "Magnolia"
-            //
-            //                let fruit = try Item.findOrCreateNewItem(name: "Australian Watermelon", context: persistentContainer.viewContext)
-            //
-            //                fruit.name = "Australian Watermelon"
-            //                fruit.brand = "Australian Farm for Watermelon"
-            //
-            //                _ = groceryShoppingList?.add(item: banana, quantity: 5)
-            //                _ = groceryShoppingList?.add(item: milk, quantity: 4)
-            //                _ = groceryShoppingList?.add(item: fruit, quantity: 9)
-            //
-            //
-            //            } catch {
-            //                let nserror = error as NSError
-            //                print("Error occured \(nserror): \(nserror.userInfo)")
-            //            }
         }
         
         let artShoppingList = ShoppingList.findOrCreateNew(name: "Art project", context: persistentContainer.viewContext)
@@ -226,22 +194,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     // MARK: - Collapsing and Expanding the interface
     
-    //Called by iPhone 7+ Potrait, iPhone 7 (Potrait & Landscape)
+    /**
+     Called by iPhone 7+ Potrait, iPhone 7 (Potrait & Landscape), iPhone6, iPhone SE because splitViewController.preferredDisplayMode = .allVisible
+     */
     func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
         
-        if let title = secondaryViewController.title, title == "Landing view controller" {
-            return true
-        }
-        
-        guard let secondaryAsNc = secondaryViewController as? UINavigationController else {
-            return false
-        }
-        
-        guard let rootVcOfNc = secondaryAsNc.visibleViewController as? ShoppingListTableViewController else {
-            return false
-        }
-        
-        if rootVcOfNc.shoppingList == nil {
+        //I do not want the screen "Landing secondary view controller" to be the first screen in iPhone because it is contains no data.
+        //Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
+        if let title = secondaryViewController.title, title == "Landing secondary view controller" {
             return true
         }
         

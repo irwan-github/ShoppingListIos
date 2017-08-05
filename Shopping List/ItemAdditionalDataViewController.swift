@@ -139,8 +139,28 @@ class ItemAdditionalDataViewController: UIViewController {
                 } else {
                     self.bundlePriceTranslated = nil
                 }
+            } else {
+                self.bundlePriceTranslated = nil
+                self.unitPriceTranslated = nil
             }
         })
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let ppc = self.navigationController?.popoverPresentationController {
+            
+            if ppc.arrowDirection == .unknown {
+                
+                title = item?.name
+            } else {
+                
+                //Set preferred content size if this is a popover presentation
+                preferredContentSize = calculatePreferredContentSize()
+            }
+            
+        }
     }
     
     private var isExchangeRateRequired: Bool {
@@ -195,13 +215,6 @@ class ItemAdditionalDataViewController: UIViewController {
         
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        //Set preferred content size if this is a popover presentation
-        preferredContentSize = calculatePreferredContentSize()
-    }
-    
     func updateUi() {
         brandLabel?.text = item?.brand
         countryOfOriginLabel?.text = item?.countryOfOrigin
@@ -231,8 +244,12 @@ class ItemAdditionalDataViewController: UIViewController {
             unitPriceGroup?.isHidden = true
         }
     }
+
+    @IBAction func didTapCancel(_ sender: UIBarButtonItem) {
+        onCancelAdditionalInfo()
+    }
     
-    func actionOnDoneAdditionalInfo() {
+    func onCancelAdditionalInfo() {
         print("\(#function) - \(type(of: self))")
         presentingViewController?.dismiss(animated: true, completion: nil)
     }

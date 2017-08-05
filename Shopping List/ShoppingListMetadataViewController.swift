@@ -47,6 +47,12 @@ class ShoppingListMetadataViewController: UIViewController {
             navigationItem.leftBarButtonItem = nil
         }
         
+        if shoppingList == nil {
+            title = "New Shopping List"
+        } else {
+            title = "Edit Shopping List"
+        }
+        
     }
     
     func updateUi() {

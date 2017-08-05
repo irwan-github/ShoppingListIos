@@ -481,7 +481,7 @@
                                 <rect key="frame" x="348.5" y="80" width="71" height="24"/>
                                 <state key="normal" title="Details" image="ic_info"/>
                                 <connections>
-                                    <segue destination="y6S-Or-Avz" kind="popoverPresentation" identifier="More information" popoverAnchorView="uy2-jQ-ejI" id="b8a-iS-Mxi">
+                                    <segue destination="vCL-7t-mo7" kind="popoverPresentation" identifier="More information" popoverAnchorView="uy2-jQ-ejI" id="b8a-iS-Mxi">
                                         <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
                                     </segue>
                                 </connections>
@@ -526,29 +526,29 @@
                         <viewControllerLayoutGuide type="bottom" id="69y-0j-5u7"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="SD4-MC-Zj7">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Brand" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hEK-KF-hQK">
-                                <rect key="frame" x="20" y="28" width="374" height="20.5"/>
+                                <rect key="frame" x="20" y="72" width="728" height="20.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Country of origin" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gZU-e2-MIE">
-                                <rect key="frame" x="20" y="64.5" width="374" height="18"/>
+                                <rect key="frame" x="20" y="108.5" width="728" height="18"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zbi-Wk-BXj">
-                                <rect key="frame" x="20" y="90.5" width="374" height="18"/>
+                                <rect key="frame" x="20" y="134.5" width="728" height="18"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="kJM-UD-GxO">
-                                <rect key="frame" x="116" y="124.5" width="183" height="29"/>
+                                <rect key="frame" x="292.5" y="168.5" width="183" height="29"/>
                                 <segments>
                                     <segment title="Unit Price"/>
                                     <segment title="Bundle Price"/>
@@ -558,7 +558,7 @@
                                 </connections>
                             </segmentedControl>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="tZi-Ul-hNJ" userLabel="Price Stack View">
-                                <rect key="frame" x="139" y="168.5" width="137.5" height="43.5"/>
+                                <rect key="frame" x="315.5" y="212.5" width="137.5" height="43.5"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="xjn-3L-j3z" userLabel="Unir group">
                                         <rect key="frame" x="7" y="0.0" width="124" height="14.5"/>
@@ -653,7 +653,13 @@
                             <constraint firstItem="tZi-Ul-hNJ" firstAttribute="centerX" secondItem="SD4-MC-Zj7" secondAttribute="centerX" id="ygc-dF-vK9"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="XQ7-bY-vuG"/>
+                    <navigationItem key="navigationItem" id="XQ7-bY-vuG">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="INU-fM-2hG">
+                            <connections>
+                                <action selector="didTapCancel:" destination="y6S-Or-Avz" id="sLy-qi-ZEk"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="brandLabel" destination="hEK-KF-hQK" id="yJm-al-bJI"/>
                         <outlet property="bundleCurrencyCode" destination="mAd-hp-JBc" id="wB9-gj-5yP"/>
@@ -675,7 +681,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yry-cs-9fS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4207" y="569"/>
+            <point key="canvasLocation" x="4971.875" y="568.9453125"/>
         </scene>
         <!--Shopping List Item Editor View Controller-->
         <scene sceneID="0p2-tx-8nh">
@@ -1045,6 +1051,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="g6w-9Q-T0T" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="933.59375" y="-943.35937499999989"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="uFV-09-UUU">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vCL-7t-mo7" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="y7W-0P-T1J">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="y6S-Or-Avz" kind="relationship" relationship="rootViewController" id="e5w-dt-9TA"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pfd-If-vBa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4206.25" y="568.9453125"/>
         </scene>
     </scenes>
     <resources>

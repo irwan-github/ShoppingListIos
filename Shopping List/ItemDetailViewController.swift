@@ -119,6 +119,11 @@ class ItemDetailViewController: UIViewController {
         var viewController = segue.destination
         
         if let viewControllerAsNavigationController = viewController as? UINavigationController {
+            
+            if segue.identifier == "More information" {
+                viewControllerAsNavigationController.popoverPresentationController?.delegate = self
+            }
+            
             viewController = viewControllerAsNavigationController.visibleViewController!
         }
         
@@ -132,10 +137,6 @@ class ItemDetailViewController: UIViewController {
             
             let moreInformationVc = viewController as! ItemAdditionalDataViewController
             
-            if let popoverPresentationController = moreInformationVc.popoverPresentationController {
-                popoverPresentationController.delegate = self
-            }
-            
             moreInformationVc.item = item
         }
     }
@@ -147,33 +148,12 @@ extension ItemDetailViewController: UIPopoverPresentationControllerDelegate {
     /**
      For iPad-sized class, the popover can be dismissed by tapping outside. However for iPhone, the view controller is displayed modally covering the presenting view controller. Thus, a button is needed to dismiss the modal view controller for iPhones.
      */
-    func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController? {
-        print("\(#function) - \(type(of: self))")
+    func presentationController(_ presentationController: UIPresentationController, willPresentWithAdaptiveStyle style: UIModalPresentationStyle, transitionCoordinator: UIViewControllerTransitionCoordinator?) {
         
-        guard let additionItemViewController = storyboard?.instantiateViewController(withIdentifier: "ItemAdditionalDataViewController") as? ItemAdditionalDataViewController else { return nil }
+        guard let presentationNavigationController = presentationController.presentedViewController as? UINavigationController else { return }
         
-        additionItemViewController.item = item
+        let hidesNavigationBar = style != .fullScreen
         
-        let navigationController = UINavigationController(rootViewController: additionItemViewController)
-        
-        additionItemViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: additionItemViewController, action: #selector(ItemAdditionalDataViewController.actionOnDoneAdditionalInfo))
-        
-        return navigationController
-    }
-    
-    //The following is an alternative method to the above:
-    
-    //    extension ListTableViewController: UIPopoverPresentationControllerDelegate {
-    //        func presentationController(_ presentationController: UIPresentationController, willPresentWithAdaptiveStyle style: UIModalPresentationStyle, transitionCoordinator: UIViewControllerTransitionCoordinator?) {
-    //            guard let presentedNavigationController = presentationController.presentedViewController as? UINavigationController else { return }
-    //
-    //            // We want to show the navigation bar if we're presenting in full screen.
-    //
-    //            let hidesNavigationBar = style != .fullScreen
-    //
-    //            presentedNavigationController.setNavigationBarHidden(hidesNavigationBar, animated: false)
-    //        }
-    //    }
-    
-    
+        presentationNavigationController.setNavigationBarHidden(hidesNavigationBar, animated: true)
+    }    
 }

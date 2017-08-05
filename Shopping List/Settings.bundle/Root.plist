@@ -8,19 +8,11 @@
 	<array>
 		<dict>
 			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string>Details</string>
-		</dict>
-		<dict>
-			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 			<key>Title</key>
 			<string>Country Code</string>
 			<key>Key</key>
 			<string>country_code</string>
-			<key>DefaultValue</key>
-			<string>SG</string>
 		</dict>
 		<dict>
 			<key>Type</key>
