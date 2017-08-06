@@ -30,8 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UISplitViewControllerDele
     
     private func setDefaultCountryCode() {
         let appDefaults = UserDefaults.standard
-        let currentLocale = Locale.current
-        let defaultCountryCode = currentLocale.regionCode ?? "US"
+        let defaultCountryCode = Locale.current.regionCode
         appDefaults.set(defaultCountryCode, forKey: "country_code")
     }
     

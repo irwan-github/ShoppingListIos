@@ -64,8 +64,7 @@ class ExchangeRateWebApi {
     */
     public func getExchangeRates(completionHandlerForMain: @escaping (Dictionary<String, Double>?) -> Void) {
         
-        let currencyHelper = CurrencyHelper()
-        let currencyCode = currencyHelper.getHomeCurrencyCode() ?? Locale.current.currencyCode!
+        let currencyCode = CurrencyHelper.getHomeCurrencyCode() ?? Locale.current.currencyCode!
         guard let webApiUrl = getWebApiUrl(paramName: "base", baseCurrencyCode: currencyCode) else { return }
         
         //Create session

@@ -13,6 +13,8 @@
 			<string>Country Code</string>
 			<key>Key</key>
 			<string>country_code</string>
+			<key>AutocapitalizationType</key>
+			<string>AllCharacters</string>
 		</dict>
 		<dict>
 			<key>Type</key>

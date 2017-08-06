@@ -107,7 +107,7 @@ class ItemAdditionalDataViewController: UIViewController {
     }
     
     //Get the user's home currency code
-    private let homeCurrencyCode = CurrencyHelper().getHomeCurrencyCode() ?? Locale.current.currencyCode!
+    private let homeCurrencyCode = CurrencyHelper.getHomeCurrencyCode() ?? Locale.current.currencyCode!
     
     override func viewDidLoad() {
         super.viewDidLoad()

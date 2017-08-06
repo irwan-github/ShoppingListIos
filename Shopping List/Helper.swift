@@ -14,7 +14,7 @@ struct Helper {
         
         let helper = CurrencyHelper()
         let formatter = NumberFormatter()
-        formatter.locale = helper.userLocale
+        formatter.locale = CurrencyHelper.userLocale
         formatter.numberStyle = .decimal
         formatter.minimumFractionDigits = fractionDigits
         formatter.maximumFractionDigits = fractionDigits

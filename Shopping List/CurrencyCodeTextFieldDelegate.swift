@@ -42,8 +42,8 @@ class CurrencyCodeTextFieldDelegate: NSObject, UITextFieldDelegate {
         let toBeCurrencyCode = presentString + string
         if toBeCurrencyCode.characters.count == 3 {
             print("Check currency code now")
-            print("\(currencyHelper.isValid(currencyCode: toBeCurrencyCode))")
-            if !currencyHelper.isValid(currencyCode: toBeCurrencyCode) {
+            print("\(CurrencyHelper.isValid(currencyCode: toBeCurrencyCode))")
+            if !CurrencyHelper.isValid(currencyCode: toBeCurrencyCode) {
                 showAlert(validationMessage: "\(toBeCurrencyCode) is an invalid currency code")
                 return false
             }

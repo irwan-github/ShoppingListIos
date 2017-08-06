@@ -10,28 +10,20 @@ import Foundation
 
 struct CurrencyHelper {
     
-    var userLocale: Locale = Locale.current
-    var availableCurrencyCodes = NSLocale.isoCurrencyCodes as NSArray
-        
-    init() {
-        let countryCode = UserDefaults.standard.value(forKey: "country_code") as! String
-        self.init(languangeCode: "en", countryCode: countryCode)
-    }
+    //var userLocale: Locale = Locale.current
+    static var availableCurrencyCodes = NSLocale.isoCurrencyCodes as NSArray
+    static let countryCode = UserDefaults.standard.value(forKey: "country_code") as! String
+    static var userLocale = Locale(identifier: "en" + "_" + countryCode)
     
-    init(languangeCode: String, countryCode: String) {
-        let languageTag = languangeCode + "_" + countryCode
-        userLocale = Locale(identifier: languageTag)
-    }
-    
-    func getHomeCurrencyCode() -> String? {
+    static func getHomeCurrencyCode() -> String? {
         
-        return userLocale.currencyCode
+        return CurrencyHelper.userLocale.currencyCode
     }
     
     /**
      Validates a given currency code
     */
-    func isValid(currencyCode code: String) -> Bool {
+    static func isValid(currencyCode code: String) -> Bool {
         let filterCurrencyCode = NSPredicate(format: "SELF == %@", code)
         return availableCurrencyCodes.filtered(using: filterCurrencyCode).count > 0
     }

@@ -22,11 +22,11 @@ struct ExchangeRate {
         
         let formatter: NumberFormatter = NumberFormatter()
         
-        formatter.locale = currencyHelper.userLocale
+        formatter.locale = CurrencyHelper.userLocale
         
         formatter.numberStyle = .currency
         
-        formatter.internationalCurrencySymbol = currencyHelper.getHomeCurrencyCode()
+        formatter.internationalCurrencySymbol = CurrencyHelper.getHomeCurrencyCode()
         
         let translated = foreignAmount / (costInForeignCurrencyToGetOneUnitOfBaseCurrency!)
         

@@ -21,7 +21,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
-    let userLocale: Locale = CurrencyHelper(languangeCode: "en", countryCode: "SG").userLocale
+    let currencyHelper = CurrencyHelper()
     
     private var item: Item? {
         didSet {
@@ -178,11 +178,11 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             if let newValue = newValue {
                 unitPriceTextField?.text = Helper.string(from: newValue, fractionDigits: 2)
-                unitCurrencyCodeTextField?.text = unitPrice?.currencyCode ?? userLocale.currencyCode
+                unitCurrencyCodeTextField?.text = unitPrice?.currencyCode ?? CurrencyHelper.getHomeCurrencyCode()
                 
             } else {
                 unitPriceTextField?.text = nil
-                unitCurrencyCodeTextField?.text = userLocale.currencyCode
+                unitCurrencyCodeTextField?.text = CurrencyHelper.getHomeCurrencyCode()
             }
         }
     }
@@ -206,10 +206,10 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             if let newValue = newValue {
                 bundlePriceTextField?.text = Helper.string(from: newValue, fractionDigits: 2)
-                bundleCurrencyCodeTextField?.text = bundlePrice?.currencyCode ?? userLocale.currencyCode
+                bundleCurrencyCodeTextField?.text = bundlePrice?.currencyCode ?? CurrencyHelper.getHomeCurrencyCode()
             } else {
                 bundlePriceTextField?.text = nil
-                bundleCurrencyCodeTextField?.text = userLocale.currencyCode
+                bundleCurrencyCodeTextField?.text = CurrencyHelper.getHomeCurrencyCode()
             }
         }
     }
@@ -699,7 +699,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             item.addToPrices(unitPrice!)
         }
         
-        unitPrice?.currencyCode = unitCurrencyCodeTextField.text ?? userLocale.currencyCode
+        unitPrice?.currencyCode = unitCurrencyCodeTextField.text ?? CurrencyHelper.getHomeCurrencyCode()
         unitPrice?.quantityConvert = 1
         unitPrice?.valueConvert = unitPriceVc ?? 0
         unitPrice?.type = 0
@@ -714,7 +714,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
         let t = bundleCurrencyCodeTextField.text
         print("\(t!)")
-        bundlePrice?.currencyCode = bundleCurrencyCodeTextField.text ?? userLocale.currencyCode
+        bundlePrice?.currencyCode = bundleCurrencyCodeTextField.text ?? CurrencyHelper.getHomeCurrencyCode()
         bundlePrice?.valueConvert = bundlePriceVc ?? 0
         bundlePrice?.quantityConvert = bundleQtyPricingInfoVc ?? 2
         bundlePrice?.type = 1
@@ -779,7 +779,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     func validateCurrencyCode() -> Bool {
         
-        guard let unitCurrencyCode = unitCurrencyCodeTextField.text, CurrencyHelper().isValid(currencyCode: unitCurrencyCode) else {
+        guard let unitCurrencyCode = unitCurrencyCodeTextField.text, CurrencyHelper.isValid(currencyCode: unitCurrencyCode) else {
             let alert = UIAlertController(title: "Unit price currency code is invalid", message: nil, preferredStyle: .alert)
             let action = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(action)
@@ -791,7 +791,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             return false
         }
         
-        guard let bundleCurrencyCode = bundleCurrencyCodeTextField.text, CurrencyHelper().isValid(currencyCode: bundleCurrencyCode) else {
+        guard let bundleCurrencyCode = bundleCurrencyCodeTextField.text, CurrencyHelper.isValid(currencyCode: bundleCurrencyCode) else {
             let alert = UIAlertController(title: "Bundle price currency code is invalid", message: nil, preferredStyle: .alert)
             let action = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(action)
@@ -870,6 +870,10 @@ class ShoppingListItemEditorViewController: UIViewController {
         switch nextState {
         case .newListItem:
             self.deleteItemButton.isEnabled = false
+            
+            self.unitCurrencyCodeTextField.text = CurrencyHelper.getHomeCurrencyCode()
+            
+            self.bundleCurrencyCodeTextField.text = "GBP"
             
             self.pictureState.transition(event: .onLoad(nil), handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
             
