@@ -99,7 +99,7 @@
                                 <rect key="frame" x="0.0" y="28" width="320" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jBR-AZ-Vdw" id="sV6-kS-MqP">
-                                    <rect key="frame" x="0.0" y="0.0" width="287" height="65.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="66"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="KLq-yZ-n5V">
@@ -185,7 +185,7 @@
                                 <rect key="frame" x="0.0" y="28" width="320" height="91"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WSJ-Dv-71D" id="Gl5-3v-eNb">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="90.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="n3b-tS-Vut" userLabel="Parent">
@@ -386,7 +386,7 @@
                                 <rect key="frame" x="0.0" y="58" width="320" height="91"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mIW-c7-dPp" id="B7q-Of-6sB">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="90.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="rJF-y2-8NZ" userLabel="Parent">
@@ -975,11 +975,18 @@
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" id="Hkr-c7-L14">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="3Ss-ve-7xg">
-                            <connections>
-                                <action selector="onCancel:" destination="m5J-7J-iQ3" id="ytG-9E-5AC"/>
-                            </connections>
-                        </barButtonItem>
+                        <leftBarButtonItems>
+                            <barButtonItem systemItem="cancel" id="3Ss-ve-7xg">
+                                <connections>
+                                    <action selector="onCancel:" destination="m5J-7J-iQ3" id="ytG-9E-5AC"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem systemItem="trash" id="tos-AG-9rn">
+                                <connections>
+                                    <action selector="onDeleteItem:" destination="m5J-7J-iQ3" id="q5v-cR-bIo"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="done" id="UbO-5p-caz">
                                 <connections>
@@ -989,11 +996,6 @@
                             <barButtonItem systemItem="search" id="XZ6-iU-qIi">
                                 <connections>
                                     <segue destination="bEI-Jw-FTe" kind="show" identifier="Search item" id="we8-45-Iff"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="trash" id="qHj-DE-Oof">
-                                <connections>
-                                    <action selector="onDeleteItem:" destination="m5J-7J-iQ3" id="9mV-dN-lQu"/>
                                 </connections>
                             </barButtonItem>
                         </rightBarButtonItems>
@@ -1010,7 +1012,7 @@
                         <outlet property="bundleQtyStepper" destination="Zc2-WG-Ot0" id="OfG-HS-U0m"/>
                         <outlet property="cancelButton" destination="3Ss-ve-7xg" id="xvR-su-VfU"/>
                         <outlet property="countryOriginTextField" destination="g5c-i1-FMJ" id="YSk-VX-K97"/>
-                        <outlet property="deleteItemButton" destination="qHj-DE-Oof" id="FHh-J7-C0V"/>
+                        <outlet property="deleteItemButton" destination="tos-AG-9rn" id="5UU-5W-KCc"/>
                         <outlet property="descriptionTextField" destination="Hbw-vf-Cqj" id="gO4-M3-F3N"/>
                         <outlet property="doneButton" destination="UbO-5p-caz" id="HFb-de-Kq5"/>
                         <outlet property="itemDetailsStackView" destination="fsJ-O9-spr" id="5nB-VK-0mG"/>
