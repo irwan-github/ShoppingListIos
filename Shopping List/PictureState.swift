@@ -23,7 +23,7 @@ enum PictureState {
         case onSaveImage((PictureState) -> Void)
         case onFinishPickingCameraMedia(UIImage)
         case onDelete
-        case onLoad(String?)
+        case onLoad(String?) //filename of picture file
     }
     
     init() {

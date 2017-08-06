@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import MobileCoreServices
 
 class ShoppingListItemEditorViewController: UIViewController {
     
@@ -242,7 +243,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let tapper = UITapGestureRecognizer(target: self, action: #selector(endEditing))
+        let tapper = UITapGestureRecognizer(target: self, action: #selector(endTextFieldEditing))
         tapper.cancelsTouchesInView = false
         view.addGestureRecognizer(tapper)
         
@@ -972,12 +973,12 @@ class ShoppingListItemEditorViewController: UIViewController {
         }
     }
     
+    /**
+     Present action sheet as a popover if in iPad. In iPhone, it is presented as a default action sheet.
+     */
     @IBAction func onPickPicture(_ sender: UITapGestureRecognizer) {
         
-        endEditing()
-        
-        //Create a action sheet
-        let pictureActionSheetController = pictureActionSheet
+        endTextFieldEditing()
         
         //The following will cause app to adapt to iPad by presenting action sheet as popover on an iPad.
         pictureActionSheetController.modalPresentationStyle = .popover
@@ -1008,54 +1009,74 @@ class ShoppingListItemEditorViewController: UIViewController {
 
 extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
-    var pictureActionSheet: UIAlertController {
-        //Create a action sheet
+    /**
+     Action sheet that shows option of picking a picture from camera or from album or delete an existing picture.
+     Provides:
+     - Cancel button all the time.
+     - Delete button when there is an existing picture.
+     - Camera button if device has a camera
+     - Album button
+     */
+    fileprivate var pictureActionSheetController: UIAlertController {
+        
+        //Create initial action sheet
         let pictureActionSheet = UIAlertController(title: "Show a picture of the item", message: nil, preferredStyle: .actionSheet)
         
-        //HIG: A Cancel button instills confidence when the user is abandoning a task. Cancel button will not be displayed in iPad.
+        //HIG: Add a cencel button for all cases. A Cancel button instills confidence when the user is abandoning a task. Cancel button will not be displayed in iPad.
         pictureActionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
         switch pictureState {
+            
         case .none, .delete:
             break
+            
         default:
             //HIG: Make destructive choices prominent. Use red for buttons that perform destructive or dangerous actions, and display these buttons at the top of an action sheet.
-            pictureActionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: onPictureActionHandler))
+            pictureActionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { alertAction in
+                
+                self.onPickPicture(action: alertAction)
+            }))
         }
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
-            pictureActionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: onPictureActionHandler))
+            
+            pictureActionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: { alertAction in
+                
+                self.onPickPicture(action: alertAction)
+            }))
+            
         }
         
-        pictureActionSheet.addAction(UIAlertAction(title: "Album", style: .default, handler: onPictureActionHandler))
+        pictureActionSheet.addAction(UIAlertAction(title: "Album", style: .default, handler: { alertAction in
+            
+            self.onPickPicture(action: alertAction)
+        }))
         
         return pictureActionSheet
     }
     
-    var onPictureActionHandler: (UIAlertAction) -> Void {
-        get {
-            return { action in
-                switch action.title! {
-                case "Camera":
-                    self.activateImagePicketController(sourceType: .camera)
-                    
-                case "Album":
-                    self.activateImagePicketController(sourceType: .savedPhotosAlbum)
-                    
-                case "Delete":
-                    
-                    self.pictureState.transition(event: .onDelete, handleNextStateUiAttributes: {
-                        
-                        pictureState, itemPicture in
-                        
-                        self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
-                    })
-                    
-                    self.changeState.transition(event: .onDeletePicture, handleNextStateUiAttributes: self.changeStateAttributeHandler)
-                default:
-                    break
-                }
-            }
+    func onPickPicture(action: UIAlertAction) {
+        
+        switch action.title! {
+            
+        case "Camera":
+            self.activateImagePicketController(sourceType: .camera)
+            
+        case "Album":
+            self.activateImagePicketController(sourceType: .savedPhotosAlbum)
+            
+        case "Delete":
+            
+            self.pictureState.transition(event: .onDelete, handleNextStateUiAttributes: {
+                
+                pictureState, itemPicture in
+                
+                self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
+            })
+            
+            self.changeState.transition(event: .onDeletePicture, handleNextStateUiAttributes: self.changeStateAttributeHandler)
+        default:
+            break
         }
     }
     
@@ -1096,7 +1117,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                 break
                 
             case .new:
-                self.savePictureInFilesystemAndCoreData(of: item, in: moc)
+                self.savePictureInFilesystemAndMoc(of: item, in: moc)
                 
             case .replacement:
                 
@@ -1108,7 +1129,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                     //Delete existing picture from database
                     moc.delete(item.picture!)
                     
-                    self.savePictureInFilesystemAndCoreData(of: item, in: moc)
+                    self.savePictureInFilesystemAndMoc(of: item, in: moc)
                 }
                 
             case .delete:
@@ -1128,7 +1149,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         }))
     }
     
-    func savePictureInFilesystemAndCoreData(of item: Item, in moc: NSManagedObjectContext) {
+    func savePictureInFilesystemAndMoc(of item: Item, in moc: NSManagedObjectContext) {
         
         let stringFilename = writeImagePickedFromCameraToFile()
         
@@ -1172,6 +1193,7 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
         imagePickerController.delegate = self
         imagePickerController.allowsEditing = false
         imagePickerController.sourceType = sourceType
+        imagePickerController.mediaTypes = [kUTTypeImage as String]
         if sourceType == .camera {
             imagePickerController.cameraCaptureMode = .photo
         }
@@ -1181,18 +1203,25 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
-        guard let selectedOriginalItemImage = info[UIImagePickerControllerOriginalImage] as? UIImage else { return }
+        guard let mediaType: String = info[UIImagePickerControllerMediaType] as? String else {
+            dismiss(animated: true, completion: nil)
+            return
+        }
         
-        pictureState.transition(event: .onFinishPickingCameraMedia(selectedOriginalItemImage), handleNextStateUiAttributes: {
+        if mediaType == (kUTTypeImage as String) {
             
-            pictureState, itemPicture in
-        
-            self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
-        
-        
-        })
-        
-        changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
+            // The user has selected an image
+            guard let selectedOriginalItemImage = info[UIImagePickerControllerOriginalImage] as? UIImage else { return }
+            
+            pictureState.transition(event: .onFinishPickingCameraMedia(selectedOriginalItemImage), handleNextStateUiAttributes: {
+                
+                pictureState, itemPicture in
+                
+                self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
+            })
+            
+            changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
+        }
         
         self.dismiss(animated: true, completion: { print("completion dismiss imagePickerVc")})
         
@@ -1208,8 +1237,8 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
 // MARK: - Handle change state transition event action and ui attributes
 extension ShoppingListItemEditorViewController: UITextFieldDelegate {
     
-    
     var changeStateAttributeHandler: (ChangeState) -> Void {
+        
         return { changeState in
             
             switch changeState {
@@ -1225,6 +1254,7 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
     }
     
     var changeStateOnCancelEventAction: (ChangeState) -> Void {
+        
         return { (changeState: ChangeState) -> Void  in
             
             switch changeState {
@@ -1407,7 +1437,7 @@ extension ShoppingListItemEditorViewController {
         let positionOfPriceTextField = priceTextFieldStackView.frame.origin.y + priceTextFieldRelativeHeight
         
         return positionOfPriceTextField
-
+        
     }
     
     func processAdjustmentsForIpad(keyboard: CGRect) {
@@ -1465,7 +1495,7 @@ extension ShoppingListItemEditorViewController {
         
         let navBarHeight = navigationController?.navigationBar.frame.height ?? 0
         let yPosBundleQtyAdjuster = bundleQtyAdjusterStackView.frame.origin.y
-
+        
         let heightBundleQtyAdjuster = bundleQtyAdjusterStackView.frame.size.height
         let bundleQtyAdjusterLayoutSizeFittingForHeight = priceTextFieldStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
         let heightCompressed = yPosBundleQtyAdjuster + heightBundleQtyAdjuster - (priceTextFieldStackView.frame.size.height - bundleQtyAdjusterLayoutSizeFittingForHeight) - navBarHeight
@@ -1475,8 +1505,8 @@ extension ShoppingListItemEditorViewController {
     
     /**
      Dismiss keyboard when a new tap gesture is detected.
-    */
-    func endEditing() {
+     */
+    func endTextFieldEditing() {
         itemDetailsTextFieldsState.next(event: .endEditing, completionHandler: nil)
         unitPriceTextField.resignFirstResponder()
         unitCurrencyCodeTextField.resignFirstResponder()
