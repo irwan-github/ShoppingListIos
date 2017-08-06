@@ -110,8 +110,6 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     @IBOutlet weak var pricingInformationSc: UISegmentedControl!
     
-    @IBOutlet weak var bundleQtyStackView: UIStackView!
-    
     @IBOutlet weak var unitCurrencyCodeTextField: UITextField! {
         didSet {
             unitCurrencyCodeTextField.delegate = currencyCodeTextFieldDelegate
@@ -379,20 +377,17 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         switch priceType {
         case .unit:
-            bundlePriceStackView.isHidden = true
+
             unitPriceStackView.isHidden = false
-            unitPriceTextField.isHidden = false
-            bundlePriceTextField.isHidden = true
-            unitCurrencyCodeTextField.isHidden = false
-            bundleCurrencyCodeTextField.isHidden = true
+            
+            bundlePriceStackView.isHidden = true
+            bundleQtyAdjusterStackView.isHidden = true
             
         case .bundle:
             bundlePriceStackView.isHidden = false
+            bundleQtyAdjusterStackView.isHidden = false
+            
             unitPriceStackView.isHidden = true
-            unitPriceTextField.isHidden = true
-            bundlePriceTextField.isHidden = false
-            unitCurrencyCodeTextField.isHidden = true
-            bundleCurrencyCodeTextField.isHidden = false
         }
     }
     
@@ -976,10 +971,8 @@ class ShoppingListItemEditorViewController: UIViewController {
     fileprivate var isKeyboardOnScreen = false
     
     @IBOutlet weak var itemDetailsStackView: UIStackView!
-    
-    @IBOutlet weak var purchaseInfoStackView: UIStackView!
-    
-    @IBOutlet weak var priceInformationStackView: UIStackView!
+        
+    @IBOutlet weak var bundleQtyAdjusterStackView: UIStackView!
     
     @IBOutlet weak var priceTextFieldStackView: UIStackView!
     
@@ -1379,11 +1372,12 @@ extension ShoppingListItemEditorViewController {
     
     fileprivate var priceGroupYpositionInHeightForIphone: CGFloat {
         
-        let priceTextFieldRelativeHeight = priceTextFieldStackView.frame.origin.y
+        let priceTextFieldRelativeHeight = priceTextFieldStackView.frame.size.height
         
-        let positionOfPriceTextField = priceInformationStackView.frame.origin.y + priceTextFieldRelativeHeight
+        let positionOfPriceTextField = priceTextFieldStackView.frame.origin.y + priceTextFieldRelativeHeight
         
         return positionOfPriceTextField
+
     }
     
     func processAdjustmentsForIpad(keyboard: CGRect) {
@@ -1439,9 +1433,14 @@ extension ShoppingListItemEditorViewController {
      */
     fileprivate func calculatePreferredContentSize() -> CGSize {
         
-        let heightAggregate = priceGroupYpositionInHeightForIphone
-        let widthAggregate = purchaseInfoStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).width + 32
-        return CGSize(width: widthAggregate, height: heightAggregate)
+        let navBarHeight = navigationController?.navigationBar.frame.height ?? 0
+        let yPosBundleQtyAdjuster = bundleQtyAdjusterStackView.frame.origin.y
+
+        let heightBundleQtyAdjuster = bundleQtyAdjusterStackView.frame.size.height
+        let bundleQtyAdjusterLayoutSizeFittingForHeight = priceTextFieldStackView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
+        let heightCompressed = yPosBundleQtyAdjuster + heightBundleQtyAdjuster - (priceTextFieldStackView.frame.size.height - bundleQtyAdjusterLayoutSizeFittingForHeight) - navBarHeight
+        
+        return CGSize(width: 0, height: heightCompressed)
     }
     
     /**

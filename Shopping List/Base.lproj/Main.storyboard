@@ -99,7 +99,7 @@
                                 <rect key="frame" x="0.0" y="28" width="320" height="66"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="jBR-AZ-Vdw" id="sV6-kS-MqP">
-                                    <rect key="frame" x="0.0" y="0.0" width="287" height="66"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="65.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="KLq-yZ-n5V">
@@ -185,7 +185,7 @@
                                 <rect key="frame" x="0.0" y="28" width="320" height="91"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="WSJ-Dv-71D" id="Gl5-3v-eNb">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="90.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="n3b-tS-Vut" userLabel="Parent">
@@ -386,7 +386,7 @@
                                 <rect key="frame" x="0.0" y="58" width="320" height="91"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mIW-c7-dPp" id="B7q-Of-6sB">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="91"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="90.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="rJF-y2-8NZ" userLabel="Parent">
@@ -747,10 +747,10 @@
                                     <constraint firstItem="2lG-B4-4Ex" firstAttribute="height" secondItem="p8W-PP-MaE" secondAttribute="height" id="fZY-QI-AHe"/>
                                 </constraints>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" verticalHuggingPriority="300" horizontalCompressionResistancePriority="700" verticalCompressionResistancePriority="700" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="W72-eu-lZd" userLabel="Buy qty and price Stack View">
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="M1a-Kl-9aR" userLabel="Buy Qty &amp; Price select Stack View">
                                 <rect key="frame" x="16" y="208" width="288" height="99"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0Ik-Xz-R8c" userLabel="Qty to buy Stack View">
+                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="0Ik-Xz-R8c" userLabel="Buy Qty Stack View">
                                         <rect key="frame" x="0.0" y="0.0" width="136" height="99"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="200" verticalHuggingPriority="300" horizontalCompressionResistancePriority="800" verticalCompressionResistancePriority="800" text="Qty to buy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ueW-mM-7Ld">
@@ -773,7 +773,7 @@
                                             </stepper>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="X8o-52-qFX" userLabel="Pick price Stack View">
+                                    <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="X8o-52-qFX" userLabel="Price Select Stack View">
                                         <rect key="frame" x="152" y="0.0" width="136" height="99"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select price" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e61-7p-cJy">
@@ -825,8 +825,58 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="200" verticalHuggingPriority="200" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ZA9-iO-Gnb">
+                                <rect key="frame" x="103.5" y="323" width="113" height="29"/>
+                                <segments>
+                                    <segment title="Unit"/>
+                                    <segment title="Bundle"/>
+                                </segments>
+                                <connections>
+                                    <action selector="onDisplayPriceTypeInformation:" destination="m5J-7J-iQ3" eventType="valueChanged" id="G1J-4I-7nE"/>
+                                </connections>
+                            </segmentedControl>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="0aR-RC-0YY" userLabel="Pricing Info Stack View">
+                                <rect key="frame" x="48" y="367" width="224" height="60"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e2H-Qf-et4" userLabel="Unit price Stack View">
+                                        <rect key="frame" x="0.0" y="0.0" width="224" height="30"/>
+                                        <subviews>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cac-Wg-wl9" userLabel="Unit currency code">
+                                                <rect key="frame" x="0.0" y="0.0" width="56" height="30"/>
+                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" autocorrectionType="no" spellCheckingType="no" enablesReturnKeyAutomatically="YES"/>
+                                            </textField>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="200" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Unit" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L8j-Al-QPM" userLabel="Unit Price">
+                                                <rect key="frame" x="56" y="0.0" width="168" height="30"/>
+                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="numbersAndPunctuation"/>
+                                            </textField>
+                                        </subviews>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sJk-qi-qn4" userLabel="Bundle price Stack View">
+                                        <rect key="frame" x="0.0" y="30" width="224" height="30"/>
+                                        <subviews>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PpG-Vd-7R2" userLabel="Bundle currency code">
+                                                <rect key="frame" x="0.0" y="0.0" width="56" height="30"/>
+                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" autocorrectionType="no" spellCheckingType="no"/>
+                                            </textField>
+                                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="200" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Bundle" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="v2o-T4-dtO" userLabel="Bundle Price">
+                                                <rect key="frame" x="56" y="0.0" width="168" height="30"/>
+                                                <nil key="textColor"/>
+                                                <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="numbersAndPunctuation" enablesReturnKeyAutomatically="YES"/>
+                                            </textField>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <variation key="heightClass=compact" alignment="fill" axis="vertical"/>
+                            </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="300" axis="vertical" alignment="center" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Kcn-8f-2Zs" userLabel="Adjust Bundle Qty Stack View">
-                                <rect key="frame" x="113" y="323" width="94" height="99"/>
+                                <rect key="frame" x="113" y="435" width="94" height="99"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="800" text="Bundle" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1kS-Wt-Vkw" userLabel="Buble Qty Label">
                                         <rect key="frame" x="20.5" y="0.0" width="53.5" height="20.5"/>
@@ -848,132 +898,79 @@
                                     </stepper>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="200" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="T8n-v8-yzD" userLabel="Price Info Stack View">
-                                <rect key="frame" x="64" y="438" width="192" height="96"/>
-                                <subviews>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="300" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="ZA9-iO-Gnb">
-                                        <rect key="frame" x="0.0" y="0.0" width="192" height="29"/>
-                                        <segments>
-                                            <segment title="Unit"/>
-                                            <segment title="Bundle"/>
-                                        </segments>
-                                        <connections>
-                                            <action selector="onDisplayPriceTypeInformation:" destination="m5J-7J-iQ3" eventType="valueChanged" id="G1J-4I-7nE"/>
-                                        </connections>
-                                    </segmentedControl>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="mxe-Uw-BML" userLabel="Price Stack View">
-                                        <rect key="frame" x="0.0" y="36" width="192" height="60"/>
-                                        <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e2H-Qf-et4" userLabel="Unit price Stack View">
-                                                <rect key="frame" x="0.0" y="0.0" width="192" height="30"/>
-                                                <subviews>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="cac-Wg-wl9" userLabel="Unit currency code">
-                                                        <rect key="frame" x="0.0" y="0.0" width="56" height="30"/>
-                                                        <nil key="textColor"/>
-                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" autocorrectionType="no" spellCheckingType="no" enablesReturnKeyAutomatically="YES"/>
-                                                    </textField>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="200" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="#.##" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="L8j-Al-QPM" userLabel="Unit Price">
-                                                        <rect key="frame" x="56" y="0.0" width="136" height="30"/>
-                                                        <nil key="textColor"/>
-                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="numbersAndPunctuation"/>
-                                                    </textField>
-                                                </subviews>
-                                            </stackView>
-                                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sJk-qi-qn4" userLabel="Bundle price Stack View">
-                                                <rect key="frame" x="0.0" y="30" width="192" height="30"/>
-                                                <subviews>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="SGD" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PpG-Vd-7R2" userLabel="Bundle currency code">
-                                                        <rect key="frame" x="0.0" y="0.0" width="56" height="30"/>
-                                                        <nil key="textColor"/>
-                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <textInputTraits key="textInputTraits" autocapitalizationType="allCharacters" autocorrectionType="no" spellCheckingType="no"/>
-                                                    </textField>
-                                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="200" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="#.##" textAlignment="natural" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="v2o-T4-dtO" userLabel="Bundle Price">
-                                                        <rect key="frame" x="56" y="0.0" width="136" height="30"/>
-                                                        <nil key="textColor"/>
-                                                        <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                                                        <textInputTraits key="textInputTraits" spellCheckingType="no" keyboardType="numbersAndPunctuation" enablesReturnKeyAutomatically="YES"/>
-                                                    </textField>
-                                                </subviews>
-                                            </stackView>
-                                        </subviews>
-                                    </stackView>
-                                </subviews>
-                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="T8n-v8-yzD" secondAttribute="trailing" id="1aI-Md-jKg"/>
-                            <constraint firstItem="T8n-v8-yzD" firstAttribute="bottom" secondItem="Kcn-8f-2Zs" secondAttribute="bottom" id="2Ov-vA-Mdd"/>
-                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="top" secondItem="W72-eu-lZd" secondAttribute="top" id="5cS-h7-LRs"/>
-                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="leading" secondItem="W72-eu-lZd" secondAttribute="trailing" constant="16" id="699-QT-Mj0"/>
-                            <constraint firstItem="T8n-v8-yzD" firstAttribute="leading" secondItem="m55-fy-D4h" secondAttribute="leadingMargin" constant="138" id="91a-re-cwS">
-                                <variation key="heightClass=regular" constant="48"/>
-                            </constraint>
-                            <constraint firstItem="T8n-v8-yzD" firstAttribute="top" secondItem="Kcn-8f-2Zs" secondAttribute="top" id="A5n-yT-dzV"/>
+                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="centerX" secondItem="m55-fy-D4h" secondAttribute="centerX" id="1pH-hN-9qp"/>
+                            <constraint firstItem="0aR-RC-0YY" firstAttribute="top" relation="greaterThanOrEqual" secondItem="ZA9-iO-Gnb" secondAttribute="bottom" constant="8" id="6Ct-KS-EuH"/>
+                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="leading" secondItem="0aR-RC-0YY" secondAttribute="trailing" constant="8" id="6xJ-27-x3a"/>
+                            <constraint firstItem="ZA9-iO-Gnb" firstAttribute="top" secondItem="M1a-Kl-9aR" secondAttribute="top" id="8xN-Oe-bCb"/>
+                            <constraint firstItem="0aR-RC-0YY" firstAttribute="bottom" secondItem="M1a-Kl-9aR" secondAttribute="bottom" id="BAh-dF-iKX"/>
                             <constraint firstItem="fsJ-O9-spr" firstAttribute="top" secondItem="yWl-hw-Gqq" secondAttribute="bottom" constant="8" id="HX7-6O-FJl"/>
-                            <constraint firstItem="W72-eu-lZd" firstAttribute="top" secondItem="fsJ-O9-spr" secondAttribute="bottom" constant="16" id="JRO-E7-vtW"/>
+                            <constraint firstItem="0aR-RC-0YY" firstAttribute="top" secondItem="ZA9-iO-Gnb" secondAttribute="bottom" constant="16" id="HZx-2x-I3G"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="M1a-Kl-9aR" secondAttribute="leading" id="JNB-l8-Beh"/>
+                            <constraint firstItem="ZA9-iO-Gnb" firstAttribute="leading" secondItem="M1a-Kl-9aR" secondAttribute="trailing" constant="16" id="MbE-ja-AyS"/>
+                            <constraint firstItem="ZA9-iO-Gnb" firstAttribute="centerX" secondItem="m55-fy-D4h" secondAttribute="centerX" id="Mmh-Ta-foU"/>
                             <constraint firstAttribute="trailingMargin" secondItem="fsJ-O9-spr" secondAttribute="trailing" id="RJd-Xx-8sg"/>
-                            <constraint firstItem="T8n-v8-yzD" firstAttribute="leading" secondItem="Kcn-8f-2Zs" secondAttribute="trailing" id="VHe-dY-fMz">
-                                <variation key="heightClass=compact" constant="16"/>
-                            </constraint>
-                            <constraint firstAttribute="trailingMargin" secondItem="T8n-v8-yzD" secondAttribute="trailing" id="Vbg-MG-vtE"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="W72-eu-lZd" secondAttribute="trailing" id="aSz-4p-MvP"/>
                             <constraint firstAttribute="leadingMargin" secondItem="fsJ-O9-spr" secondAttribute="leading" id="atp-VB-7wL"/>
-                            <constraint firstItem="W72-eu-lZd" firstAttribute="leading" secondItem="m55-fy-D4h" secondAttribute="leadingMargin" id="bWT-jD-wNv"/>
-                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="bottom" secondItem="W72-eu-lZd" secondAttribute="bottom" id="c7k-du-TvK"/>
-                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="centerX" secondItem="m55-fy-D4h" secondAttribute="centerX" id="dOg-9e-jdP"/>
-                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="top" secondItem="W72-eu-lZd" secondAttribute="bottom" constant="16" id="mCR-yt-cTf"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="T8n-v8-yzD" secondAttribute="trailing" constant="48" id="oMJ-Of-dCa"/>
-                            <constraint firstItem="T8n-v8-yzD" firstAttribute="top" secondItem="Kcn-8f-2Zs" secondAttribute="bottom" constant="-16" id="wmv-7C-jyG">
+                            <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="Kcn-8f-2Zs" secondAttribute="trailing" constant="7.5" id="axk-ix-XOr">
+                                <variation key="heightClass=compact" constant="0.0"/>
+                            </constraint>
+                            <constraint firstItem="ZA9-iO-Gnb" firstAttribute="top" secondItem="M1a-Kl-9aR" secondAttribute="bottom" constant="24" id="d0B-Mh-ucB">
                                 <variation key="heightClass=regular" constant="16"/>
                             </constraint>
-                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="bottom" secondItem="T8n-v8-yzD" secondAttribute="top" constant="16" id="xX6-aZ-WfQ">
-                                <variation key="heightClass=regular" constant="16"/>
+                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="top" secondItem="ZA9-iO-Gnb" secondAttribute="top" id="gU6-uk-n1N"/>
+                            <constraint firstItem="Kcn-8f-2Zs" firstAttribute="top" secondItem="0aR-RC-0YY" secondAttribute="bottom" constant="8" id="jfi-vg-HNv"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="M1a-Kl-9aR" secondAttribute="trailing" constant="86.5" id="mgq-VQ-a7D">
+                                <variation key="heightClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstAttribute="trailingMargin" secondItem="0aR-RC-0YY" secondAttribute="trailing" constant="32" id="uI2-HC-YlH"/>
+                            <constraint firstItem="0aR-RC-0YY" firstAttribute="leading" secondItem="ZA9-iO-Gnb" secondAttribute="leading" id="uRD-ae-g7a"/>
+                            <constraint firstItem="0aR-RC-0YY" firstAttribute="leading" secondItem="m55-fy-D4h" secondAttribute="leadingMargin" constant="32" id="wNd-g8-vDc"/>
+                            <constraint firstItem="M1a-Kl-9aR" firstAttribute="top" secondItem="fsJ-O9-spr" secondAttribute="bottom" constant="16" id="xsd-3L-B6K"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
-                                <exclude reference="aSz-4p-MvP"/>
-                                <exclude reference="5cS-h7-LRs"/>
-                                <exclude reference="699-QT-Mj0"/>
-                                <exclude reference="c7k-du-TvK"/>
-                                <exclude reference="dOg-9e-jdP"/>
-                                <exclude reference="mCR-yt-cTf"/>
-                                <exclude reference="xX6-aZ-WfQ"/>
-                                <exclude reference="1aI-Md-jKg"/>
-                                <exclude reference="2Ov-vA-Mdd"/>
-                                <exclude reference="91a-re-cwS"/>
-                                <exclude reference="A5n-yT-dzV"/>
-                                <exclude reference="VHe-dY-fMz"/>
-                                <exclude reference="Vbg-MG-vtE"/>
-                                <exclude reference="oMJ-Of-dCa"/>
-                                <exclude reference="wmv-7C-jyG"/>
+                                <exclude reference="mgq-VQ-a7D"/>
+                                <exclude reference="8xN-Oe-bCb"/>
+                                <exclude reference="MbE-ja-AyS"/>
+                                <exclude reference="Mmh-Ta-foU"/>
+                                <exclude reference="d0B-Mh-ucB"/>
+                                <exclude reference="6Ct-KS-EuH"/>
+                                <exclude reference="BAh-dF-iKX"/>
+                                <exclude reference="HZx-2x-I3G"/>
+                                <exclude reference="uI2-HC-YlH"/>
+                                <exclude reference="uRD-ae-g7a"/>
+                                <exclude reference="wNd-g8-vDc"/>
+                                <exclude reference="1pH-hN-9qp"/>
+                                <exclude reference="6xJ-27-x3a"/>
+                                <exclude reference="axk-ix-XOr"/>
+                                <exclude reference="gU6-uk-n1N"/>
+                                <exclude reference="jfi-vg-HNv"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=compact">
                             <mask key="constraints">
-                                <include reference="5cS-h7-LRs"/>
-                                <include reference="699-QT-Mj0"/>
-                                <include reference="c7k-du-TvK"/>
-                                <include reference="1aI-Md-jKg"/>
-                                <include reference="2Ov-vA-Mdd"/>
-                                <include reference="A5n-yT-dzV"/>
-                                <include reference="VHe-dY-fMz"/>
-                                <exclude reference="Vbg-MG-vtE"/>
+                                <include reference="8xN-Oe-bCb"/>
+                                <include reference="MbE-ja-AyS"/>
+                                <include reference="6Ct-KS-EuH"/>
+                                <include reference="BAh-dF-iKX"/>
+                                <include reference="uRD-ae-g7a"/>
+                                <include reference="6xJ-27-x3a"/>
+                                <include reference="axk-ix-XOr"/>
+                                <include reference="gU6-uk-n1N"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular">
                             <mask key="constraints">
-                                <include reference="aSz-4p-MvP"/>
-                                <include reference="dOg-9e-jdP"/>
-                                <include reference="mCR-yt-cTf"/>
-                                <exclude reference="xX6-aZ-WfQ"/>
-                                <include reference="91a-re-cwS"/>
-                                <include reference="oMJ-Of-dCa"/>
-                                <include reference="wmv-7C-jyG"/>
+                                <include reference="mgq-VQ-a7D"/>
+                                <include reference="Mmh-Ta-foU"/>
+                                <include reference="d0B-Mh-ucB"/>
+                                <include reference="HZx-2x-I3G"/>
+                                <include reference="uI2-HC-YlH"/>
+                                <include reference="wNd-g8-vDc"/>
+                                <include reference="1pH-hN-9qp"/>
+                                <include reference="jfi-vg-HNv"/>
                             </mask>
                         </variation>
                     </view>
@@ -1008,8 +1005,8 @@
                         <outlet property="bundlePriceStackView" destination="sJk-qi-qn4" id="ikh-kU-yBm"/>
                         <outlet property="bundlePriceSwitch" destination="CLG-Yp-S5V" id="Kr3-lh-bqS"/>
                         <outlet property="bundlePriceTextField" destination="v2o-T4-dtO" id="Ye7-zx-zKK"/>
+                        <outlet property="bundleQtyAdjusterStackView" destination="Kcn-8f-2Zs" id="M61-pS-N5J"/>
                         <outlet property="bundleQtyLabel" destination="yGP-c6-iou" id="Asg-xb-xxZ"/>
-                        <outlet property="bundleQtyStackView" destination="Kcn-8f-2Zs" id="Cl4-Rb-DVR"/>
                         <outlet property="bundleQtyStepper" destination="Zc2-WG-Ot0" id="OfG-HS-U0m"/>
                         <outlet property="cancelButton" destination="3Ss-ve-7xg" id="xvR-su-VfU"/>
                         <outlet property="countryOriginTextField" destination="g5c-i1-FMJ" id="YSk-VX-K97"/>
@@ -1020,10 +1017,8 @@
                         <outlet property="itemDetailsTopConstraint" destination="HX7-6O-FJl" id="i6Q-vD-eDW"/>
                         <outlet property="itemImageView" destination="2lG-B4-4Ex" id="jtN-fj-ERz"/>
                         <outlet property="itemNameTextField" destination="Mmb-SA-yLt" id="Koz-ht-kY3"/>
-                        <outlet property="priceInformationStackView" destination="T8n-v8-yzD" id="IC3-Ff-q44"/>
-                        <outlet property="priceTextFieldStackView" destination="mxe-Uw-BML" id="RZi-C5-HQd"/>
+                        <outlet property="priceTextFieldStackView" destination="0aR-RC-0YY" id="pgO-iB-Lsr"/>
                         <outlet property="pricingInformationSc" destination="ZA9-iO-Gnb" id="GAR-Ti-tru"/>
-                        <outlet property="purchaseInfoStackView" destination="W72-eu-lZd" id="jiG-a2-n8s"/>
                         <outlet property="quantityToBuyLabel" destination="i9w-bW-egx" id="RGQ-Dn-xvK"/>
                         <outlet property="quantityToBuyStepper" destination="RQN-pf-Vcy" id="rUA-Fb-bWO"/>
                         <outlet property="unitCurrencyCodeTextField" destination="cac-Wg-wl9" id="kLe-8f-9cI"/>
