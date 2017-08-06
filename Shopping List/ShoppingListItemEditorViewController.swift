@@ -52,7 +52,9 @@ class ShoppingListItemEditorViewController: UIViewController {
     
     fileprivate var validationItemState = ValidationItemState()
     
-    fileprivate var itemDetailsTextFieldsState = ItemDetailsTextFieldState()
+    //fileprivate var itemDetailsTextFieldsState = ItemDetailsTextFieldState()
+    
+    var textFieldStateController = TextFieldStateController()
     
     // MARK: - Properties
     
@@ -270,11 +272,14 @@ class ShoppingListItemEditorViewController: UIViewController {
         brandTextField.delegate = self
         countryOriginTextField.delegate = self
         descriptionTextField.delegate = self
+        //unitCurrencyCodeTextField.delegate = self
         
         moneyTextFieldDelegate.vc = self
         moneyTextFieldDelegate.changeState = changeState
         unitPriceTextField.delegate = moneyTextFieldDelegate
         bundlePriceTextField.delegate = moneyTextFieldDelegate
+        
+        textFieldStateController.handler = transferFirstResponderHandler
         
         if shoppingListItem == nil {
             title = "New Item"
@@ -363,7 +368,7 @@ class ShoppingListItemEditorViewController: UIViewController {
         
         if let priceType = PriceType(rawValue: sender.selectedSegmentIndex) {
             
-            setPricingControlAttributes(priceType: priceType)
+            displayPricingInfo(for: priceType)
         }
     }
     
@@ -374,11 +379,11 @@ class ShoppingListItemEditorViewController: UIViewController {
     /**
      Display and hide price control depending on the price type
      */
-    func setPricingControlAttributes(priceType: PriceType) {
+    func displayPricingInfo(for priceType: PriceType) {
         
         switch priceType {
         case .unit:
-
+            
             unitPriceStackView.isHidden = false
             
             bundlePriceStackView.isHidden = true
@@ -887,11 +892,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.pricingControlsAttributeHandler)
             
-            self.itemDetailsTextFieldsState.next(event: .onLoad(self.itemNameTextField.tag), completionHandler: { nextState in
-                
-                self.shouldBeginEditing(nextState: nextState)
-                
-            })
+            self.textFieldStateController.next(event: .onLoad(self.itemNameTextField.tag))
             
         case .existingListItem:
             
@@ -991,7 +992,7 @@ class ShoppingListItemEditorViewController: UIViewController {
     fileprivate var isKeyboardOnScreen = false
     
     @IBOutlet weak var itemDetailsStackView: UIStackView!
-        
+    
     @IBOutlet weak var bundleQtyAdjusterStackView: UIStackView!
     
     @IBOutlet weak var priceTextFieldStackView: UIStackView!
@@ -1285,6 +1286,16 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         }
     }
     
+    //Just before a text object becomes first responder
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        
+        //Keep track of the current state but let iOS handle the keyboard and responder actions
+        textFieldStateController.next(event: .shouldBeginEditing(textField))
+        
+        return true
+    }
+    
+    //The delegate validate each character as it is entered into a text field
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
         changeState.transition(event: .onChangeCharacters, handleNextStateUiAttributes: changeStateAttributeHandler)
@@ -1294,54 +1305,57 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         return true
     }
     
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+    //When the user taps the return key, TextField sends message to the delegate to ask whether it should resign first responder.
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
-        //Keep track of the current state but let iOS handle the keyboard and responder actions
-        itemDetailsTextFieldsState.next(event: .shouldBeginEditing(textField.tag), completionHandler: nil)
+        textFieldStateController.next(event: .shouldReturn)
         
         return true
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        
-        itemDetailsTextFieldsState.next(event: .shouldReturn  ,completionHandler: { nextState in
-            
-            if nextState == .transient {
-                textField.resignFirstResponder()
-            }
-            
-            self.shouldBeginEditing(nextState: nextState)
-            
-        })
-        
-        return true
-    }
+    //Just after text a object resigns first responder. A delegate can implement these methods to get the text that the user has just entered or edited.
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         
-        itemDetailsTextFieldsState.next(event: .didEndEditing  ,completionHandler: nil)
+        textFieldStateController.next(event: .didEndEditing)
     }
     
-    func shouldBeginEditing(nextState: ItemDetailsTextFieldState) {
+    var transferFirstResponderHandler: (TextFieldStateController.State) -> Void {
         
-        switch nextState {
+        get {
             
-        case .nameTag:
-            self.itemNameTextField.becomeFirstResponder()
-            
-        case .brandTag:
-            self.brandTextField.becomeFirstResponder()
-            
-        case .countryTag:
-            self.countryOriginTextField.becomeFirstResponder()
-            
-        case .descriptionTag:
-            self.descriptionTextField.becomeFirstResponder()
-            
-        default:
-            break
+            return {
+                
+                nextState in
+                
+                switch nextState {
+                    
+                case .transient:
+                    self.textFieldStateController.currTextField?.resignFirstResponder()
+                    
+                case .nameTag:
+                    self.itemNameTextField.becomeFirstResponder()
+                    
+                case .brandTag:
+                    self.brandTextField.becomeFirstResponder()
+                    
+                case .countryTag:
+                    self.countryOriginTextField.becomeFirstResponder()
+                    
+                case .descriptionTag:
+                    self.descriptionTextField.becomeFirstResponder()
+                    
+                case .unitCurrencyCodeTag:
+                    self.unitPriceTextField.becomeFirstResponder()
+                    
+                case .unitPriceTag:
+                    self.unitPriceTextField.becomeFirstResponder()
+                    
+                default:
+                    break
+                }
+            }
         }
-        
     }
 }
 
@@ -1353,7 +1367,7 @@ extension ShoppingListItemEditorViewController {
      */
     func keyboardWillShow(notification: NSNotification) {
         
-        if let info = notification.userInfo, !isKeyboardOnScreen {
+        if let info = notification.userInfo {
             
             let keyboard: CGRect = info[UIKeyboardFrameEndUserInfoKey] as! CGRect
             
@@ -1507,15 +1521,22 @@ extension ShoppingListItemEditorViewController {
      Dismiss keyboard when a new tap gesture is detected.
      */
     func endTextFieldEditing() {
-        itemDetailsTextFieldsState.next(event: .endEditing, completionHandler: nil)
-        unitPriceTextField.resignFirstResponder()
-        unitCurrencyCodeTextField.resignFirstResponder()
-        bundlePriceTextField.resignFirstResponder()
-        bundleCurrencyCodeTextField.resignFirstResponder()
-        itemNameTextField.resignFirstResponder()
-        brandTextField.resignFirstResponder()
-        countryOriginTextField.resignFirstResponder()
-        descriptionTextField.resignFirstResponder()
+        //        itemDetailsTextFieldsState.next(event: .endEditing, completionHandler: nil)
+        //        unitPriceTextField.resignFirstResponder()
+        //        unitCurrencyCodeTextField.resignFirstResponder()
+        //        bundlePriceTextField.resignFirstResponder()
+        //        bundleCurrencyCodeTextField.resignFirstResponder()
+        //        itemNameTextField.resignFirstResponder()
+        //        brandTextField.resignFirstResponder()
+        //        countryOriginTextField.resignFirstResponder()
+        //        descriptionTextField.resignFirstResponder()
+        
+        textFieldStateController.next(event: .manualResignFirstResponder({ textField in
+            
+            if let textField = textField {
+                textField.resignFirstResponder()
+            }
+        }))
     }
     
     func subscribeToNotification(_ notification: NSNotification.Name, selector: Selector) {

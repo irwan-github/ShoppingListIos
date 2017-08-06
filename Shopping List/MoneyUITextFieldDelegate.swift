@@ -33,6 +33,10 @@ class MoneyUITextFieldDelegate: NSObject, UITextFieldDelegate {
         
         let newString = startWith.replacingCharacters(in: range, with: string)
         
+        if newString == "\n" {
+            return false
+        }
+        
         let decimalDigits = CharacterSet.decimalDigits
         
         var digits = ""

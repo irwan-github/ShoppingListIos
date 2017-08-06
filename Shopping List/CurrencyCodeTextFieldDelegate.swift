@@ -20,7 +20,7 @@ class CurrencyCodeTextFieldDelegate: NSObject, UITextFieldDelegate {
     var changeStateUiAttributesHandler: ((ChangeState) -> Void)? = nil
     
     let currencyHelper = CurrencyHelper()
-    
+        
     //Use this method to validate text as it is typed by the user. For example, you could use this method to prevent the user from entering anything but numerical values.
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         print("\(#function) \(type(of: self))")
