@@ -875,7 +875,12 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.bundleCurrencyCodeTextField.text = "GBP"
             
-            self.pictureState.transition(event: .onLoad(nil), handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+            self.pictureState.transition(event: .onLoad(nil), handleNextStateUiAttributes: {
+                
+                pictureState, itemPicture in
+                
+                self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
+            })
             
             let selectedPriceTypeEvent = SelectedPriceState.Event.onSelectPriceType(.unit, nil)
             
@@ -893,7 +898,12 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.quantityToBuyStepper.value = Double((self.shoppingListItem?.quantityToBuyConvert) ?? 1)
             
-            self.pictureState.transition(event: .onLoad(self.shoppingListItem?.item?.picture?.fileUrl), handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+            self.pictureState.transition(event: .onLoad(self.shoppingListItem?.item?.picture?.fileUrl), handleNextStateUiAttributes: {
+                
+                pictureState, itemPicture in
+                
+                self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
+            })
             
             //Contains a property observer that set the price fields
             self.prices = self.shoppingListItem?.item?.prices
@@ -953,7 +963,12 @@ class ShoppingListItemEditorViewController: UIViewController {
             item = searchVc.selectedItem
             changeState.transition(event: .onSearchResult, handleNextStateUiAttributes: changeStateAttributeHandler)
             validationItemState.handle(event: .onExistingItem)
-            pictureState.transition(event: .onLoad(item?.picture?.fileUrl), handleNextStateUiAttributes: nextPictureStateUiAttributes)
+            pictureState.transition(event: .onLoad(item?.picture?.fileUrl), handleNextStateUiAttributes: {
+                
+                pictureState, itemPicture in
+                
+                self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
+            })
         }
     }
     
@@ -1028,7 +1043,14 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
                     self.activateImagePicketController(sourceType: .savedPhotosAlbum)
                     
                 case "Delete":
-                    self.pictureState.transition(event: .onDelete, handleNextStateUiAttributes: self.nextPictureStateUiAttributes)
+                    
+                    self.pictureState.transition(event: .onDelete, handleNextStateUiAttributes: {
+                        
+                        pictureState, itemPicture in
+                        
+                        self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
+                    })
+                    
                     self.changeState.transition(event: .onDeletePicture, handleNextStateUiAttributes: self.changeStateAttributeHandler)
                 default:
                     break
@@ -1040,28 +1062,24 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     /**
      Handles the setting of properties for UIImage depending on state. State machine will pass the image to this closure.
      */
-    var nextPictureStateUiAttributes: (PictureState, ItemPicture?) -> Void {
+    fileprivate func handlePictureStateAttributes(pictureState: PictureState, itemPicture: ItemPicture?) -> Void {
         
-        return { (pictureState: PictureState, itemPicture: ItemPicture?) -> Void in
+        switch pictureState {
             
-            switch pictureState {
-                
-            case .delete, .none:
-                let placeholder = UIImage(named: "ic_add_a_photo")!
-                self.itemImageView.image = PictureUtil.resizeImage(image: placeholder, newWidth: self.itemImageView.bounds.width, newHeight: self.itemImageView.bounds.width)
-                
-            case .new, .replacement:
-                self.itemImageVc = itemPicture
-                self.itemImageView.image = self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
-                
-            case .existing:
-                self.itemImageVc = itemPicture
-                self.itemImageView.image = self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
-                
-            default:
-                break
-            }
+        case .delete, .none:
+            let placeholder = UIImage(named: "ic_add_a_photo")!
+            self.itemImageView.image = PictureUtil.resizeImage(image: placeholder, newWidth: self.itemImageView.bounds.width, newHeight: self.itemImageView.bounds.width)
             
+        case .new, .replacement:
+            self.itemImageVc = itemPicture
+            self.itemImageView.image = self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
+            
+        case .existing:
+            self.itemImageVc = itemPicture
+            self.itemImageView.image = self.itemImageVc?.scale(widthToScale: self.itemImageView.bounds.width)
+            
+        default:
+            break
         }
     }
     
@@ -1164,7 +1182,15 @@ extension ShoppingListItemEditorViewController: UIImagePickerControllerDelegate,
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
         guard let selectedOriginalItemImage = info[UIImagePickerControllerOriginalImage] as? UIImage else { return }
-        pictureState.transition(event: .onFinishPickingCameraMedia(selectedOriginalItemImage), handleNextStateUiAttributes: nextPictureStateUiAttributes)
+        
+        pictureState.transition(event: .onFinishPickingCameraMedia(selectedOriginalItemImage), handleNextStateUiAttributes: {
+            
+            pictureState, itemPicture in
+        
+            self.handlePictureStateAttributes(pictureState: pictureState, itemPicture: itemPicture)
+        
+        
+        })
         
         changeState.transition(event: .onCameraCapture, handleNextStateUiAttributes: changeStateAttributeHandler)
         

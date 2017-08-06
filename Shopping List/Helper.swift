@@ -12,7 +12,6 @@ struct Helper {
     
     static func string(from number: Int, fractionDigits: Int) -> String? {
         
-        let helper = CurrencyHelper()
         let formatter = NumberFormatter()
         formatter.locale = CurrencyHelper.userLocale
         formatter.numberStyle = .decimal
