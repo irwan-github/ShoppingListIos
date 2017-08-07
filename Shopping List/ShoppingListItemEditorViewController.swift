@@ -272,14 +272,14 @@ class ShoppingListItemEditorViewController: UIViewController {
         brandTextField.delegate = self
         countryOriginTextField.delegate = self
         descriptionTextField.delegate = self
-        //unitCurrencyCodeTextField.delegate = self
         
         moneyTextFieldDelegate.vc = self
         moneyTextFieldDelegate.changeState = changeState
+        moneyTextFieldDelegate.textFieldStateController = textFieldStateController
         unitPriceTextField.delegate = moneyTextFieldDelegate
         bundlePriceTextField.delegate = moneyTextFieldDelegate
         
-        textFieldStateController.handler = transferFirstResponderHandler
+        textFieldStateController.nextResponder = nextTextFieldResponder
         
         if shoppingListItem == nil {
             title = "New Item"
@@ -879,7 +879,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.unitCurrencyCodeTextField.text = CurrencyHelper.getHomeCurrencyCode()
             
-            self.bundleCurrencyCodeTextField.text = "GBP"
+            self.bundleCurrencyCodeTextField.text = CurrencyHelper.getHomeCurrencyCode()
             
             self.pictureState.transition(event: .onLoad(nil), handleNextStateUiAttributes: {
                 
@@ -892,7 +892,7 @@ class ShoppingListItemEditorViewController: UIViewController {
             
             self.selectedPriceState.transition(event: selectedPriceTypeEvent, handleStateUiAttribute: self.pricingControlsAttributeHandler)
             
-            self.textFieldStateController.next(event: .onLoad(self.itemNameTextField.tag))
+            self.textFieldStateController.next(event: .onLoad(self.itemNameTextField))
             
         case .existingListItem:
             
@@ -1320,13 +1320,16 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
         textFieldStateController.next(event: .didEndEditing)
     }
     
-    var transferFirstResponderHandler: (TextFieldStateController.State) -> Void {
+    /**
+     Specify first responder based on FSM logic defined in TextFieldStateController
+    */
+    var nextTextFieldResponder: (TextFieldStateController.State, UITextField) -> Void {
         
         get {
             
             return {
                 
-                nextState in
+                nextState, currentTextField in
                 
                 switch nextState {
                     
@@ -1350,6 +1353,13 @@ extension ShoppingListItemEditorViewController: UITextFieldDelegate {
                     
                 case .unitPriceTag:
                     self.unitPriceTextField.becomeFirstResponder()
+                    
+                case .bundlePriceTag:
+                    self.bundlePriceTextField.becomeFirstResponder()
+                    
+                    //Do the following because bundle pricing info is index 1 of segmented control
+                    self.pricingInformationSc.selectedSegmentIndex = PriceType.bundle.rawValue
+                    self.onDisplayPriceTypeInformation(self.pricingInformationSc)
                     
                 default:
                     break
@@ -1518,25 +1528,11 @@ extension ShoppingListItemEditorViewController {
     }
     
     /**
-     Dismiss keyboard when a new tap gesture is detected.
+     Dismiss keyboard from text field when a new tap gesture is detected.
      */
     func endTextFieldEditing() {
-        //        itemDetailsTextFieldsState.next(event: .endEditing, completionHandler: nil)
-        //        unitPriceTextField.resignFirstResponder()
-        //        unitCurrencyCodeTextField.resignFirstResponder()
-        //        bundlePriceTextField.resignFirstResponder()
-        //        bundleCurrencyCodeTextField.resignFirstResponder()
-        //        itemNameTextField.resignFirstResponder()
-        //        brandTextField.resignFirstResponder()
-        //        countryOriginTextField.resignFirstResponder()
-        //        descriptionTextField.resignFirstResponder()
         
-        textFieldStateController.next(event: .manualResignFirstResponder({ textField in
-            
-            if let textField = textField {
-                textField.resignFirstResponder()
-            }
-        }))
+        textFieldStateController.next(event: .onManualResignFirstResponder)
     }
     
     func subscribeToNotification(_ notification: NSNotification.Name, selector: Selector) {

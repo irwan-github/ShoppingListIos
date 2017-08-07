@@ -9,21 +9,22 @@
 import Foundation
 import UIKit
 
-struct TextFieldStateController {
+class TextFieldStateController {
     
     var currTextField: UITextField!
     
     var currState = State()
     
-    var handler: ((State) -> Void)?
+    var nextResponder: ((State, UITextField) -> Void)?
     
-    mutating func next(event: Event) {
+    func next(event: Event) {
         
         switch event {
             
-        case .onLoad(let state):
+        case .onLoad(let textField):
             
-            guard let stateInd = State(rawValue: state) else { break }
+            guard let stateInd = State(rawValue: textField.tag) else { break }
+            currTextField = textField
             
             switch currState {
                 
@@ -35,7 +36,7 @@ struct TextFieldStateController {
                 
             }
             
-            handler?(currState)
+            nextResponder?(currState, currTextField)
             
         //At this point, iOS will display the keyboard
         case .shouldBeginEditing(let textField):
@@ -43,7 +44,7 @@ struct TextFieldStateController {
             currState = State(rawValue: textField.tag)!
             currTextField = textField
             
-        //Define the next textfield the will receive focus
+        //Define the next textfield that will receive focus. This event is called before shouldBeginEditing event
         case .shouldReturn:
             
             switch currState {
@@ -64,31 +65,36 @@ struct TextFieldStateController {
                 currState = .unitPriceTag
                 
             case .unitPriceTag:
+                currState = .bundlePriceTag
+                
+            case .bundlePriceTag:
                 currState = .transient
                 
             default:
                 break
             }
             
-            handler?(currState)
+            nextResponder?(currState, currTextField)
             
-        case .manualResignFirstResponder(let resignFirstResponder):
-            resignFirstResponder(currTextField)
+        case .onManualResignFirstResponder():
+            resignFirstResponder()
             currState = .transient
             
         default:
             break
         }
-        
-        
+    }
+    
+    private func resignFirstResponder() {
+        currTextField?.resignFirstResponder()
     }
     
     enum Event {
-        case onLoad(Int)
+        case onLoad(UITextField) //Use this event for viewDidLoad event
         case shouldBeginEditing(UITextField)
         case shouldReturn
         case didEndEditing
-        case manualResignFirstResponder((UITextField!) -> Void)
+        case onManualResignFirstResponder
     }
     
     enum State: Int {
@@ -101,6 +107,7 @@ struct TextFieldStateController {
         case unitCurrencyCodeTag
         case unitPriceTag
         case bundleCurrencyCodeTag
+        case bundlePriceTag
         
         init() {
             self = .transient

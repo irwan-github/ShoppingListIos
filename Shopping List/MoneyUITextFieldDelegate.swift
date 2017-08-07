@@ -11,6 +11,7 @@ import UIKit
 class MoneyUITextFieldDelegate: NSObject, UITextFieldDelegate {
     var changeState: ChangeState?
     weak var vc: ShoppingListItemEditorViewController?
+    var textFieldStateController: TextFieldStateController?
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
@@ -62,4 +63,20 @@ class MoneyUITextFieldDelegate: NSObject, UITextFieldDelegate {
         return false
     }
     
+    //Just before a text object becomes first responder
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        
+        //Keep track of the current state but let iOS handle the keyboard and responder actions
+        textFieldStateController?.next(event: .shouldBeginEditing(textField))
+        
+        return true
+    }
+    
+    //When the user taps the return key, TextField sends message to the delegate to ask whether it should resign first responder.
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        textFieldStateController?.next(event: .shouldReturn)
+        
+        return true
+    }
 }
