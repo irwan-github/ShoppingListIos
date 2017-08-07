@@ -15,6 +15,40 @@ class MoneyUITextFieldDelegate: NSObject, UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         
+        let decimalDigits = CharacterSet.decimalDigits
+        
+        let startWith = (textField.text)! as NSString
+        
+        let newString = startWith.replacingCharacters(in: range, with: string)
+        
+        if newString == "\n" {
+            return false
+        }
+        
+        var digits = ""
+        
+        for c in newString.unicodeScalars {
+            
+            if decimalDigits.contains(c) {
+                digits.append(String(c))
+            }
+        }
+        
+        if digits.isEmpty {
+            return false
+        }
+        
+        let dollars = (Int(digits))! / 100
+        let cents = (Int(digits))! % 100
+        let centsString = String(cents)
+        let moneyString = String(dollars) + "." + (centsString.characters.count == 1 ? "0" + centsString : centsString)
+        
+        if moneyString == "0.00" {
+            textField.text = nil
+        } else {
+            textField.text = moneyString
+        }
+        
         changeState?.transition(event: .onChangeCharacters) {
             
             changeState in
@@ -28,36 +62,6 @@ class MoneyUITextFieldDelegate: NSObject, UITextFieldDelegate {
                 break
             }
             
-        }
-        
-        let startWith = (textField.text)! as NSString
-        
-        let newString = startWith.replacingCharacters(in: range, with: string)
-        
-        if newString == "\n" {
-            return false
-        }
-        
-        let decimalDigits = CharacterSet.decimalDigits
-        
-        var digits = ""
-        
-        for c in newString.unicodeScalars {
-            
-            if decimalDigits.contains(c) {
-                digits.append(String(c))
-            }
-        }
-        
-        let dollars = (Int(digits))! / 100
-        let cents = (Int(digits))! % 100
-        let centsString = String(cents)
-        let moneyString = String(dollars) + "." + (centsString.characters.count == 1 ? "0" + centsString : centsString)
-        
-        if moneyString == "0.00" {
-            textField.text = nil
-        } else {
-            textField.text = moneyString
         }
         
         return false
